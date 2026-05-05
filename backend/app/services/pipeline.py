@@ -49,8 +49,8 @@ class ResearchPipeline:
             }
             results["papers"] = retrieval["papers"]
             self.on_progress("retrieving", 0.25, f"Found {retrieval['after_dedup']} unique papers")
+            await asyncio.sleep(3)  # Rate limit buffer
 
-            # Step 2: Analyze papers
             # Build knowledge graph from papers
             self.on_progress("building_graph", 0.28, "Building knowledge graph...")
             self.kg.add_papers_batch(retrieval["papers"])
@@ -58,7 +58,7 @@ class ResearchPipeline:
             # Step 2: Analyze papers
             self.on_progress("analyzing", 0.3, "Analyzing papers...")
             analysis = await self.analyzer.execute({
-                "papers": retrieval["papers"][:30],  # Limit for API costs
+                "papers": retrieval["papers"][:10],  # Limit for rate limits
                 "focus_areas": config.get("focus_areas", []),
             })
             results["steps"]["analysis"] = {
@@ -70,6 +70,7 @@ class ResearchPipeline:
             results["gaps"] = analysis["gaps"]
             results["contradictions"] = analysis["contradictions"]
             self.on_progress("analyzing", 0.55, f"Found {len(analysis['common_themes'])} themes")
+            await asyncio.sleep(5)  # Rate limit buffer
 
             # Step 3: Synthesize
             self.on_progress("synthesizing", 0.6, "Synthesizing findings...")
@@ -90,8 +91,9 @@ class ResearchPipeline:
             results["hypotheses"] = synthesis["hypothesis_suggestions"]
             results["framework"] = synthesis["conceptual_framework"]
             self.on_progress("synthesizing", 0.8, "Synthesis complete")
+            await asyncio.sleep(5)  # Rate limit buffer
 
-            # Step 4: Generate initial writing (optional, can be triggered separately)
+            # Step 4: Generate initial writing
             self.on_progress("writing", 0.85, "Generating literature review draft...")
             writing = await self.writer.execute({
                 "section_type": "literature_review",
