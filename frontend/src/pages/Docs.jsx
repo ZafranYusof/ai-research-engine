@@ -1,163 +1,311 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { Book, Code, Zap, GitBranch, FileText, Search, ChevronRight, ExternalLink } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Book, Code, Zap, GitBranch, FileText, Search, ChevronRight, ExternalLink, Copy, Check, ArrowLeft } from 'lucide-react'
+
+function CodeBlock({ code, language = 'json' }) {
+  const [copied, setCopied] = useState(false)
+  const handleCopy = () => {
+    navigator.clipboard.writeText(code)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  return (
+    <div className="relative group my-4 rounded-xl overflow-hidden border border-[#e5e5e5]">
+      <div className="flex items-center justify-between px-4 py-2 bg-[#f8f8f8] border-b border-[#e5e5e5]">
+        <span className="text-[10px] font-mono text-[#999] uppercase tracking-wider">{language}</span>
+        <button
+          onClick={handleCopy}
+          className="text-[#999] hover:text-[#555] transition-colors"
+        >
+          {copied ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
+        </button>
+      </div>
+      <pre className="p-4 bg-[#fafafa] overflow-x-auto text-[13px] leading-relaxed font-mono text-[#333]">
+        <code>{code}</code>
+      </pre>
+    </div>
+  )
+}
+
+function Endpoint({ method, path, description }) {
+  const methodColors = {
+    GET: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    POST: 'bg-blue-50 text-blue-700 border-blue-200',
+    PUT: 'bg-amber-50 text-amber-700 border-amber-200',
+    DELETE: 'bg-red-50 text-red-700 border-red-200',
+  }
+
+  return (
+    <div className="flex items-center gap-3 py-2">
+      <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${methodColors[method]}`}>
+        {method}
+      </span>
+      <code className="text-sm font-mono text-[#333]">{path}</code>
+      {description && <span className="text-xs text-[#999] ml-auto">{description}</span>}
+    </div>
+  )
+}
 
 const sections = [
   {
-    id: 'getting-started',
-    title: 'Getting Started',
-    icon: Zap,
-    content: [
-      {
-        title: 'Quick Start',
-        body: `ResearchAI is a multi-agent system that automates academic literature reviews. Here's how to get started:
+    id: 'introduction',
+    title: 'Introduction',
+    icon: Book,
+    content: () => (
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight mb-3">Documentation</h1>
+        <p className="text-[#666] text-lg leading-relaxed mb-8">
+          ResearchAI is a multi-agent system that automates academic literature reviews using five specialized AI agents.
+        </p>
 
-1. **Create an account** — Sign up with your email
-2. **Start a research project** — Enter your topic and parameters
-3. **Wait for the pipeline** — 5 AI agents work in sequence (~2-3 min)
-4. **Explore results** — Themes, gaps, hypotheses, knowledge graph
-5. **Generate writing** — Auto-produce cited literature reviews
-6. **Export** — Download as Markdown, LaTeX, or BibTeX`
-      },
-      {
-        title: 'System Requirements',
-        body: `- Modern browser (Chrome, Firefox, Safari, Edge)
-- Internet connection (API calls to Groq + Semantic Scholar)
-- No installation needed for the web app`
-      }
-    ]
+        <div className="bg-gradient-to-br from-[#f8f9ff] to-[#f0f4ff] border border-[#e0e7ff] rounded-2xl p-6 mb-8">
+          <h3 className="font-semibold mb-3 text-[#1e40af]">Quick Start</h3>
+          <ol className="space-y-2 text-sm text-[#444]">
+            <li className="flex items-start gap-3">
+              <span className="w-6 h-6 bg-[#2563eb] text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0">1</span>
+              <span><strong>Create account</strong> — Register with email and password</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="w-6 h-6 bg-[#2563eb] text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0">2</span>
+              <span><strong>Start research</strong> — Enter topic, year range, and focus areas</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="w-6 h-6 bg-[#2563eb] text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0">3</span>
+              <span><strong>Wait for pipeline</strong> — 5 agents process in sequence (~2-3 min)</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="w-6 h-6 bg-[#2563eb] text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0">4</span>
+              <span><strong>Explore results</strong> — Themes, gaps, hypotheses, knowledge graph</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="w-6 h-6 bg-[#2563eb] text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0">5</span>
+              <span><strong>Generate & export</strong> — Literature review in Markdown, LaTeX, or BibTeX</span>
+            </li>
+          </ol>
+        </div>
+
+        <h3 className="font-semibold text-lg mb-3">Architecture Overview</h3>
+        <div className="bg-[#1a1a1a] rounded-2xl p-6 font-mono text-xs text-[#ccc] overflow-x-auto">
+          <pre>{`┌─────────────────────────────────────────────────────────┐
+│                    Frontend (React + Vite)                │
+│   Landing │ Auth │ Dashboard │ Graph │ Writing │ Docs    │
+└────────────────────────┬────────────────────────────────┘
+                         │ REST API (HTTPS)
+┌────────────────────────┴────────────────────────────────┐
+│                   Backend (FastAPI)                       │
+├──────────────────────────────────────────────────────────┤
+│  ┌──────────┐  ┌──────────┐  ┌───────────┐             │
+│  │Retriever │──│ Analyzer │──│Synthesizer│             │
+│  └──────────┘  └──────────┘  └───────────┘             │
+│       │                            │                     │
+│  ┌──────────┐                ┌──────────┐               │
+│  │  Writer  │◄───────────────│  Critic  │               │
+│  └──────────┘  (revision)    └──────────┘               │
+├──────────────────────────────────────────────────────────┤
+│  Semantic Scholar API │ arXiv API │ Groq LLM │ NetworkX  │
+└──────────────────────────────────────────────────────────┘`}</pre>
+        </div>
+      </div>
+    )
   },
   {
-    id: 'pipeline',
-    title: 'Pipeline Architecture',
+    id: 'agents',
+    title: 'AI Agents',
     icon: GitBranch,
-    content: [
-      {
-        title: 'Overview',
-        body: `The research pipeline consists of 5 specialized AI agents that execute in sequence:
+    content: () => (
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight mb-3">AI Agents</h1>
+        <p className="text-[#666] mb-8">Five specialized agents collaborate in a pipeline architecture.</p>
 
-\`\`\`
-Topic → Retriever → Analyzer → Synthesizer → Writer → Critic → Output
-                                                         ↑         |
-                                                         └─────────┘
-                                                        (revision loop)
-\`\`\`
+        {[
+          {
+            num: '01', name: 'Retriever Agent', color: '#2563eb',
+            purpose: 'Discovers relevant papers from multiple academic databases.',
+            process: [
+              'Receives research topic from user',
+              'Uses Groq LLM to generate 5 diverse search queries (synonyms, related concepts, different angles)',
+              'Queries Semantic Scholar API (200M+ papers, citation data)',
+              'Queries arXiv API (preprints, full-text available)',
+              'Deduplicates results by DOI and title similarity',
+              'Ranks by citation count + recency bonus',
+            ],
+            output: 'Ranked list of papers with metadata (title, abstract, authors, year, citations, venue)',
+            config: { max_papers: '5-200', year_range: 'configurable', timeout: '30s per source' }
+          },
+          {
+            num: '02', name: 'Analyzer Agent', color: '#059669',
+            purpose: 'Extracts structured insights from each paper.',
+            process: [
+              'Processes papers in batches of 5 (optimizes API calls)',
+              'Extracts: key findings, methodology, limitations, future work',
+              'Identifies common themes across all papers',
+              'Detects research gaps from limitations + future work',
+              'Finds contradictions between papers\' findings',
+            ],
+            output: 'Structured analyses, theme clusters, research gaps, contradictions',
+            config: { batch_size: 5, max_papers_analyzed: 15, rate_limit_delay: '5s between batches' }
+          },
+          {
+            num: '03', name: 'Synthesizer Agent', color: '#7c3aed',
+            purpose: 'Connects findings into coherent narratives and generates hypotheses.',
+            process: [
+              'Builds narrative threads from identified themes',
+              'Maps how the field has evolved over time',
+              'Generates novel research hypotheses from gaps',
+              'Rates each hypothesis on novelty (1-5) and feasibility (1-5)',
+              'Creates conceptual framework (layers, relationships, core concepts)',
+            ],
+            output: 'Narrative threads, hypotheses with ratings, conceptual framework',
+            config: { max_threads: '3-5', max_hypotheses: '3-5' }
+          },
+          {
+            num: '04', name: 'Writer Agent', color: '#d97706',
+            purpose: 'Generates publication-ready academic text with proper citations.',
+            process: [
+              'Builds citation map (AuthorYear format) from paper metadata',
+              'Uses narrative threads as structural guide',
+              'Generates section with inline citations (APA style)',
+              'Synthesizes across sources (not just summarizes)',
+              'Targets specified word count and academic tone',
+            ],
+            output: 'Academic text with inline citations, reference list, word count',
+            config: { styles: 'APA (default)', max_words: '500-5000', temperature: 0.4 }
+          },
+          {
+            num: '05', name: 'Critic Agent', color: '#dc2626',
+            purpose: 'Quality assurance — reviews and scores generated content.',
+            process: [
+              'Evaluates 6 dimensions: clarity, flow, depth, synthesis, citations, coherence',
+              'Each dimension scored 1-10',
+              'Calculates weighted overall score',
+              'Identifies specific weaknesses and suggestions',
+              'Pass threshold: ≥ 7/10',
+              'If fails: Writer revises based on feedback (max 3 iterations)',
+            ],
+            output: 'Score breakdown, pass/fail, suggestions, strengths',
+            config: { threshold: '7/10', max_iterations: 3 }
+          },
+        ].map((agent) => (
+          <div key={agent.num} className="mb-10 last:mb-0">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="text-xs font-mono text-[#999]">{agent.num}</span>
+              <div className="w-8 h-1 rounded-full" style={{ backgroundColor: agent.color }} />
+              <h2 className="text-xl font-bold">{agent.name}</h2>
+            </div>
 
-Each agent has a specific role and passes structured data to the next.`
-      },
-      {
-        title: 'Agent 1: Retriever',
-        body: `**Purpose:** Find relevant papers from multiple academic databases.
+            <div className="ml-10 space-y-4">
+              <div>
+                <p className="text-sm font-medium text-[#555] mb-1">Purpose</p>
+                <p className="text-sm text-[#666]">{agent.purpose}</p>
+              </div>
 
-**Process:**
-1. Takes your research topic
-2. Uses Groq LLM to generate 5 diverse search queries (synonyms, related concepts)
-3. Searches Semantic Scholar API (200M+ papers)
-4. Searches arXiv API (preprints)
-5. Deduplicates results (DOI/title matching)
-6. Ranks by citation count + recency
+              <div>
+                <p className="text-sm font-medium text-[#555] mb-2">Process</p>
+                <ol className="space-y-1.5">
+                  {agent.process.map((step, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-[#666]">
+                      <span className="text-[#999] font-mono text-xs mt-0.5">{i + 1}.</span>
+                      {step}
+                    </li>
+                  ))}
+                </ol>
+              </div>
 
-**Output:** List of papers with title, abstract, authors, year, citations
+              <div>
+                <p className="text-sm font-medium text-[#555] mb-1">Output</p>
+                <p className="text-sm text-[#666] bg-[#f8f8f8] px-3 py-2 rounded-lg border border-[#eee] font-mono">{agent.output}</p>
+              </div>
 
-**Rate Limits:** Semantic Scholar allows 100 req/5min. The system handles this with automatic retry + backoff.`
-      },
-      {
-        title: 'Agent 2: Analyzer',
-        body: `**Purpose:** Extract structured insights from each paper.
-
-**Process:**
-1. Processes papers in batches of 5 (saves API calls)
-2. For each batch, extracts:
-   - Key findings (bullet points)
-   - Methodology used
-   - Limitations acknowledged
-   - Future work suggested
-3. Cross-paper analysis:
-   - Common themes identification
-   - Research gap detection
-   - Contradiction finding
-
-**Output:** Structured analyses, themes, gaps, contradictions`
-      },
-      {
-        title: 'Agent 3: Synthesizer',
-        body: `**Purpose:** Connect findings across papers into coherent narratives.
-
-**Process:**
-1. Builds narrative threads from themes (how the field evolved)
-2. Generates research hypotheses from identified gaps
-3. Creates conceptual framework (layers, relationships, core concepts)
-
-**Output:** Narrative threads, hypotheses (with novelty/feasibility scores), framework`
-      },
-      {
-        title: 'Agent 4: Writer',
-        body: `**Purpose:** Generate publication-ready academic text.
-
-**Process:**
-1. Builds citation map from papers (AuthorYear format)
-2. Uses narrative threads as structural guide
-3. Generates section with inline citations
-4. Targets specified word count and style (APA default)
-
-**Output:** Academic text with citations, word count, reference list`
-      },
-      {
-        title: 'Agent 5: Critic',
-        body: `**Purpose:** Quality assurance — reviews and scores generated content.
-
-**Dimensions scored (1-10):**
-- Clarity — Is it well-written?
-- Flow — Logical progression?
-- Depth — Sufficient analysis?
-- Synthesis — Connects sources vs just lists them?
-- Citations — Claims properly supported?
-- Coherence — Argument holds together?
-
-**Threshold:** Score must be ≥ 7/10 to pass. If it fails, Writer revises based on Critic's suggestions (up to 3 iterations).`
-      }
-    ]
+              <div>
+                <p className="text-sm font-medium text-[#555] mb-2">Configuration</p>
+                <div className="flex flex-wrap gap-2">
+                  {Object.entries(agent.config).map(([key, val]) => (
+                    <span key={key} className="text-xs bg-[#f0f0f0] border border-[#e5e5e5] px-2.5 py-1 rounded-lg font-mono">
+                      <span className="text-[#999]">{key}:</span> <span className="text-[#333]">{val}</span>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    )
   },
   {
-    id: 'api',
+    id: 'api-reference',
     title: 'API Reference',
     icon: Code,
-    content: [
-      {
-        title: 'Base URL',
-        body: `\`\`\`
-Production: https://your-domain.com/api
-Local: http://localhost:8000/api
-\`\`\`
+    content: () => (
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight mb-3">API Reference</h1>
+        <p className="text-[#666] mb-4">RESTful API. All responses are JSON. Auth via Bearer token.</p>
 
-All endpoints return JSON. Authentication via Bearer token in Authorization header.`
-      },
-      {
-        title: 'Authentication',
-        body: `**POST /api/auth/register**
-\`\`\`json
+        <div className="bg-[#f8f8f8] border border-[#e5e5e5] rounded-xl px-4 py-3 mb-8 flex items-center gap-3">
+          <span className="text-xs font-mono text-[#999]">Base URL</span>
+          <code className="text-sm font-mono text-[#333] font-medium">https://ai-research-engine-8ctr.onrender.com/api</code>
+        </div>
+
+        {/* Auth */}
+        <div className="mb-10">
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#2563eb]" />
+            Authentication
+          </h2>
+
+          <div className="space-y-6">
+            <div>
+              <Endpoint method="POST" path="/auth/register" description="Create account" />
+              <CodeBlock language="json" code={`// Request
 {
   "name": "Dr. Jane Smith",
   "email": "jane@university.edu",
   "password": "securepass123"
 }
-\`\`\`
-Returns: \`{ "token": "jwt...", "user": { "email", "name" } }\`
 
-**POST /api/auth/login**
-\`\`\`json
+// Response 200
+{
+  "token": "eyJhbGciOiJIUzI1NiIs...",
+  "user": {
+    "email": "jane@university.edu",
+    "name": "Dr. Jane Smith"
+  }
+}`} />
+            </div>
+
+            <div>
+              <Endpoint method="POST" path="/auth/login" description="Sign in" />
+              <CodeBlock language="json" code={`// Request
 {
   "email": "jane@university.edu",
   "password": "securepass123"
 }
-\`\`\`
-Returns: \`{ "token": "jwt...", "user": { "email", "name" } }\``
-      },
-      {
-        title: 'Papers',
-        body: `**POST /api/papers/search**
-\`\`\`json
+
+// Response 200
+{
+  "token": "eyJhbGciOiJIUzI1NiIs...",
+  "user": { "email": "...", "name": "..." }
+}
+
+// Response 401
+{ "detail": "Invalid credentials" }`} />
+            </div>
+          </div>
+        </div>
+
+        {/* Papers */}
+        <div className="mb-10">
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#059669]" />
+            Papers
+          </h2>
+
+          <div className="space-y-6">
+            <div>
+              <Endpoint method="POST" path="/papers/search" description="Search academic papers" />
+              <CodeBlock language="json" code={`// Request
 {
   "query": "transformer attention mechanism",
   "max_results": 20,
@@ -165,19 +313,44 @@ Returns: \`{ "token": "jwt...", "user": { "email", "name" } }\``
   "year_to": 2026,
   "sources": ["semantic_scholar", "arxiv"]
 }
-\`\`\`
-Returns: \`{ "papers": [...], "total": 20 }\`
 
-**GET /api/papers/{paper_id}?source=semantic_scholar**
-Returns: Full paper details
+// Response 200
+{
+  "papers": [
+    {
+      "id": "abc123",
+      "title": "Attention Is All You Need",
+      "abstract": "...",
+      "authors": ["Vaswani, A.", "Shazeer, N.", ...],
+      "year": 2017,
+      "venue": "NeurIPS",
+      "citation_count": 95000,
+      "doi": "10.48550/arXiv.1706.03762",
+      "source": "semantic_scholar"
+    }
+  ],
+  "total": 20
+}`} />
+            </div>
 
-**GET /api/papers/{paper_id}/citations?limit=50**
-Returns: \`{ "citations": [...], "total": 50 }\``
-      },
-      {
-        title: 'Research Pipeline',
-        body: `**POST /api/research/start**
-\`\`\`json
+            <div>
+              <Endpoint method="GET" path="/papers/{paper_id}" description="Get paper details" />
+              <Endpoint method="GET" path="/papers/{paper_id}/citations" description="Get citing papers" />
+            </div>
+          </div>
+        </div>
+
+        {/* Research */}
+        <div className="mb-10">
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#7c3aed]" />
+            Research Pipeline
+          </h2>
+
+          <div className="space-y-6">
+            <div>
+              <Endpoint method="POST" path="/research/start" description="Start pipeline" />
+              <CodeBlock language="json" code={`// Request
 {
   "topic": "large language models for code generation",
   "max_papers": 50,
@@ -185,151 +358,293 @@ Returns: \`{ "citations": [...], "total": 50 }\``
   "year_to": 2026,
   "focus_areas": ["code synthesis", "program repair"]
 }
-\`\`\`
-Returns: \`{ "project_id": "uuid", "status": "started" }\`
 
-**GET /api/research/status/{project_id}**
-Returns: \`{ "id", "topic", "status", "progress", "current_step", "message" }\`
-
-**GET /api/research/results/{project_id}**
-Returns: Full results (papers, themes, gaps, hypotheses, draft, review, framework)
-
-**GET /api/research/list**
-Returns: \`{ "projects": [...] }\``
-      },
-      {
-        title: 'Writing',
-        body: `**POST /api/writing/generate**
-\`\`\`json
+// Response 200
 {
-  "section_type": "literature_review",
-  "narrative_threads": [...],
-  "papers": [...],
-  "style": "APA",
-  "max_words": 2000
-}
-\`\`\`
+  "project_id": "d3f1b216-41c3-4a13-9815-c251b8af552f",
+  "status": "started"
+}`} />
+            </div>
 
-**POST /api/writing/generate-iterative**
-Same params, but auto-revises until Critic passes (max 3 iterations).
-
-**POST /api/writing/revise**
-\`\`\`json
+            <div>
+              <Endpoint method="GET" path="/research/status/{project_id}" description="Check progress" />
+              <CodeBlock language="json" code={`// Response 200
 {
-  "content": "existing text...",
-  "feedback": "make it more concise",
-  "section_type": "literature_review"
-}
-\`\`\`
+  "id": "d3f1b216-...",
+  "topic": "large language models for code generation",
+  "status": "started",       // started | completed | failed
+  "progress": 0.6,           // 0.0 - 1.0
+  "current_step": "synthesizing",
+  "message": "Synthesizing findings..."
+}`} />
+            </div>
 
-**POST /api/writing/export**
-\`\`\`json
+            <div>
+              <Endpoint method="GET" path="/research/results/{project_id}" description="Get full results" />
+              <p className="text-xs text-[#999] ml-4 mt-1">Returns: papers, themes, gaps, contradictions, hypotheses, framework, draft, review</p>
+            </div>
+
+            <div>
+              <Endpoint method="GET" path="/research/list" description="List all projects" />
+            </div>
+          </div>
+        </div>
+
+        {/* Writing */}
+        <div className="mb-10">
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#d97706]" />
+            Writing
+          </h2>
+
+          <div className="space-y-6">
+            <div>
+              <Endpoint method="POST" path="/writing/generate" description="Generate section" />
+              <Endpoint method="POST" path="/writing/generate-iterative" description="Generate with auto-revision" />
+              <Endpoint method="POST" path="/writing/revise" description="Revise with feedback" />
+              <Endpoint method="POST" path="/writing/export" description="Export document" />
+              <CodeBlock language="json" code={`// Export Request
 {
-  "sections": [{"section_type": "...", "content": "...", "citations": [...]}],
-  "title": "My Paper",
+  "sections": [
+    {
+      "section_type": "literature_review",
+      "content": "...",
+      "citations": [...]
+    }
+  ],
+  "title": "My Research Paper",
   "authors": ["Jane Smith"],
-  "format": "latex"  // or "markdown", "bibtex"
-}
-\`\`\``
-      },
-      {
-        title: 'Knowledge Graph',
-        body: `**GET /api/graph/full**
-Returns: \`{ "graph": { "nodes": [...], "links": [...] }, "stats": {...} }\`
+  "format": "latex"    // markdown | latex | bibtex
+}`} />
+            </div>
+          </div>
+        </div>
 
-**GET /api/graph/network/{paper_id}?depth=2**
-Returns: Subgraph around a paper
+        {/* Knowledge Graph */}
+        <div className="mb-10">
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#dc2626]" />
+            Knowledge Graph
+          </h2>
 
-**GET /api/graph/themes**
-Returns: \`{ "clusters": [{ "theme", "description", "papers", "paper_count" }] }\`
+          <div className="space-y-2">
+            <Endpoint method="GET" path="/graph/full" description="Entire graph (nodes + edges)" />
+            <Endpoint method="GET" path="/graph/network/{paper_id}?depth=2" description="Subgraph around paper" />
+            <Endpoint method="GET" path="/graph/themes" description="Theme clusters" />
+            <Endpoint method="GET" path="/graph/bridges" description="Bridge papers" />
+            <Endpoint method="GET" path="/graph/collaborations" description="Co-authorship network" />
+            <Endpoint method="GET" path="/graph/stats" description="Graph statistics" />
+            <Endpoint method="POST" path="/graph/papers" description="Add papers to graph" />
+            <Endpoint method="POST" path="/graph/themes" description="Add themes" />
+            <Endpoint method="DELETE" path="/graph/clear" description="Clear graph" />
+          </div>
+        </div>
+      </div>
+    )
+  },
+  {
+    id: 'deployment',
+    title: 'Deployment',
+    icon: Zap,
+    content: () => (
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight mb-3">Deployment</h1>
+        <p className="text-[#666] mb-8">Production deployment on Render (backend) + Vercel (frontend).</p>
 
-**GET /api/graph/bridges**
-Returns: Papers connecting multiple theme clusters
+        <h2 className="text-xl font-bold mb-4">Current Production</h2>
+        <div className="grid grid-cols-2 gap-4 mb-8">
+          <div className="bg-white border border-[#e5e5e5] rounded-xl p-5">
+            <p className="text-xs font-mono text-[#999] uppercase tracking-wider mb-2">Frontend</p>
+            <p className="font-medium text-sm mb-1">Vercel</p>
+            <code className="text-xs text-[#2563eb] break-all">frontend-kappa-six-83.vercel.app</code>
+          </div>
+          <div className="bg-white border border-[#e5e5e5] rounded-xl p-5">
+            <p className="text-xs font-mono text-[#999] uppercase tracking-wider mb-2">Backend</p>
+            <p className="font-medium text-sm mb-1">Render</p>
+            <code className="text-xs text-[#2563eb] break-all">ai-research-engine-8ctr.onrender.com</code>
+          </div>
+        </div>
 
-**GET /api/graph/collaborations**
-Returns: Co-authorship network
+        <h2 className="text-xl font-bold mb-4">Local Development</h2>
+        <CodeBlock language="bash" code={`# Clone
+git clone https://github.com/Vexccz/ai-research-engine.git
+cd ai-research-engine
 
-**GET /api/graph/stats**
-Returns: \`{ "total_nodes", "total_edges", "node_types", "density" }\``
-      }
-    ]
+# Backend
+cd backend
+python -m venv venv
+.\\venv\\Scripts\\activate        # Windows
+source venv/bin/activate        # Mac/Linux
+pip install -r requirements.txt
+cp .env.example .env            # Add your Groq API key
+uvicorn app.main:app --reload --port 8000
+
+# Frontend (new terminal)
+cd frontend
+npm install --legacy-peer-deps
+npm run dev`} />
+
+        <h2 className="text-xl font-bold mb-4 mt-8">Environment Variables</h2>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm border border-[#e5e5e5] rounded-xl overflow-hidden">
+            <thead className="bg-[#f8f8f8]">
+              <tr>
+                <th className="text-left px-4 py-2.5 font-medium text-[#555] border-b border-[#e5e5e5]">Variable</th>
+                <th className="text-left px-4 py-2.5 font-medium text-[#555] border-b border-[#e5e5e5]">Required</th>
+                <th className="text-left px-4 py-2.5 font-medium text-[#555] border-b border-[#e5e5e5]">Description</th>
+              </tr>
+            </thead>
+            <tbody className="font-mono text-xs">
+              {[
+                ['GROQ_API_KEY', 'Yes', 'Groq API key (free at console.groq.com)'],
+                ['GROQ_MODEL', 'No', 'Default: llama-3.3-70b-versatile'],
+                ['GROQ_BASE_URL', 'No', 'Default: https://api.groq.com/openai/v1'],
+                ['JWT_SECRET', 'Yes', 'Random string for token signing'],
+                ['CORS_ORIGINS', 'No', 'JSON array of allowed origins'],
+                ['VITE_API_URL', 'Yes*', 'Backend URL (frontend build-time)'],
+              ].map(([name, req, desc]) => (
+                <tr key={name} className="border-b border-[#f0f0f0] last:border-0">
+                  <td className="px-4 py-2.5 text-[#333]">{name}</td>
+                  <td className="px-4 py-2.5"><span className={req === 'Yes' ? 'text-red-500' : 'text-[#999]'}>{req}</span></td>
+                  <td className="px-4 py-2.5 text-[#666] font-sans">{desc}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <h2 className="text-xl font-bold mb-4 mt-8">Docker</h2>
+        <CodeBlock language="bash" code={`docker-compose up -d
+
+# Services: backend (8000), frontend (5173), postgres, neo4j, redis`} />
+      </div>
+    )
   },
   {
     id: 'tech-stack',
     title: 'Tech Stack',
     icon: FileText,
-    content: [
-      {
-        title: 'Backend',
-        body: `- **Framework:** FastAPI (Python)
-- **AI:** Groq API (Llama 3.3 70B) — OpenAI-compatible
-- **Paper APIs:** Semantic Scholar, arXiv
-- **Graph:** NetworkX (local, persists to JSON)
-- **Auth:** JWT (python-jose + bcrypt)
-- **Task Queue:** Background tasks (FastAPI built-in)
-- **Server:** Uvicorn`
-      },
-      {
-        title: 'Frontend',
-        body: `- **Framework:** React 19
-- **Build:** Vite 5
-- **Styling:** Tailwind CSS 3
-- **Animation:** Framer Motion
-- **Graph Viz:** react-force-graph-2d (D3-based)
-- **Markdown:** react-markdown
-- **HTTP:** Axios
-- **Routing:** React Router 7`
-      },
-      {
-        title: 'Infrastructure',
-        body: `- **Local Dev:** Uvicorn + Vite dev server
-- **Production:** Render (backend) + Vercel (frontend)
-- **Tunneling:** Cloudflare Tunnel (dev access)
-- **Database:** In-memory (dev) / PostgreSQL (prod)
-- **Graph Storage:** JSON file (dev) / Neo4j (prod)
-- **Docker:** docker-compose.yml included`
-      }
-    ]
+    content: () => (
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight mb-3">Tech Stack</h1>
+        <p className="text-[#666] mb-8">Built with modern, production-ready technologies.</p>
+
+        <div className="grid grid-cols-2 gap-6">
+          {[
+            {
+              title: 'Backend',
+              items: [
+                { name: 'FastAPI', desc: 'High-performance Python web framework' },
+                { name: 'Groq', desc: 'LLM inference (Llama 3.3 70B, OpenAI-compatible)' },
+                { name: 'NetworkX', desc: 'Knowledge graph (local, persists to JSON)' },
+                { name: 'Uvicorn', desc: 'ASGI server' },
+                { name: 'JWT', desc: 'Authentication (python-jose + bcrypt)' },
+              ]
+            },
+            {
+              title: 'Frontend',
+              items: [
+                { name: 'React 19', desc: 'UI framework' },
+                { name: 'Vite 5', desc: 'Build tool' },
+                { name: 'Tailwind CSS', desc: 'Utility-first styling' },
+                { name: 'Framer Motion', desc: 'Animations' },
+                { name: 'react-force-graph-2d', desc: 'Graph visualization (D3-based)' },
+              ]
+            },
+            {
+              title: 'External APIs',
+              items: [
+                { name: 'Semantic Scholar', desc: '200M+ papers, citation data, free tier' },
+                { name: 'arXiv', desc: 'Preprints, full-text, unlimited' },
+                { name: 'Groq Cloud', desc: '30 req/min, 14.4k req/day free' },
+              ]
+            },
+            {
+              title: 'Infrastructure',
+              items: [
+                { name: 'Vercel', desc: 'Frontend hosting (CDN, auto-deploy)' },
+                { name: 'Render', desc: 'Backend hosting (auto-deploy from GitHub)' },
+                { name: 'GitHub', desc: 'Source control' },
+              ]
+            },
+          ].map((group) => (
+            <div key={group.title} className="bg-white border border-[#e5e5e5] rounded-2xl p-5">
+              <h3 className="font-bold text-sm mb-4 text-[#333]">{group.title}</h3>
+              <div className="space-y-3">
+                {group.items.map((item) => (
+                  <div key={item.name} className="flex items-start gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#2563eb] mt-1.5 shrink-0" />
+                    <div>
+                      <span className="text-sm font-medium">{item.name}</span>
+                      <span className="text-xs text-[#999] ml-2">{item.desc}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
   },
   {
     id: 'faq',
     title: 'FAQ',
     icon: Search,
-    content: [
-      {
-        title: 'How much does it cost?',
-        body: `Free for personal use. The system uses Groq's free tier (30 req/min, 14,400 req/day). Paper search APIs (Semantic Scholar, arXiv) are also free.`
-      },
-      {
-        title: 'How accurate are the citations?',
-        body: `Citations are sourced from real papers found via Semantic Scholar and arXiv. The Writer agent uses actual paper metadata (author, year, title) for inline citations. However, AI can occasionally hallucinate citation placement — always verify critical citations.`
-      },
-      {
-        title: 'Can I use the generated text in my paper?',
-        body: `The generated text is a starting point. It should be reviewed, edited, and verified before submission. Think of it as a first draft that saves you 80% of the work, not a final product.`
-      },
-      {
-        title: 'What models are supported?',
-        body: `Currently uses Groq (Llama 3.3 70B). The system is OpenAI-compatible, so you can swap to GPT-4, Claude, or any provider by changing the base URL and API key in \`.env\`.`
-      },
-      {
-        title: 'How long does a full pipeline take?',
-        body: `Typically 2-4 minutes depending on:
-- Number of papers requested (more = longer)
-- Groq rate limits (12k TPM on free tier)
-- Semantic Scholar response time
-- Number of revision iterations needed`
-      },
-      {
-        title: 'Can I add my own papers/PDFs?',
-        body: `Not yet in the current version. Planned for Phase 6: PDF upload → GROBID parsing → add to knowledge graph. For now, the system discovers papers automatically from Semantic Scholar and arXiv.`
-      }
-    ]
-  }
+    content: () => {
+      const [open, setOpen] = useState(null)
+      const faqs = [
+        { q: 'How much does it cost?', a: 'Free for personal use. Groq free tier (30 req/min, 14,400 req/day). Semantic Scholar and arXiv APIs are also free. Total infrastructure cost: $0.' },
+        { q: 'How accurate are the citations?', a: 'Citations are sourced from real papers via Semantic Scholar and arXiv. The Writer uses actual metadata (author, year, title). However, AI can occasionally misplace citations — always verify before submission.' },
+        { q: 'Can I use generated text in my paper?', a: 'Yes, but treat it as a first draft. Review, edit, and verify before submission. It saves ~80% of literature review work but isn\'t a final product.' },
+        { q: 'What LLM models are supported?', a: 'Currently Groq (Llama 3.3 70B). The system is OpenAI-compatible — swap to GPT-4, Claude, or any provider by changing GROQ_BASE_URL and GROQ_API_KEY.' },
+        { q: 'How long does a full pipeline take?', a: '2-4 minutes depending on: number of papers, Groq rate limits (12k TPM free), Semantic Scholar response time, and revision iterations needed.' },
+        { q: 'Can I upload my own PDFs?', a: 'Not yet. Planned for a future release: PDF upload → GROBID parsing → knowledge graph integration. Currently papers are discovered automatically.' },
+        { q: 'Is there a paper limit?', a: 'Configurable: 5-200 papers per project. More papers = longer processing time and more API calls. Recommended: 20-50 for best results within free tier limits.' },
+        { q: 'How does the knowledge graph persist?', a: 'Currently stored as JSON on disk (NetworkX). In production with Docker, Neo4j is available for larger graphs. The graph accumulates across all your research projects.' },
+      ]
+
+      return (
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight mb-3">FAQ</h1>
+          <p className="text-[#666] mb-8">Frequently asked questions about ResearchAI.</p>
+
+          <div className="space-y-2">
+            {faqs.map((faq, i) => (
+              <div key={i} className="border border-[#e5e5e5] rounded-xl overflow-hidden">
+                <button
+                  onClick={() => setOpen(open === i ? null : i)}
+                  className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-[#f8f8f8] transition-colors"
+                >
+                  <span className="font-medium text-sm">{faq.q}</span>
+                  <ChevronRight size={16} className={`text-[#999] transition-transform ${open === i ? 'rotate-90' : ''}`} />
+                </button>
+                <AnimatePresence>
+                  {open === i && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <p className="px-5 pb-4 text-sm text-[#666] leading-relaxed border-t border-[#f0f0f0] pt-3">
+                        {faq.a}
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ))}
+          </div>
+        </div>
+      )
+    }
+  },
 ]
 
 export default function Docs() {
-  const [activeSection, setActiveSection] = useState('getting-started')
+  const [activeSection, setActiveSection] = useState('introduction')
   const currentSection = sections.find(s => s.id === activeSection)
 
   return (
@@ -337,23 +652,26 @@ export default function Docs() {
       {/* Nav */}
       <nav className="sticky top-0 z-50 backdrop-blur-xl bg-[#fafaf9]/80 border-b border-[#eee]/50">
         <div className="flex items-center justify-between px-8 py-4 max-w-7xl mx-auto">
-          <Link to="/" className="flex items-center gap-2">
-            <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
-              <path d="M4 6C4 4.9 4.9 4 6 4h4v20H6c-1.1 0-2-.9-2-2V6z" fill="#2563eb" opacity="0.8"/>
-              <path d="M12 4h4v20h-4V4z" fill="#7c3aed" opacity="0.6"/>
-              <path d="M18 4h4c1.1 0 2 .9 2 2v16c0 1.1-.9 2-2 2h-4V4z" fill="#2563eb" opacity="0.4"/>
-            </svg>
-            <span className="text-base font-semibold tracking-tight">ResearchAI</span>
-            <span className="text-[#999] text-sm ml-2">/ docs</span>
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link to="/" className="flex items-center gap-2">
+              <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
+                <path d="M4 6C4 4.9 4.9 4 6 4h4v20H6c-1.1 0-2-.9-2-2V6z" fill="#2563eb" opacity="0.8"/>
+                <path d="M12 4h4v20h-4V4z" fill="#7c3aed" opacity="0.6"/>
+                <path d="M18 4h4c1.1 0 2 .9 2 2v16c0 1.1-.9 2-2 2h-4V4z" fill="#2563eb" opacity="0.4"/>
+              </svg>
+              <span className="text-base font-semibold tracking-tight">ResearchAI</span>
+            </Link>
+            <span className="text-[#ddd]">/</span>
+            <span className="text-sm text-[#888]">Documentation</span>
+          </div>
           <div className="flex items-center gap-6 text-sm">
             <Link to="/" className="text-[#555] hover:text-[#1a1a1a] transition-colors">Home</Link>
             <Link to="/app" className="text-[#555] hover:text-[#1a1a1a] transition-colors">Dashboard</Link>
             <a
-              href="https://github.com"
+              href="https://github.com/Vexccz/ai-research-engine"
               target="_blank"
               rel="noopener"
-              className="flex items-center gap-1 text-[#555] hover:text-[#1a1a1a] transition-colors"
+              className="flex items-center gap-1.5 text-[#555] hover:text-[#1a1a1a] transition-colors"
             >
               GitHub <ExternalLink size={12} />
             </a>
@@ -363,8 +681,9 @@ export default function Docs() {
 
       <div className="max-w-7xl mx-auto flex">
         {/* Sidebar */}
-        <aside className="w-56 shrink-0 sticky top-[65px] h-[calc(100vh-65px)] overflow-y-auto py-8 px-4 border-r border-[#eee]">
-          <nav className="space-y-1">
+        <aside className="w-52 shrink-0 sticky top-[57px] h-[calc(100vh-57px)] overflow-y-auto py-6 pl-8 pr-4">
+          <p className="text-[10px] font-mono text-[#999] uppercase tracking-wider mb-3 px-3">Navigation</p>
+          <nav className="space-y-0.5">
             {sections.map((section) => {
               const Icon = section.icon
               return (
@@ -377,49 +696,30 @@ export default function Docs() {
                       : 'text-[#888] hover:text-[#555] hover:bg-[#f8f8f8]'
                   }`}
                 >
-                  <Icon size={15} />
+                  <Icon size={14} />
                   {section.title}
                 </button>
               )
             })}
           </nav>
+
+          <div className="mt-8 px-3">
+            <div className="bg-[#f8f8f8] border border-[#eee] rounded-lg p-3">
+              <p className="text-[10px] text-[#999] font-mono">Version</p>
+              <p className="text-xs font-medium">v0.1.0</p>
+            </div>
+          </div>
         </aside>
 
         {/* Content */}
-        <main className="flex-1 py-8 px-12 max-w-4xl">
+        <main className="flex-1 py-8 px-12 max-w-4xl border-l border-[#eee] min-h-[calc(100vh-57px)]">
           <motion.div
             key={activeSection}
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <div className="flex items-center gap-3 mb-8">
-              {(() => { const Icon = currentSection.icon; return <Icon size={20} className="text-[#2563eb]" /> })()}
-              <h1 className="text-2xl font-bold tracking-tight">{currentSection.title}</h1>
-            </div>
-
-            <div className="space-y-10">
-              {currentSection.content.map((item, i) => (
-                <article key={i} className="group">
-                  <h2 className="text-lg font-semibold mb-3 text-[#1a1a1a]">{item.title}</h2>
-                  <div className="prose prose-sm max-w-none text-[#555] leading-relaxed">
-                    {item.body.split('\n').map((line, j) => {
-                      // Code blocks
-                      if (line.startsWith('```')) return null
-                      if (line.startsWith('- **')) {
-                        const [bold, rest] = line.slice(2).split('**').filter(Boolean)
-                        return <p key={j} className="ml-4 my-1"><strong className="text-[#1a1a1a]">{bold}</strong>{rest}</p>
-                      }
-                      if (line.startsWith('- ')) return <p key={j} className="ml-4 my-1">• {line.slice(2)}</p>
-                      if (line.match(/^\d+\./)) return <p key={j} className="ml-4 my-1">{line}</p>
-                      if (line.startsWith('`') && line.endsWith('`')) return <code key={j} className="bg-[#f0f0f0] px-2 py-0.5 rounded text-xs font-mono text-[#333]">{line.slice(1, -1)}</code>
-                      if (line.trim() === '') return <br key={j} />
-                      return <p key={j} className="my-1">{line}</p>
-                    })}
-                  </div>
-                </article>
-              ))}
-            </div>
+            {currentSection.content()}
           </motion.div>
         </main>
       </div>
