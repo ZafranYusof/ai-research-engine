@@ -276,7 +276,7 @@ export default function Landing() {
             <a href="#demo" className="text-[#555] hover:text-[#1a1a1a] transition-colors">Demo</a>
             <Link to="/search" className="text-[#555] hover:text-[#1a1a1a] transition-colors">Papers</Link>
             <Link
-              to="/new"
+              to="/login"
               className="bg-[#1a1a1a] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#333] transition-colors"
             >
               Start →
@@ -302,7 +302,7 @@ export default function Landing() {
               </p>
               <div className="flex items-center gap-4">
                 <Link
-                  to="/new"
+                  to="/register"
                   className="bg-[#1a1a1a] text-white px-7 py-3.5 rounded-xl font-medium hover:bg-[#333] transition-all hover:shadow-xl hover:shadow-black/10 hover:-translate-y-0.5 active:translate-y-0"
                 >
                   Start Research
@@ -494,7 +494,7 @@ export default function Landing() {
             Let AI agents do the systematic review. You focus on the insights.
           </p>
           <Link
-            to="/new"
+            to="/register"
             className="inline-block bg-[#1a1a1a] text-white px-8 py-4 rounded-xl font-medium text-lg hover:bg-[#333] transition-all hover:shadow-xl hover:shadow-black/10 hover:-translate-y-0.5 active:translate-y-0"
           >
             Start Your Research →

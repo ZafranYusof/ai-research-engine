@@ -16,8 +16,12 @@ export default function Layout() {
 
   useEffect(() => {
     const stored = localStorage.getItem('user')
-    if (stored) setUser(JSON.parse(stored))
-  }, [])
+    if (stored) {
+      setUser(JSON.parse(stored))
+    } else {
+      navigate('/login')
+    }
+  }, [navigate])
 
   const handleLogout = () => {
     localStorage.removeItem('token')
