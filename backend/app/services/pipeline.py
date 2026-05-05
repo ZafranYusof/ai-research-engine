@@ -4,6 +4,7 @@ Coordinates all agents in sequence with proper error handling and progress track
 """
 from typing import Dict, Any, Callable, Optional
 from app.agents import RetrieverAgent, AnalyzerAgent, SynthesizerAgent, WriterAgent, CriticAgent
+from app.services.knowledge_graph import get_kg_service
 import asyncio
 import time
 
@@ -17,6 +18,7 @@ class ResearchPipeline:
         self.synthesizer = SynthesizerAgent()
         self.writer = WriterAgent()
         self.critic = CriticAgent()
+        self.kg = get_kg_service()
         self.on_progress = on_progress or (lambda *args: None)
 
     async def run(self, config: Dict[str, Any]) -> Dict[str, Any]:
@@ -49,6 +51,11 @@ class ResearchPipeline:
             self.on_progress("retrieving", 0.25, f"Found {retrieval['after_dedup']} unique papers")
 
             # Step 2: Analyze papers
+            # Build knowledge graph from papers
+            self.on_progress("building_graph", 0.28, "Building knowledge graph...")
+            self.kg.add_papers_batch(retrieval["papers"])
+
+            # Step 2: Analyze papers
             self.on_progress("analyzing", 0.3, "Analyzing papers...")
             analysis = await self.analyzer.execute({
                 "papers": retrieval["papers"][:30],  # Limit for API costs
@@ -76,6 +83,9 @@ class ResearchPipeline:
                 "threads": len(synthesis["narrative_threads"]),
                 "hypotheses": len(synthesis["hypothesis_suggestions"]),
             }
+            # Add themes to knowledge graph
+            self.kg.add_themes_batch(analysis["common_themes"], retrieval["papers"])
+
             results["narrative_threads"] = synthesis["narrative_threads"]
             results["hypotheses"] = synthesis["hypothesis_suggestions"]
             results["framework"] = synthesis["conceptual_framework"]

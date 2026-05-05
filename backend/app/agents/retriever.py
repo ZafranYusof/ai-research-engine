@@ -25,7 +25,11 @@ class RetrieverAgent(BaseAgent):
         year_range = input_data.get("year_range", (2019, 2026))
 
         # Step 1: Generate search queries from topic using Groq
-        queries = await self._generate_search_queries(topic)
+        try:
+            queries = await self._generate_search_queries(topic)
+        except Exception as e:
+            print(f"Query generation failed: {e}, using topic directly")
+            queries = [topic]
 
         # Step 2: Search multiple sources
         all_papers = []
