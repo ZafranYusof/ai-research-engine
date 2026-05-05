@@ -1,9 +1,13 @@
 import axios from 'axios'
 
+const API_URL = import.meta.env.VITE_API_URL || ''
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '',
+  baseURL: API_URL,
   timeout: 120000, // 2 min timeout for AI operations
 })
+
+export { API_URL }
 
 // Request interceptor - add auth token
 api.interceptors.request.use((config) => {

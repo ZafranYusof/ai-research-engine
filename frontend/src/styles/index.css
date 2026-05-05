@@ -2,7 +2,34 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
 body {
-  @apply bg-gray-950 text-gray-100;
-  font-family: 'Inter', system-ui, sans-serif;
+  @apply bg-[#0a0f1a] text-gray-100;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.5);
+}
+
+/* Prose overrides for dark theme */
+.prose-invert {
+  --tw-prose-body: #d1d5db;
+  --tw-prose-headings: #f3f4f6;
 }
