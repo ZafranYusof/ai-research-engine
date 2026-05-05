@@ -274,6 +274,7 @@ export default function Landing() {
           <div className="flex items-center gap-8 text-sm">
             <a href="#pipeline" className="text-[#555] hover:text-[#1a1a1a] transition-colors">Pipeline</a>
             <a href="#demo" className="text-[#555] hover:text-[#1a1a1a] transition-colors">Demo</a>
+            <Link to="/docs" className="text-[#555] hover:text-[#1a1a1a] transition-colors">Docs</Link>
             <Link to="/search" className="text-[#555] hover:text-[#1a1a1a] transition-colors">Papers</Link>
             <Link
               to="/login"

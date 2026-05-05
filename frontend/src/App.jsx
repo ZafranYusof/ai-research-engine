@@ -3,6 +3,7 @@ import Layout from './components/Layout'
 import Landing from './pages/Landing'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import Docs from './pages/Docs'
 import Dashboard from './pages/Dashboard'
 import NewResearch from './pages/NewResearch'
 import ResearchView from './pages/ResearchView'
@@ -18,6 +19,7 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/docs" element={<Docs />} />
 
         {/* App */}
         <Route path="/app" element={<Layout />}>

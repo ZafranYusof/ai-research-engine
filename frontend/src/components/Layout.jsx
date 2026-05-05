@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
-import { Home, Search, BookOpen, GitBranch, LogOut, User } from 'lucide-react'
+import { Home, Search, BookOpen, GitBranch, LogOut, User, FileText } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
 const navItems = [
@@ -7,6 +7,7 @@ const navItems = [
   { path: '/search', icon: Search, label: 'Search' },
   { path: '/new', icon: BookOpen, label: 'New Research' },
   { path: '/graph', icon: GitBranch, label: 'Graph' },
+  { path: '/docs', icon: FileText, label: 'Docs' },
 ]
 
 export default function Layout() {
