@@ -1,9 +1,38 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Plus, Clock, CheckCircle, AlertCircle } from 'lucide-react'
+import axios from 'axios'
+import { Plus, Clock, CheckCircle, AlertCircle, Trash2 } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 export default function Dashboard() {
   const [projects, setProjects] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    loadProjects()
+    const interval = setInterval(loadProjects, 5000) // Poll for updates
+    return () => clearInterval(interval)
+  }, [])
+
+  const loadProjects = async () => {
+    try {
+      const res = await axios.get('/api/research/list')
+      setProjects(res.data.projects || [])
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case 'completed': return <CheckCircle size={16} className="text-emerald-400" />
+      case 'started': return <Clock size={16} className="text-yellow-400 animate-pulse" />
+      case 'failed': return <AlertCircle size={16} className="text-red-400" />
+      default: return <Clock size={16} className="text-gray-400" />
+    }
+  }
 
   return (
     <div>
@@ -21,11 +50,13 @@ export default function Dashboard() {
         </Link>
       </div>
 
-      {projects.length === 0 ? (
+      {loading ? (
+        <div className="text-center py-20 text-gray-500">Loading...</div>
+      ) : projects.length === 0 ? (
         <div className="text-center py-20 text-gray-500">
-          <BookOpenIcon className="mx-auto mb-4" size={48} />
+          <p className="text-5xl mb-4">📚</p>
           <p className="text-lg">No research projects yet</p>
-          <p className="mt-2">Start by creating a new research topic</p>
+          <p className="mt-2 text-sm">Start by creating a new research topic</p>
           <Link
             to="/new"
             className="inline-block mt-4 bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-lg"
@@ -35,44 +66,46 @@ export default function Dashboard() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {projects.map((project) => (
-            <Link
+          {projects.map((project, i) => (
+            <motion.div
               key={project.id}
-              to={`/research/${project.id}`}
-              className="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-emerald-500/50 transition-colors"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.05 }}
             >
-              <h3 className="font-semibold text-lg mb-2">{project.title}</h3>
-              <p className="text-gray-400 text-sm mb-4 line-clamp-2">{project.topic}</p>
-              <div className="flex items-center gap-2 text-sm">
-                {project.status === 'completed' && (
-                  <span className="flex items-center gap-1 text-emerald-400">
-                    <CheckCircle size={14} /> Completed
-                  </span>
-                )}
-                {project.status === 'active' && (
-                  <span className="flex items-center gap-1 text-yellow-400">
-                    <Clock size={14} /> In Progress
-                  </span>
-                )}
-                {project.status === 'failed' && (
-                  <span className="flex items-center gap-1 text-red-400">
-                    <AlertCircle size={14} /> Failed
-                  </span>
-                )}
-              </div>
-            </Link>
+              <Link
+                to={`/research/${project.id}`}
+                className="block bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-emerald-500/50 transition-all hover:shadow-lg hover:shadow-emerald-500/5"
+              >
+                <div className="flex items-start justify-between">
+                  <h3 className="font-semibold text-lg line-clamp-2 flex-1">{project.topic}</h3>
+                  {getStatusIcon(project.status)}
+                </div>
+
+                <div className="mt-4">
+                  {project.status === 'started' && (
+                    <div>
+                      <div className="w-full bg-gray-800 rounded-full h-1.5 mb-1">
+                        <div
+                          className="bg-emerald-500 h-1.5 rounded-full transition-all"
+                          style={{ width: `${(project.progress || 0) * 100}%` }}
+                        />
+                      </div>
+                      <p className="text-xs text-gray-500">{Math.round((project.progress || 0) * 100)}%</p>
+                    </div>
+                  )}
+                  {project.status === 'completed' && (
+                    <span className="text-xs text-emerald-400">✅ Ready to explore</span>
+                  )}
+                  {project.status === 'failed' && (
+                    <span className="text-xs text-red-400">❌ Failed</span>
+                  )}
+                </div>
+              </Link>
+            </motion.div>
           ))}
         </div>
       )}
     </div>
-  )
-}
-
-function BookOpenIcon(props) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width={props.size} height={props.size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={props.className}>
-      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-    </svg>
   )
 }
