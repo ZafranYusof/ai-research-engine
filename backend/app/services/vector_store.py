@@ -1,17 +1,32 @@
 from sentence_transformers import SentenceTransformer
 from typing import Dict, List, Optional
 import numpy as np
+import json
+import os
 from app.core.config import settings
 
 
 class VectorStore:
     """Local vector store using sentence-transformers + numpy.
-    Can be swapped for Pinecone/Qdrant in production."""
+    Persists to disk for durability between restarts."""
 
-    def __init__(self):
-        self.model = SentenceTransformer(settings.EMBEDDING_MODEL)
+    def __init__(self, persist_dir: str = "./data/vectors"):
+        self.persist_dir = persist_dir
+        os.makedirs(persist_dir, exist_ok=True)
+        
+        self._model = None  # Lazy load
         self.vectors: Dict[str, np.ndarray] = {}
         self.metadata: Dict[str, Dict] = {}
+        
+        # Load from disk if exists
+        self._load()
+
+    @property
+    def model(self):
+        """Lazy load the embedding model."""
+        if self._model is None:
+            self._model = SentenceTransformer(settings.EMBEDDING_MODEL)
+        return self._model
 
     def embed(self, text: str) -> np.ndarray:
         """Generate embedding for text."""
@@ -26,15 +41,21 @@ class VectorStore:
         embedding = self.embed(text)
         self.vectors[id] = embedding
         self.metadata[id] = metadata or {}
+        self._save()
 
     def upsert_batch(self, items: List[Dict]):
         """Store multiple vectors. Each item: {id, text, metadata}."""
+        if not items:
+            return
+            
         texts = [item["text"] for item in items]
         embeddings = self.embed_batch(texts)
 
         for i, item in enumerate(items):
             self.vectors[item["id"]] = embeddings[i]
             self.metadata[item["id"]] = item.get("metadata", {})
+        
+        self._save()
 
     def search(self, query: str, top_k: int = 10, filter_fn=None) -> List[Dict]:
         """Search for similar vectors."""
@@ -59,7 +80,32 @@ class VectorStore:
         """Remove a vector."""
         self.vectors.pop(id, None)
         self.metadata.pop(id, None)
+        self._save()
 
     @property
     def count(self) -> int:
         return len(self.vectors)
+
+    def _save(self):
+        """Persist vectors to disk."""
+        if self.vectors:
+            np.savez(
+                os.path.join(self.persist_dir, "vectors.npz"),
+                **{k: v for k, v in self.vectors.items()}
+            )
+        
+        with open(os.path.join(self.persist_dir, "metadata.json"), "w") as f:
+            json.dump(self.metadata, f)
+
+    def _load(self):
+        """Load vectors from disk."""
+        vectors_path = os.path.join(self.persist_dir, "vectors.npz")
+        metadata_path = os.path.join(self.persist_dir, "metadata.json")
+        
+        if os.path.exists(vectors_path):
+            data = np.load(vectors_path)
+            self.vectors = {k: data[k] for k in data.files}
+        
+        if os.path.exists(metadata_path):
+            with open(metadata_path, "r") as f:
+                self.metadata = json.load(f)

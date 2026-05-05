@@ -8,7 +8,7 @@ router = APIRouter()
 
 class WriteRequest(BaseModel):
     section_type: str  # introduction, literature_review, methodology, discussion
-    project_id: str
+    project_id: Optional[str] = None
     narrative_threads: List[dict] = []
     papers: List[dict] = []
     style: str = "APA"
@@ -55,7 +55,7 @@ async def revise_section(request: ReviseRequest):
     writer = WriterAgent()
 
     result = await writer._call_llm(
-        system_prompt="You are an academic editor. Revise the text based on feedback while maintaining citations.",
+        system_prompt="You are an academic editor. Revise the text based on feedback while maintaining citations and academic tone.",
         user_prompt=f"""Revise this {request.section_type} based on the feedback:
 
 Current text:
@@ -67,4 +67,15 @@ Feedback:
 Provide the revised version:""",
     )
 
-    return {"revised_content": result}
+    # Re-review
+    critic = CriticAgent()
+    review = await critic.execute({
+        "content": result,
+        "citations": [],
+        "section_type": request.section_type,
+    })
+
+    return {
+        "revised_content": result,
+        "review": review,
+    }

@@ -7,7 +7,7 @@ class WriterAgent(BaseAgent):
     """Agent that generates academic writing with proper citations."""
 
     def __init__(self):
-        super().__init__(name="Writer", model="gpt-4-turbo-preview")
+        super().__init__(name="Writer")
 
     async def execute(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -17,8 +17,8 @@ class WriterAgent(BaseAgent):
         Output: {content, citations, word_count}
         """
         section_type = input_data["section_type"]
-        threads = input_data["narrative_threads"]
-        papers = input_data["papers"]
+        threads = input_data.get("narrative_threads", [])
+        papers = input_data.get("papers", [])
         style = input_data.get("style", "APA")
         max_words = input_data.get("max_words", 2000)
 
@@ -50,26 +50,27 @@ class WriterAgent(BaseAgent):
     ) -> str:
         """Write an academic section with inline citations."""
         available_refs = "\n".join(
-            [f"[{k}] {v['title']} ({v['year']})" for k, v in citation_map.items()]
+            [f"[{k}] {v['title']} ({v['year']})" for k, v in list(citation_map.items())[:30]]
         )
+
+        threads_text = json.dumps(threads[:5]) if threads else "No threads available"
 
         prompt = f"""Write a {section_type} section for an academic paper.
         
-Use these narrative threads as your guide:
-{json.dumps(threads, indent=2)}
+Narrative threads to follow:
+{threads_text}
 
-Available references (use inline citations like [AuthorYear]):
+Available references (use inline citations like (Author, Year)):
 {available_refs}
 
 Requirements:
 - Style: {style}
-- Max words: {max_words}
-- Use academic tone
-- Every claim must have a citation
-- Synthesize, don't just summarize each paper
+- Target: ~{max_words} words
+- Academic tone
+- Every major claim must have a citation
+- Synthesize findings, don't just list papers
 - Show connections between studies
 - Identify agreements and disagreements
-- End with transition to next section
 
 Write the section now:"""
 
@@ -93,8 +94,11 @@ Write the section now:"""
             key = f"{first_author}{year}"
 
             # Handle duplicates
-            if key in citation_map:
-                key = f"{key}a"
+            counter = 0
+            original_key = key
+            while key in citation_map:
+                counter += 1
+                key = f"{original_key}{'abcdefgh'[counter-1]}"
 
             citation_map[key] = {
                 "title": paper.get("title"),
@@ -109,6 +113,7 @@ Write the section now:"""
         """Extract which citations were actually used in the text."""
         used = []
         for key, ref in citation_map.items():
-            if key in content:
+            # Check for various citation formats
+            if key in content or ref.get("title", "NOMATCH")[:30] in content:
                 used.append(ref)
         return used

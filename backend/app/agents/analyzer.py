@@ -7,7 +7,7 @@ class AnalyzerAgent(BaseAgent):
     """Agent that extracts key findings, methodology, and gaps from papers."""
 
     def __init__(self):
-        super().__init__(name="Analyzer", model="gpt-4-turbo-preview")
+        super().__init__(name="Analyzer")
 
     async def execute(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -19,10 +19,14 @@ class AnalyzerAgent(BaseAgent):
         papers = input_data["papers"]
         focus_areas = input_data.get("focus_areas", [])
 
+        # Analyze papers in batches (respect Groq rate limits)
         analyses = []
-        for paper in papers:
-            analysis = await self._analyze_paper(paper, focus_areas)
-            analyses.append(analysis)
+        batch_size = 5  # Analyze 5 papers at once to save API calls
+        
+        for i in range(0, len(papers), batch_size):
+            batch = papers[i:i + batch_size]
+            batch_analysis = await self._analyze_batch(batch, focus_areas)
+            analyses.extend(batch_analysis)
 
         # Cross-paper analysis
         themes = await self._find_themes(analyses)
@@ -36,86 +40,155 @@ class AnalyzerAgent(BaseAgent):
             "contradictions": contradictions,
         }
 
-    async def _analyze_paper(self, paper: Dict, focus_areas: List[str]) -> Dict:
-        """Extract structured analysis from a single paper."""
-        prompt = f"""Analyze this academic paper and extract:
-1. Key findings (bullet points)
-2. Methodology used
-3. Limitations acknowledged
-4. Future work suggested
-5. How it relates to: {', '.join(focus_areas) if focus_areas else 'the general field'}
+    async def _analyze_batch(self, papers: List[Dict], focus_areas: List[str]) -> List[Dict]:
+        """Analyze a batch of papers in one LLM call."""
+        papers_text = ""
+        for i, paper in enumerate(papers):
+            papers_text += f"""
+Paper {i+1}:
+- Title: {paper.get('title', 'Unknown')}
+- Abstract: {paper.get('abstract', 'N/A')[:500]}
+- Year: {paper.get('year', 'N/A')}
+- Citations: {paper.get('citation_count', 0)}
+"""
 
-Paper:
-Title: {paper.get('title')}
-Abstract: {paper.get('abstract')}
-Year: {paper.get('year')}
+        prompt = f"""Analyze these academic papers and extract structured insights for each:
 
-Return as JSON with keys: key_findings, methodology, limitations, future_work, relevance_notes"""
+{papers_text}
+
+Focus areas: {', '.join(focus_areas) if focus_areas else 'general field'}
+
+For EACH paper, provide:
+1. key_findings (list of strings)
+2. methodology (string)
+3. limitations (list of strings)
+4. future_work (list of strings)
+
+Return as JSON array. Example:
+[{{"paper_title": "...", "key_findings": ["..."], "methodology": "...", "limitations": ["..."], "future_work": ["..."]}}]
+
+Return ONLY valid JSON array, no other text."""
 
         result = await self._call_llm(
-            system_prompt="You are a senior researcher skilled at critical paper analysis.",
+            system_prompt="You are a senior researcher skilled at critical paper analysis. Return only valid JSON.",
             user_prompt=prompt,
+            max_tokens=4096,
         )
-        analysis = json.loads(result)
-        analysis["paper_id"] = paper.get("id")
-        analysis["paper_title"] = paper.get("title")
-        return analysis
+        
+        try:
+            result = result.strip()
+            if result.startswith("```"):
+                result = result.split("\n", 1)[1].rsplit("```", 1)[0]
+            parsed = json.loads(result)
+            
+            # Add paper IDs
+            for i, analysis in enumerate(parsed):
+                if i < len(papers):
+                    analysis["paper_id"] = papers[i].get("id", "")
+                    analysis["paper_title"] = papers[i].get("title", "")
+            return parsed
+        except (json.JSONDecodeError, IndexError):
+            # Fallback: return basic analysis
+            return [{"paper_id": p.get("id"), "paper_title": p.get("title"), 
+                     "key_findings": [], "methodology": "Unknown", 
+                     "limitations": [], "future_work": []} for p in papers]
 
     async def _find_themes(self, analyses: List[Dict]) -> List[Dict]:
         """Identify common themes across all analyzed papers."""
+        if not analyses:
+            return []
+            
         summaries = [
-            f"- {a['paper_title']}: {', '.join(a.get('key_findings', [])[:3])}"
-            for a in analyses
+            f"- {a.get('paper_title', 'Unknown')}: {', '.join(a.get('key_findings', [])[:2])}"
+            for a in analyses[:20]  # Limit to avoid token overflow
         ]
-        prompt = f"""Given these paper findings, identify 5-10 common themes/clusters:
+        
+        prompt = f"""Given these paper findings, identify 5-8 common themes/clusters:
 
 {chr(10).join(summaries)}
 
-Return as JSON array of objects: [{{"theme": "...", "description": "...", "paper_ids": [...]}}]"""
+Return as JSON array:
+[{{"theme": "Theme Name", "description": "Brief description", "paper_count": N}}]
+
+Return ONLY valid JSON array."""
 
         result = await self._call_llm(
-            system_prompt="You are a research synthesizer identifying patterns across studies.",
+            system_prompt="You are a research synthesizer identifying patterns across studies. Return only valid JSON.",
             user_prompt=prompt,
         )
-        return json.loads(result)
+        
+        try:
+            result = result.strip()
+            if result.startswith("```"):
+                result = result.split("\n", 1)[1].rsplit("```", 1)[0]
+            return json.loads(result)
+        except json.JSONDecodeError:
+            return []
 
     async def _identify_gaps(self, analyses: List[Dict]) -> List[str]:
         """Identify research gaps from the analyzed papers."""
+        if not analyses:
+            return []
+            
         limitations = []
         future_work = []
-        for a in analyses:
-            limitations.extend(a.get("limitations", []))
-            future_work.extend(a.get("future_work", []))
+        for a in analyses[:15]:
+            limitations.extend(a.get("limitations", [])[:2])
+            future_work.extend(a.get("future_work", [])[:2])
 
         prompt = f"""Based on these limitations and future work suggestions from multiple papers,
-identify the top research gaps that haven't been addressed:
+identify the top 5-7 research gaps that haven't been addressed:
 
-Limitations: {json.dumps(limitations[:30])}
-Future work: {json.dumps(future_work[:30])}
+Limitations: {json.dumps(limitations[:20])}
+Future work: {json.dumps(future_work[:20])}
 
-Return as JSON array of strings describing each gap."""
+Return as JSON array of strings:
+["Gap 1 description", "Gap 2 description", ...]
+
+Return ONLY valid JSON array."""
 
         result = await self._call_llm(
-            system_prompt="You identify unexplored research opportunities.",
+            system_prompt="You identify unexplored research opportunities. Return only valid JSON.",
             user_prompt=prompt,
         )
-        return json.loads(result)
+        
+        try:
+            result = result.strip()
+            if result.startswith("```"):
+                result = result.split("\n", 1)[1].rsplit("```", 1)[0]
+            return json.loads(result)
+        except json.JSONDecodeError:
+            return []
 
     async def _find_contradictions(self, analyses: List[Dict]) -> List[Dict]:
         """Find contradicting findings across papers."""
+        if len(analyses) < 2:
+            return []
+            
         findings = [
-            {"paper": a["paper_title"], "findings": a.get("key_findings", [])}
-            for a in analyses
+            {"paper": a.get("paper_title", ""), "findings": a.get("key_findings", [])[:3]}
+            for a in analyses[:15]
         ]
+        
         prompt = f"""Find any contradictions or disagreements between these papers' findings:
 
-{json.dumps(findings[:20])}
+{json.dumps(findings)}
 
-Return as JSON array: [{{"finding_a": "...", "paper_a": "...", "finding_b": "...", "paper_b": "...", "nature": "..."}}]
-Return empty array if no contradictions found."""
+Return as JSON array:
+[{{"finding_a": "...", "paper_a": "...", "finding_b": "...", "paper_b": "...", "nature": "description of contradiction"}}]
+
+If no contradictions found, return empty array: []
+Return ONLY valid JSON array."""
 
         result = await self._call_llm(
-            system_prompt="You are a critical reviewer finding inconsistencies in literature.",
+            system_prompt="You are a critical reviewer finding inconsistencies in literature. Return only valid JSON.",
             user_prompt=prompt,
         )
-        return json.loads(result)
+        
+        try:
+            result = result.strip()
+            if result.startswith("```"):
+                result = result.split("\n", 1)[1].rsplit("```", 1)[0]
+            return json.loads(result)
+        except json.JSONDecodeError:
+            return []
