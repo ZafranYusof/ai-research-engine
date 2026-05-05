@@ -1,234 +1,259 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { useState, useEffect } from 'react'
+
+// Typewriter effect
+function Typewriter({ words, className }) {
+  const [index, setIndex] = useState(0)
+  const [text, setText] = useState('')
+  const [deleting, setDeleting] = useState(false)
+
+  useEffect(() => {
+    const word = words[index]
+    const timeout = setTimeout(() => {
+      if (!deleting) {
+        setText(word.slice(0, text.length + 1))
+        if (text === word) setTimeout(() => setDeleting(true), 2000)
+      } else {
+        setText(word.slice(0, text.length - 1))
+        if (text === '') {
+          setDeleting(false)
+          setIndex((i) => (i + 1) % words.length)
+        }
+      }
+    }, deleting ? 50 : 100)
+    return () => clearTimeout(timeout)
+  }, [text, deleting, index, words])
+
+  return <span className={className}>{text}<span className="animate-pulse">|</span></span>
+}
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-[#0a0f1a] text-white overflow-hidden">
-      {/* Animated background grid */}
-      <div className="fixed inset-0 opacity-[0.03]" style={{
-        backgroundImage: `linear-gradient(rgba(99,102,241,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,0.3) 1px, transparent 1px)`,
-        backgroundSize: '60px 60px'
+    <div className="min-h-screen bg-[#fafaf9] text-[#1a1a1a] overflow-hidden">
+      {/* Subtle paper texture overlay */}
+      <div className="fixed inset-0 opacity-[0.4] pointer-events-none" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E")`,
       }} />
 
-      {/* Floating particles */}
-      <div className="fixed inset-0 pointer-events-none">
-        {[...Array(20)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-indigo-400/30 rounded-full"
-            style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }}
-            animate={{
-              y: [0, -30, 0],
-              opacity: [0.2, 0.8, 0.2],
-            }}
-            transition={{
-              duration: 3 + Math.random() * 4,
-              repeat: Infinity,
-              delay: Math.random() * 2,
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Nav */}
-      <nav className="relative z-10 flex items-center justify-between px-8 py-6 max-w-7xl mx-auto">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center text-lg font-bold">
-            R
-          </div>
-          <span className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-            ResearchAI
-          </span>
-        </div>
-        <div className="flex items-center gap-6">
-          <Link to="/search" className="text-gray-400 hover:text-white transition-colors text-sm">
-            Search
-          </Link>
-          <Link to="/graph" className="text-gray-400 hover:text-white transition-colors text-sm">
-            Graph
-          </Link>
+      {/* Nav - minimal, scholarly */}
+      <nav className="relative z-10 flex items-center justify-between px-8 py-5 max-w-6xl mx-auto">
+        <Link to="/" className="flex items-center gap-2">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <path d="M4 6C4 4.9 4.9 4 6 4h4v20H6c-1.1 0-2-.9-2-2V6z" fill="#2563eb" opacity="0.8"/>
+            <path d="M12 4h4v20h-4V4z" fill="#7c3aed" opacity="0.6"/>
+            <path d="M18 4h4c1.1 0 2 .9 2 2v16c0 1.1-.9 2-2 2h-4V4z" fill="#2563eb" opacity="0.4"/>
+          </svg>
+          <span className="text-lg font-semibold tracking-tight">ResearchAI</span>
+        </Link>
+        <div className="flex items-center gap-8 text-sm">
+          <Link to="/search" className="text-[#555] hover:text-[#1a1a1a] transition-colors">Papers</Link>
+          <Link to="/graph" className="text-[#555] hover:text-[#1a1a1a] transition-colors">Graph</Link>
+          <Link to="/app" className="text-[#555] hover:text-[#1a1a1a] transition-colors">Dashboard</Link>
           <Link
             to="/new"
-            className="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg text-sm font-medium transition-all hover:shadow-lg hover:shadow-indigo-500/25"
+            className="bg-[#1a1a1a] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#333] transition-colors"
           >
-            Start Research
+            New Research →
           </Link>
         </div>
       </nav>
 
-      {/* Hero */}
-      <section className="relative z-10 max-w-7xl mx-auto px-8 pt-20 pb-32">
-        <div className="max-w-4xl">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-4 py-1.5 mb-8">
-              <span className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse" />
-              <span className="text-indigo-300 text-sm">Powered by Multi-Agent AI</span>
-            </div>
-
-            <h1 className="text-6xl md:text-7xl font-bold leading-[1.1] mb-6">
-              <span className="bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent">
-                Research Papers.
-              </span>
-              <br />
-              <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                Analyzed by AI.
-              </span>
-            </h1>
-
-            <p className="text-xl text-gray-400 max-w-2xl mb-10 leading-relaxed">
-              Five specialized AI agents work together to find, analyze, synthesize, 
-              and write academic literature reviews. From topic to paper in minutes, not weeks.
-            </p>
-
-            <div className="flex items-center gap-4">
-              <Link
-                to="/new"
-                className="group bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 px-8 py-4 rounded-xl text-lg font-semibold transition-all hover:shadow-xl hover:shadow-indigo-500/25 flex items-center gap-3"
-              >
-                Start Research
-                <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-              </Link>
-              <Link
-                to="/search"
-                className="px-8 py-4 rounded-xl text-lg font-medium border border-gray-700 hover:border-gray-500 text-gray-300 hover:text-white transition-all"
-              >
-                Search Papers
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Stats */}
+      {/* Hero - clean, typographic focus */}
+      <section className="relative z-10 max-w-6xl mx-auto px-8 pt-24 pb-20">
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-20"
+          transition={{ duration: 0.6 }}
+          className="max-w-3xl"
         >
-          {[
-            { value: '200M+', label: 'Papers Accessible', icon: '📄' },
-            { value: '5', label: 'AI Agents', icon: '🤖' },
-            { value: '<3min', label: 'Full Analysis', icon: '⚡' },
-            { value: '7+/10', label: 'Quality Score', icon: '✨' },
-          ].map((stat, i) => (
-            <div key={i} className="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-6 backdrop-blur-sm">
-              <span className="text-2xl mb-2 block">{stat.icon}</span>
-              <p className="text-3xl font-bold text-white">{stat.value}</p>
-              <p className="text-sm text-gray-500 mt-1">{stat.label}</p>
+          <p className="text-sm font-mono text-[#888] mb-6 tracking-wide uppercase">Multi-Agent Research System</p>
+          
+          <h1 className="text-[3.5rem] leading-[1.1] font-bold tracking-tight mb-6">
+            From research topic to
+            <br />
+            <Typewriter
+              words={['literature review', 'knowledge graph', 'gap analysis', 'hypothesis generation']}
+              className="text-[#2563eb]"
+            />
+          </h1>
+
+          <p className="text-lg text-[#666] max-w-xl leading-relaxed mb-10">
+            Five AI agents collaborate to search, analyze, synthesize, write, and critique 
+            academic papers. What takes weeks now takes minutes.
+          </p>
+
+          <div className="flex items-center gap-4">
+            <Link
+              to="/new"
+              className="bg-[#1a1a1a] text-white px-7 py-3.5 rounded-xl font-medium hover:bg-[#333] transition-all hover:shadow-xl hover:shadow-black/10 hover:-translate-y-0.5"
+            >
+              Start Research
+            </Link>
+            <Link
+              to="/app"
+              className="text-[#555] hover:text-[#1a1a1a] px-4 py-3.5 font-medium transition-colors flex items-center gap-2"
+            >
+              View Dashboard
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M6.5 3.5L11 8l-4.5 4.5" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+              </svg>
+            </Link>
+          </div>
+        </motion.div>
+
+        {/* Terminal-style demo */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="mt-16 max-w-2xl"
+        >
+          <div className="bg-[#1a1a1a] rounded-2xl p-6 font-mono text-sm shadow-2xl shadow-black/10">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-3 h-3 rounded-full bg-[#ff5f57]" />
+              <div className="w-3 h-3 rounded-full bg-[#febc2e]" />
+              <div className="w-3 h-3 rounded-full bg-[#28c840]" />
+              <span className="ml-3 text-[#666] text-xs">research-pipeline</span>
             </div>
-          ))}
+            <div className="space-y-2 text-[#ccc]">
+              <p><span className="text-[#28c840]">▸</span> Topic: "transformer attention mechanisms in NLP"</p>
+              <p><span className="text-[#febc2e]">▸</span> Retriever found <span className="text-white">47</span> papers from Semantic Scholar + arXiv</p>
+              <p><span className="text-[#febc2e]">▸</span> Analyzer extracted <span className="text-white">12</span> themes, <span className="text-white">7</span> gaps</p>
+              <p><span className="text-[#febc2e]">▸</span> Synthesizer generated <span className="text-white">5</span> hypotheses</p>
+              <p><span className="text-[#febc2e]">▸</span> Writer produced <span className="text-white">2,100</span> word literature review</p>
+              <p><span className="text-[#28c840]">▸</span> Critic score: <span className="text-[#28c840] font-bold">8.1/10</span> ✓ passed</p>
+              <p className="text-[#666] pt-2">completed in 2m 34s</p>
+            </div>
+          </div>
         </motion.div>
       </section>
 
-      {/* How it works */}
-      <section className="relative z-10 max-w-7xl mx-auto px-8 py-24 border-t border-white/[0.06]">
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-        >
-          <h2 className="text-4xl font-bold text-center mb-4">
-            <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-              Multi-Agent Pipeline
-            </span>
-          </h2>
-          <p className="text-gray-400 text-center mb-16 max-w-xl mx-auto">
-            Five specialized agents collaborate to deliver comprehensive research analysis
-          </p>
-        </motion.div>
+      {/* Pipeline - horizontal scroll cards */}
+      <section className="relative z-10 py-20 border-t border-[#eee]">
+        <div className="max-w-6xl mx-auto px-8">
+          <p className="text-sm font-mono text-[#888] mb-3 tracking-wide uppercase">The Pipeline</p>
+          <h2 className="text-3xl font-bold tracking-tight mb-12">Five agents, one goal</h2>
 
-        <div className="grid md:grid-cols-5 gap-4">
-          {[
-            { name: 'Retriever', desc: 'Searches Semantic Scholar & arXiv for relevant papers', icon: '🔍', color: 'from-blue-500/20 to-blue-600/20', border: 'border-blue-500/30' },
-            { name: 'Analyzer', desc: 'Extracts findings, methodology, and limitations', icon: '🔬', color: 'from-emerald-500/20 to-emerald-600/20', border: 'border-emerald-500/30' },
-            { name: 'Synthesizer', desc: 'Connects dots, builds narratives, finds gaps', icon: '🧠', color: 'from-purple-500/20 to-purple-600/20', border: 'border-purple-500/30' },
-            { name: 'Writer', desc: 'Generates academic text with proper citations', icon: '✍️', color: 'from-amber-500/20 to-amber-600/20', border: 'border-amber-500/30' },
-            { name: 'Critic', desc: 'Reviews quality, coherence, and citation accuracy', icon: '⚖️', color: 'from-red-500/20 to-red-600/20', border: 'border-red-500/30' },
-          ].map((agent, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className={`relative bg-gradient-to-b ${agent.color} border ${agent.border} rounded-2xl p-5 text-center`}
-            >
-              {i < 4 && (
-                <div className="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 text-gray-600 text-xl z-10">
-                  →
-                </div>
-              )}
-              <span className="text-3xl block mb-3">{agent.icon}</span>
-              <h3 className="font-bold text-sm mb-2">{agent.name}</h3>
-              <p className="text-xs text-gray-400 leading-relaxed">{agent.desc}</p>
-            </motion.div>
-          ))}
+          <div className="grid grid-cols-5 gap-3">
+            {[
+              { num: '01', name: 'Retriever', desc: 'Searches 200M+ papers across Semantic Scholar and arXiv with AI-generated queries', color: '#2563eb' },
+              { num: '02', name: 'Analyzer', desc: 'Extracts key findings, methodology, limitations from each paper in batches', color: '#059669' },
+              { num: '03', name: 'Synthesizer', desc: 'Builds narrative threads, identifies contradictions, generates hypotheses', color: '#7c3aed' },
+              { num: '04', name: 'Writer', desc: 'Produces academic prose with inline citations and proper APA formatting', color: '#d97706' },
+              { num: '05', name: 'Critic', desc: 'Scores clarity, flow, depth, synthesis. Rejects drafts below 7/10', color: '#dc2626' },
+            ].map((agent, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                className="relative bg-white border border-[#e5e5e5] rounded-2xl p-5 hover:border-[#ccc] hover:shadow-lg hover:shadow-black/5 transition-all group"
+              >
+                <span className="text-xs font-mono text-[#bbb] block mb-4">{agent.num}</span>
+                <div className="w-8 h-1 rounded-full mb-4" style={{ backgroundColor: agent.color }} />
+                <h3 className="font-bold text-base mb-2">{agent.name}</h3>
+                <p className="text-xs text-[#777] leading-relaxed">{agent.desc}</p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Features */}
-      <section className="relative z-10 max-w-7xl mx-auto px-8 py-24 border-t border-white/[0.06]">
-        <h2 className="text-4xl font-bold text-center mb-16">
-          <span className="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-            Everything You Need
-          </span>
-        </h2>
+      {/* Output showcase */}
+      <section className="relative z-10 py-20 bg-[#f5f5f4] border-t border-[#eee]">
+        <div className="max-w-6xl mx-auto px-8">
+          <p className="text-sm font-mono text-[#888] mb-3 tracking-wide uppercase">Output</p>
+          <h2 className="text-3xl font-bold tracking-tight mb-12">What you get</h2>
 
-        <div className="grid md:grid-cols-3 gap-6">
-          {[
-            { title: 'Knowledge Graph', desc: 'Visual citation networks showing how papers connect, theme clusters, and bridge papers', icon: '🕸️' },
-            { title: 'Gap Analysis', desc: 'AI identifies unexplored research opportunities and generates testable hypotheses', icon: '🔍' },
-            { title: 'Auto Writing', desc: 'Generate literature reviews with proper APA citations and iterative quality refinement', icon: '📝' },
-            { title: 'Multi-Source', desc: 'Search across Semantic Scholar, arXiv, and more with intelligent query expansion', icon: '📚' },
-            { title: 'Export Anywhere', desc: 'Download as Markdown, LaTeX, or BibTeX. Ready for your paper or thesis', icon: '📤' },
-            { title: 'Quality Scoring', desc: 'Critic agent rates clarity, flow, depth, synthesis, and citation coverage', icon: '⭐' },
-          ].map((feature, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08 }}
-              className="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-6 hover:bg-white/[0.04] hover:border-white/[0.1] transition-all group"
-            >
-              <span className="text-3xl block mb-4 group-hover:scale-110 transition-transform">{feature.icon}</span>
-              <h3 className="font-bold text-lg mb-2">{feature.title}</h3>
-              <p className="text-sm text-gray-400 leading-relaxed">{feature.desc}</p>
-            </motion.div>
-          ))}
+          <div className="grid grid-cols-3 gap-6">
+            {[
+              { 
+                title: 'Knowledge Graph',
+                desc: 'Interactive citation network. See how papers connect, find bridge papers between clusters.',
+                visual: '🕸️',
+                tag: 'Visual'
+              },
+              { 
+                title: 'Literature Review',
+                desc: 'Publication-ready academic writing with proper citations. Iteratively refined until quality passes.',
+                visual: '📄',
+                tag: 'Writing'
+              },
+              { 
+                title: 'Research Gaps',
+                desc: 'AI-identified opportunities no one has explored yet. With suggested methodology to test them.',
+                visual: '💡',
+                tag: 'Discovery'
+              },
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="bg-white border border-[#e5e5e5] rounded-2xl p-7 hover:shadow-xl hover:shadow-black/5 transition-all"
+              >
+                <div className="flex items-center justify-between mb-5">
+                  <span className="text-3xl">{item.visual}</span>
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-[#999] bg-[#f5f5f4] px-2 py-1 rounded-full">
+                    {item.tag}
+                  </span>
+                </div>
+                <h3 className="font-bold text-lg mb-2">{item.title}</h3>
+                <p className="text-sm text-[#666] leading-relaxed">{item.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Export formats */}
+      <section className="relative z-10 py-20 border-t border-[#eee]">
+        <div className="max-w-6xl mx-auto px-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-mono text-[#888] mb-3 tracking-wide uppercase">Export</p>
+              <h2 className="text-3xl font-bold tracking-tight mb-3">Ready for your workflow</h2>
+              <p className="text-[#666] max-w-md">Export your research in any format. Drop it straight into your thesis, paper, or Overleaf project.</p>
+            </div>
+            <div className="flex gap-3">
+              {['Markdown', 'LaTeX', 'BibTeX', 'Word'].map((fmt) => (
+                <div key={fmt} className="bg-white border border-[#e5e5e5] rounded-xl px-5 py-3 text-sm font-mono text-[#555]">
+                  .{fmt.toLowerCase()}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="relative z-10 max-w-4xl mx-auto px-8 py-24 text-center">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          className="bg-gradient-to-b from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-3xl p-12"
-        >
-          <h2 className="text-4xl font-bold mb-4">Ready to accelerate your research?</h2>
-          <p className="text-gray-400 mb-8 max-w-lg mx-auto">
-            Enter a topic and let AI do the heavy lifting. Literature review in minutes, not weeks.
+      <section className="relative z-10 py-24 border-t border-[#eee]">
+        <div className="max-w-2xl mx-auto px-8 text-center">
+          <h2 className="text-4xl font-bold tracking-tight mb-4">
+            Stop reading papers manually.
+          </h2>
+          <p className="text-[#666] text-lg mb-8">
+            Let AI agents do the systematic review. You focus on the insights.
           </p>
           <Link
             to="/new"
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 px-8 py-4 rounded-xl text-lg font-semibold transition-all hover:shadow-xl hover:shadow-indigo-500/25"
+            className="inline-block bg-[#1a1a1a] text-white px-8 py-4 rounded-xl font-medium text-lg hover:bg-[#333] transition-all hover:shadow-xl hover:shadow-black/10 hover:-translate-y-0.5"
           >
-            🚀 Start Your Research
+            Start Your Research →
           </Link>
-        </motion.div>
+        </div>
       </section>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-white/[0.06] py-8 text-center text-sm text-gray-500">
-        <p>Built with FastAPI, React, Groq AI, NetworkX</p>
+      <footer className="relative z-10 border-t border-[#eee] py-8">
+        <div className="max-w-6xl mx-auto px-8 flex items-center justify-between text-sm text-[#999]">
+          <p>ResearchAI — Multi-Agent Academic Research Engine</p>
+          <p className="font-mono text-xs">FastAPI + React + Groq + NetworkX</p>
+        </div>
       </footer>
     </div>
   )
