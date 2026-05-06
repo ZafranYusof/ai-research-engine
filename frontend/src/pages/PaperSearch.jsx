@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import axios from 'axios'
 import { Search } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 export default function PaperSearch() {
   const [query, setQuery] = useState('')
@@ -27,51 +28,69 @@ export default function PaperSearch() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6">Search Papers</h1>
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+        <h1 className="text-2xl font-bold tracking-tight mb-2">Search Papers</h1>
+        <p className="text-[#888] text-sm mb-6">Search across Semantic Scholar and arXiv databases.</p>
 
-      <form onSubmit={handleSearch} className="flex gap-3 mb-8">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-3 text-gray-500" size={18} />
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search academic papers..."
-            className="w-full bg-gray-900 border border-gray-700 rounded-lg pl-10 pr-4 py-3 text-gray-100 placeholder-gray-500 focus:border-emerald-500 focus:outline-none"
-          />
-        </div>
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-lg font-medium"
-        >
-          {loading ? 'Searching...' : 'Search'}
-        </button>
-      </form>
-
-      <div className="space-y-4">
-        {results.map((paper, i) => (
-          <div key={i} className="bg-gray-900 border border-gray-800 rounded-lg p-5 hover:border-gray-700 transition-colors">
-            <h3 className="font-semibold text-lg">{paper.title}</h3>
-            <p className="text-sm text-gray-400 mt-1">
-              {paper.authors?.slice(0, 5).join(', ')}{paper.authors?.length > 5 ? ' et al.' : ''}
-            </p>
-            <p className="text-sm text-gray-500 mt-1">
-              {paper.venue} • {paper.year} • {paper.citation_count} citations
-            </p>
-            {paper.abstract && (
-              <p className="text-sm text-gray-300 mt-3 line-clamp-3">{paper.abstract}</p>
-            )}
-            <div className="flex gap-2 mt-3">
-              {paper.fields_of_study?.map((field, j) => (
-                <span key={j} className="text-xs bg-gray-800 text-gray-400 px-2 py-1 rounded">
-                  {field}
-                </span>
-              ))}
-            </div>
+        <form onSubmit={handleSearch} className="flex gap-3 mb-8">
+          <div className="flex-1 relative">
+            <Search className="absolute left-4 top-3.5 text-[#ccc]" size={18} />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search academic papers..."
+              className="w-full bg-white border border-[#e5e5e5] rounded-xl pl-11 pr-4 py-3 text-sm text-[#1a1a1a] placeholder:text-[#ccc] focus:outline-none focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/10 transition-all"
+            />
           </div>
-        ))}
-      </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-[#1a1a1a] hover:bg-[#333] disabled:bg-[#e5e5e5] disabled:text-[#999] text-white px-6 py-3 rounded-xl font-medium text-sm transition-all hover:shadow-lg hover:shadow-black/10"
+          >
+            {loading ? 'Searching...' : 'Search'}
+          </button>
+        </form>
+
+        {results.length === 0 && !loading && (
+          <div className="text-center py-20 text-[#999]">
+            <Search size={32} className="mx-auto mb-3 text-[#ddd]" />
+            <p className="text-sm">Enter a topic to search papers</p>
+          </div>
+        )}
+
+        <div className="space-y-3">
+          {results.map((paper, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.03 }}
+              className="bg-white border border-[#eee] rounded-xl p-5 hover:border-[#ddd] hover:shadow-sm transition-all"
+            >
+              <h3 className="font-medium text-sm leading-snug">{paper.title}</h3>
+              <p className="text-xs text-[#888] mt-1.5">
+                {paper.authors?.slice(0, 5).join(', ')}{paper.authors?.length > 5 ? ' et al.' : ''}
+              </p>
+              <p className="text-xs text-[#aaa] mt-1">
+                {paper.venue} &middot; {paper.year} &middot; {paper.citation_count} citations
+              </p>
+              {paper.abstract && (
+                <p className="text-xs text-[#666] mt-3 line-clamp-3 leading-relaxed">{paper.abstract}</p>
+              )}
+              {paper.fields_of_study?.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mt-3">
+                  {paper.fields_of_study.map((field, j) => (
+                    <span key={j} className="text-[10px] bg-[#f5f5f4] text-[#888] px-2 py-0.5 rounded-full border border-[#eee]">
+                      {field}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
     </div>
   )
 }

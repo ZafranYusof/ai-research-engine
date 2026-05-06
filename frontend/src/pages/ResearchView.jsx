@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import axios from 'axios'
 import { motion } from 'framer-motion'
+import { CheckCircle, Clock, AlertCircle } from 'lucide-react'
 
 export default function ResearchView() {
   const { id } = useParams()
@@ -31,14 +32,21 @@ export default function ResearchView() {
     return () => clearInterval(poll)
   }, [id])
 
-  if (!status) return <div className="text-gray-400">Loading...</div>
+  if (!status) return (
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }} className="w-6 h-6 border-2 border-[#e5e5e5] border-t-[#2563eb] rounded-full" />
+    </div>
+  )
 
   if (status.status === 'failed') {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
-        <p className="text-red-400 text-xl mb-2">❌ Research Failed</p>
-        <p className="text-gray-400">{status.message}</p>
-        <Link to="/new" className="mt-4 bg-emerald-500 text-white px-4 py-2 rounded-lg">
+        <div className="w-14 h-14 bg-red-50 rounded-2xl flex items-center justify-center mb-4">
+          <AlertCircle size={24} className="text-red-500" />
+        </div>
+        <p className="text-base font-medium mb-1">Research Failed</p>
+        <p className="text-sm text-[#888]">{status.message}</p>
+        <Link to="/new" className="mt-6 bg-[#1a1a1a] text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-[#333] transition-all">
           Try Again
         </Link>
       </div>
@@ -51,63 +59,63 @@ export default function ResearchView() {
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-          className="w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full mb-6"
+          className="w-14 h-14 border-[3px] border-[#e5e5e5] border-t-[#2563eb] rounded-full mb-6"
         />
-        <h2 className="text-xl font-semibold mb-2">Research in Progress</h2>
-        <p className="text-gray-400 mb-2 capitalize">{status.current_step?.replace(/_/g, ' ')}</p>
-        <p className="text-sm text-gray-500 mb-4">{status.message}</p>
-        <div className="w-80 bg-gray-800 rounded-full h-3">
+        <h2 className="text-lg font-semibold mb-1">Research in Progress</h2>
+        <p className="text-sm text-[#888] capitalize mb-4">{status.current_step?.replace(/_/g, ' ')}</p>
+        <p className="text-xs text-[#aaa] mb-4">{status.message}</p>
+        <div className="w-72 bg-[#f0f0f0] rounded-full h-2">
           <motion.div
-            className="bg-emerald-500 h-3 rounded-full"
+            className="bg-[#2563eb] h-2 rounded-full"
             initial={{ width: 0 }}
             animate={{ width: `${(status.progress || 0) * 100}%` }}
             transition={{ duration: 0.5 }}
           />
         </div>
-        <p className="text-sm text-gray-500 mt-2">{Math.round((status.progress || 0) * 100)}%</p>
+        <p className="text-xs text-[#aaa] mt-2 font-mono">{Math.round((status.progress || 0) * 100)}%</p>
       </div>
     )
   }
 
   const tabs = [
-    { id: 'papers', label: `📄 Papers (${results?.papers?.length || 0})` },
-    { id: 'themes', label: `🎯 Themes (${results?.themes?.length || 0})` },
-    { id: 'gaps', label: `🔍 Gaps (${results?.gaps?.length || 0})` },
-    { id: 'hypotheses', label: `💡 Hypotheses (${results?.hypotheses?.length || 0})` },
-    { id: 'draft', label: '✍️ Draft' },
-    { id: 'framework', label: '🧠 Framework' },
+    { id: 'papers', label: `Papers (${results?.papers?.length || 0})`, emoji: '📄' },
+    { id: 'themes', label: `Themes (${results?.themes?.length || 0})`, emoji: '🎯' },
+    { id: 'gaps', label: `Gaps (${results?.gaps?.length || 0})`, emoji: '🔍' },
+    { id: 'hypotheses', label: `Hypotheses (${results?.hypotheses?.length || 0})`, emoji: '💡' },
+    { id: 'draft', label: 'Draft', emoji: '✍️' },
+    { id: 'framework', label: 'Framework', emoji: '🧠' },
   ]
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-start mb-8">
         <div>
-          <h1 className="text-2xl font-bold">{status.topic}</h1>
-          <p className="text-gray-400 text-sm mt-1">
-            Completed • {results?.papers?.length || 0} papers analyzed
+          <h1 className="text-2xl font-bold tracking-tight">{status.topic}</h1>
+          <p className="text-[#888] text-sm mt-1">
+            Completed &middot; {results?.papers?.length || 0} papers analyzed
           </p>
         </div>
         <Link
           to={`/write/${id}`}
-          className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg"
+          className="flex items-center gap-2 bg-[#1a1a1a] text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-[#333] transition-all hover:shadow-lg hover:shadow-black/10"
         >
           ✍️ Write Paper
         </Link>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 border-b border-gray-800 pb-2 overflow-x-auto">
+      <div className="flex gap-1 mb-6 border-b border-[#eee] pb-0 overflow-x-auto">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 rounded-t-lg text-sm whitespace-nowrap ${
+            className={`px-4 py-2.5 text-sm whitespace-nowrap border-b-2 transition-all ${
               activeTab === tab.id
-                ? 'bg-gray-800 text-emerald-400 border-b-2 border-emerald-400'
-                : 'text-gray-400 hover:text-gray-200'
+                ? 'border-[#2563eb] text-[#2563eb] font-medium'
+                : 'border-transparent text-[#888] hover:text-[#555]'
             }`}
           >
-            {tab.label}
+            {tab.emoji} {tab.label}
           </button>
         ))}
       </div>
@@ -120,19 +128,19 @@ export default function ResearchView() {
               key={i}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
-              className="bg-gray-900 border border-gray-800 rounded-lg p-4"
+              transition={{ delay: i * 0.03 }}
+              className="bg-white border border-[#eee] rounded-xl p-5 hover:border-[#ddd] hover:shadow-sm transition-all"
             >
-              <h3 className="font-medium">{paper.title}</h3>
-              <p className="text-sm text-gray-400 mt-1">
-                {paper.authors?.slice(0, 3).join(', ')}{paper.authors?.length > 3 ? ' et al.' : ''} • {paper.year}
+              <h3 className="font-medium text-sm">{paper.title}</h3>
+              <p className="text-xs text-[#888] mt-1.5">
+                {paper.authors?.slice(0, 3).join(', ')}{paper.authors?.length > 3 ? ' et al.' : ''} &middot; {paper.year}
               </p>
-              <div className="flex gap-4 mt-2 text-xs text-gray-500">
+              <div className="flex gap-4 mt-2 text-[10px] text-[#aaa]">
                 <span>📊 {paper.citation_count} citations</span>
                 <span>📍 {paper.venue || paper.source}</span>
               </div>
               {paper.tldr && (
-                <p className="text-sm text-gray-300 mt-2 italic">{paper.tldr}</p>
+                <p className="text-xs text-[#666] mt-2 italic leading-relaxed">{paper.tldr}</p>
               )}
             </motion.div>
           ))}
@@ -144,15 +152,15 @@ export default function ResearchView() {
           {results?.themes?.map((theme, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, scale: 0.95 }}
+              initial={{ opacity: 0, scale: 0.97 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: i * 0.1 }}
-              className="bg-gray-900 border border-gray-800 rounded-lg p-5"
+              transition={{ delay: i * 0.05 }}
+              className="bg-white border border-[#eee] rounded-xl p-5 hover:shadow-sm transition-all"
             >
-              <h3 className="font-medium text-emerald-400 text-lg">{theme.theme}</h3>
-              <p className="text-sm text-gray-400 mt-2">{theme.description}</p>
+              <h3 className="font-medium text-sm text-[#2563eb]">{theme.theme}</h3>
+              <p className="text-xs text-[#666] mt-2 leading-relaxed">{theme.description}</p>
               {theme.paper_count && (
-                <span className="inline-block mt-3 text-xs bg-gray-800 text-gray-400 px-2 py-1 rounded">
+                <span className="inline-block mt-3 text-[10px] bg-[#f5f5f4] text-[#888] px-2 py-0.5 rounded-full border border-[#eee]">
                   {theme.paper_count} papers
                 </span>
               )}
@@ -168,38 +176,38 @@ export default function ResearchView() {
               key={i}
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="flex items-start gap-3 bg-gray-900 border border-gray-800 rounded-lg p-4"
+              transition={{ delay: i * 0.05 }}
+              className="flex items-start gap-3 bg-white border border-[#eee] rounded-xl p-4"
             >
-              <span className="text-yellow-400 text-lg">⚡</span>
-              <p className="text-gray-300">{gap}</p>
+              <span className="text-amber-500 text-sm mt-0.5">⚡</span>
+              <p className="text-sm text-[#555] leading-relaxed">{gap}</p>
             </motion.div>
           ))}
         </div>
       )}
 
       {activeTab === 'hypotheses' && (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {results?.hypotheses?.map((h, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="bg-gray-900 border border-gray-800 rounded-lg p-5"
+              transition={{ delay: i * 0.05 }}
+              className="bg-white border border-[#eee] rounded-xl p-5 hover:shadow-sm transition-all"
             >
-              <h3 className="font-medium text-lg">{h.hypothesis}</h3>
-              <p className="text-sm text-gray-400 mt-2">{h.reasoning}</p>
+              <h3 className="font-medium text-sm">{h.hypothesis}</h3>
+              <p className="text-xs text-[#666] mt-2 leading-relaxed">{h.reasoning}</p>
               {h.methodology && (
-                <p className="text-sm text-gray-500 mt-2">
-                  <span className="text-gray-400">Methodology:</span> {h.methodology}
+                <p className="text-xs text-[#888] mt-2">
+                  <span className="font-medium text-[#555]">Methodology:</span> {h.methodology}
                 </p>
               )}
-              <div className="flex gap-4 mt-3">
-                <span className="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded">
+              <div className="flex gap-3 mt-3">
+                <span className="text-[10px] bg-[#2563eb]/5 text-[#2563eb] px-2.5 py-1 rounded-full font-medium">
                   Novelty: {h.novelty}/5
                 </span>
-                <span className="text-xs bg-blue-500/10 text-blue-400 px-2 py-1 rounded">
+                <span className="text-[10px] bg-[#059669]/5 text-[#059669] px-2.5 py-1 rounded-full font-medium">
                   Feasibility: {h.feasibility}/5
                 </span>
               </div>
@@ -209,36 +217,36 @@ export default function ResearchView() {
       )}
 
       {activeTab === 'draft' && results?.draft && (
-        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+        <div className="bg-white border border-[#eee] rounded-xl p-6">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="font-semibold">Auto-Generated Literature Review</h2>
+            <h2 className="font-medium text-sm">Auto-Generated Literature Review</h2>
             <div className="flex items-center gap-3">
-              <span className="text-sm text-gray-500">{results.draft.word_count} words</span>
+              <span className="text-xs text-[#aaa] font-mono">{results.draft.word_count} words</span>
               {results.review && (
-                <span className={`text-sm px-2 py-1 rounded ${
-                  results.review.score >= 7 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-yellow-500/10 text-yellow-400'
+                <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
+                  results.review.score >= 7 ? 'bg-[#059669]/5 text-[#059669]' : 'bg-amber-50 text-amber-600'
                 }`}>
                   Score: {results.review.score}/10
                 </span>
               )}
             </div>
           </div>
-          <div className="prose prose-invert max-w-none text-sm leading-relaxed">
+          <div className="prose prose-sm max-w-none text-[#444] leading-relaxed">
             {results.draft.content}
           </div>
         </div>
       )}
 
       {activeTab === 'framework' && results?.framework && (
-        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
-          <h2 className="font-semibold text-xl mb-4">{results.framework.name}</h2>
+        <div className="bg-white border border-[#eee] rounded-xl p-6">
+          <h2 className="font-semibold text-lg mb-4">{results.framework.name}</h2>
 
           {results.framework.layers?.length > 0 && (
-            <div className="mb-6">
-              <h3 className="text-sm font-medium text-gray-400 mb-2">Layers</h3>
+            <div className="mb-5">
+              <h3 className="text-xs font-medium text-[#888] uppercase tracking-wider mb-2">Layers</h3>
               <div className="flex flex-wrap gap-2">
                 {results.framework.layers.map((layer, i) => (
-                  <span key={i} className="bg-purple-500/10 text-purple-400 px-3 py-1 rounded-lg text-sm">
+                  <span key={i} className="bg-[#7c3aed]/5 text-[#7c3aed] px-3 py-1 rounded-lg text-xs font-medium">
                     {layer}
                   </span>
                 ))}
@@ -247,11 +255,11 @@ export default function ResearchView() {
           )}
 
           {results.framework.core_concepts?.length > 0 && (
-            <div className="mb-6">
-              <h3 className="text-sm font-medium text-gray-400 mb-2">Core Concepts</h3>
+            <div className="mb-5">
+              <h3 className="text-xs font-medium text-[#888] uppercase tracking-wider mb-2">Core Concepts</h3>
               <div className="flex flex-wrap gap-2">
                 {results.framework.core_concepts.map((concept, i) => (
-                  <span key={i} className="bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-lg text-sm">
+                  <span key={i} className="bg-[#059669]/5 text-[#059669] px-3 py-1 rounded-lg text-xs font-medium">
                     {concept}
                   </span>
                 ))}
@@ -261,11 +269,11 @@ export default function ResearchView() {
 
           {results.framework.relationships?.length > 0 && (
             <div>
-              <h3 className="text-sm font-medium text-gray-400 mb-2">Relationships</h3>
-              <ul className="space-y-1">
+              <h3 className="text-xs font-medium text-[#888] uppercase tracking-wider mb-2">Relationships</h3>
+              <ul className="space-y-1.5">
                 {results.framework.relationships.map((rel, i) => (
-                  <li key={i} className="text-sm text-gray-300 flex items-center gap-2">
-                    <span className="text-blue-400">→</span> {rel}
+                  <li key={i} className="text-xs text-[#555] flex items-center gap-2">
+                    <span className="text-[#2563eb]">→</span> {rel}
                   </li>
                 ))}
               </ul>
