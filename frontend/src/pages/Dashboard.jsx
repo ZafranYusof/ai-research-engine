@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../utils/api'
-import { Plus, Clock, CheckCircle, AlertCircle, BookOpen, GitBranch, TrendingUp, Zap, Search, FileText, Upload } from 'lucide-react'
+import { Plus, Clock, CheckCircle, AlertCircle, BookOpen, GitBranch, TrendingUp, Zap, Search, FileText, Upload, BarChart3, FileCheck, Timer } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { SkeletonStatCard, SkeletonProjectRow } from '../components/Skeleton'
 
@@ -13,7 +13,7 @@ function StatCard({ icon: Icon, label, value, color, delay }) {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ delay, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       whileHover={{ y: -3, shadow: '0 10px 40px -10px rgba(0,0,0,0.1)' }}
-      className="bg-white border border-[#eee] rounded-2xl p-5 hover:shadow-lg hover:shadow-black/5 transition-all cursor-default"
+      className="bg-white border border-[#eee] rounded-2xl p-5 hover:shadow-lg hover:shadow-black/5 transition-all cursor-default dark:bg-[#1a1a1a] dark:border-[#2a2a2a]"
     >
       <div className="flex items-center gap-3">
         <motion.div
@@ -49,7 +49,7 @@ function QuickAction({ icon: Icon, title, desc, to, color, delay }) {
     >
       <Link
         to={to}
-        className="block bg-white border border-[#eee] rounded-2xl p-5 hover:border-[#ddd] hover:shadow-lg hover:shadow-black/5 transition-all group"
+        className="block bg-white border border-[#eee] rounded-2xl p-5 hover:border-[#ddd] hover:shadow-lg hover:shadow-black/5 transition-all group dark:bg-[#1a1a1a] dark:border-[#2a2a2a] dark:hover:border-[#444]"
       >
         <motion.div
           whileHover={{ scale: 1.05, rotate: 3 }}
@@ -65,9 +65,54 @@ function QuickAction({ icon: Icon, title, desc, to, color, delay }) {
   )
 }
 
+// Animated counter component
+function AnimatedCounter({ value, duration = 1.5, suffix = '' }) {
+  const [count, setCount] = useState(0)
+  const ref = useRef(null)
+  const hasAnimated = useRef(false)
+
+  useEffect(() => {
+    if (value === 0 || hasAnimated.current) return
+    hasAnimated.current = true
+    const start = Date.now()
+    const end = start + duration * 1000
+
+    function tick() {
+      const now = Date.now()
+      const progress = Math.min((now - start) / (duration * 1000), 1)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      setCount(Math.round(eased * value))
+      if (progress < 1) requestAnimationFrame(tick)
+    }
+    requestAnimationFrame(tick)
+  }, [value, duration])
+
+  return <span ref={ref}>{count.toLocaleString()}{suffix}</span>
+}
+
+// Mini sparkline (static decorative)
+function MiniSparkline({ color }) {
+  const points = [4, 7, 5, 9, 6, 8, 10, 7, 11, 9, 12]
+  const max = Math.max(...points)
+  const width = 60
+  const height = 20
+  const path = points.map((p, i) => {
+    const x = (i / (points.length - 1)) * width
+    const y = height - (p / max) * height
+    return `${i === 0 ? 'M' : 'L'}${x},${y}`
+  }).join(' ')
+
+  return (
+    <svg width={width} height={height} className="opacity-60">
+      <path d={path} fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  )
+}
+
 export default function Dashboard() {
   const [projects, setProjects] = useState([])
   const [graphStats, setGraphStats] = useState(null)
+  const [researchStats, setResearchStats] = useState(null)
   const [loading, setLoading] = useState(true)
   const [greeting, setGreeting] = useState('')
 
@@ -86,12 +131,14 @@ export default function Dashboard() {
 
   const loadData = async () => {
     try {
-      const [projectsRes, graphRes] = await Promise.all([
+      const [projectsRes, graphRes, statsRes] = await Promise.all([
         api.get('/api/research/list'),
         api.get('/api/graph/stats'),
+        api.get('/api/research/stats').catch(() => ({ data: null })),
       ])
       setProjects(projectsRes.data.projects || [])
       setGraphStats(graphRes.data)
+      if (statsRes.data) setResearchStats(statsRes.data)
     } catch (err) {
       console.error(err)
     } finally {
@@ -169,6 +216,71 @@ export default function Dashboard() {
         </div>
       </motion.div>
 
+      {/* Research Insights */}
+      {researchStats && researchStats.completed_projects > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="mb-8"
+        >
+          <h2 className="text-xs font-medium text-[#888] uppercase tracking-wider mb-3">Research Insights</h2>
+          <div className="grid grid-cols-4 gap-3">
+            <div className="bg-white border border-[#eee] rounded-2xl p-4 dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
+              <div className="flex items-center justify-between mb-2">
+                <div className="w-8 h-8 rounded-lg bg-[#2563eb]/10 flex items-center justify-center">
+                  <FileCheck size={16} className="text-[#2563eb]" />
+                </div>
+                <MiniSparkline color="#2563eb" />
+              </div>
+              <p className="text-xl font-bold tracking-tight">
+                <AnimatedCounter value={researchStats.total_papers_analyzed} />
+              </p>
+              <p className="text-[10px] text-[#999] mt-0.5">Papers Analyzed</p>
+            </div>
+
+            <div className="bg-white border border-[#eee] rounded-2xl p-4 dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
+              <div className="flex items-center justify-between mb-2">
+                <div className="w-8 h-8 rounded-lg bg-[#059669]/10 flex items-center justify-center">
+                  <BookOpen size={16} className="text-[#059669]" />
+                </div>
+                <MiniSparkline color="#059669" />
+              </div>
+              <p className="text-xl font-bold tracking-tight">
+                <AnimatedCounter value={researchStats.total_words_generated} />
+              </p>
+              <p className="text-[10px] text-[#999] mt-0.5">Words Generated</p>
+            </div>
+
+            <div className="bg-white border border-[#eee] rounded-2xl p-4 dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
+              <div className="flex items-center justify-between mb-2">
+                <div className="w-8 h-8 rounded-lg bg-[#7c3aed]/10 flex items-center justify-center">
+                  <BarChart3 size={16} className="text-[#7c3aed]" />
+                </div>
+                <MiniSparkline color="#7c3aed" />
+              </div>
+              <p className="text-xl font-bold tracking-tight">
+                <AnimatedCounter value={researchStats.avg_score * 10} suffix="%" />
+              </p>
+              <p className="text-[10px] text-[#999] mt-0.5">Avg Quality Score</p>
+            </div>
+
+            <div className="bg-white border border-[#eee] rounded-2xl p-4 dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
+              <div className="flex items-center justify-between mb-2">
+                <div className="w-8 h-8 rounded-lg bg-[#d97706]/10 flex items-center justify-center">
+                  <Timer size={16} className="text-[#d97706]" />
+                </div>
+                <MiniSparkline color="#d97706" />
+              </div>
+              <p className="text-xl font-bold tracking-tight">
+                <AnimatedCounter value={Math.round(researchStats.total_duration_seconds / 60)} suffix="m" />
+              </p>
+              <p className="text-[10px] text-[#999] mt-0.5">Total Research Time</p>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       {/* Projects */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
@@ -193,7 +305,7 @@ export default function Dashboard() {
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.5 }}
-            className="text-center py-16 bg-white border border-[#eee] rounded-2xl"
+            className="text-center py-16 bg-white border border-[#eee] rounded-2xl dark:bg-[#1a1a1a] dark:border-[#2a2a2a]"
           >
             <motion.div
               animate={{ y: [0, -5, 0] }}
@@ -225,7 +337,7 @@ export default function Dashboard() {
                 >
                   <Link
                     to={`/research/${project.id}`}
-                    className="flex items-center gap-4 bg-white border border-[#eee] rounded-xl px-5 py-4 hover:border-[#ddd] hover:shadow-md hover:shadow-black/5 transition-all group hover:-translate-y-0.5"
+                    className="flex items-center gap-4 bg-white border border-[#eee] rounded-xl px-5 py-4 hover:border-[#ddd] hover:shadow-md hover:shadow-black/5 transition-all group hover:-translate-y-0.5 dark:bg-[#1a1a1a] dark:border-[#2a2a2a] dark:hover:border-[#444]"
                   >
                     {/* Status icon */}
                     <motion.div

@@ -51,7 +51,7 @@ export default function NewResearch() {
               value={form.topic}
               onChange={(e) => setForm({ ...form, topic: e.target.value })}
               placeholder="e.g., The impact of transformer architectures on natural language understanding tasks"
-              className="w-full bg-white border border-[#e5e5e5] rounded-xl p-4 text-sm text-[#1a1a1a] placeholder:text-[#ccc] focus:outline-none focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/10 transition-all min-h-[120px] resize-none"
+              className="w-full bg-white border border-[#e5e5e5] rounded-xl dark:bg-[#1a1a1a] dark:border-[#333] dark:text-white p-4 text-sm text-[#1a1a1a] placeholder:text-[#ccc] focus:outline-none focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/10 transition-all min-h-[120px] resize-none"
               required
             />
           </div>
@@ -63,7 +63,7 @@ export default function NewResearch() {
                 type="number"
                 value={form.yearFrom}
                 onChange={(e) => setForm({ ...form, yearFrom: parseInt(e.target.value) })}
-                className="w-full bg-white border border-[#e5e5e5] rounded-xl px-4 py-3 text-sm text-[#1a1a1a] focus:outline-none focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/10 transition-all"
+                className="w-full bg-white border border-[#e5e5e5] rounded-xl dark:bg-[#1a1a1a] dark:border-[#333] dark:text-white px-4 py-3 text-sm text-[#1a1a1a] focus:outline-none focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/10 transition-all"
               />
             </div>
             <div>
@@ -72,7 +72,7 @@ export default function NewResearch() {
                 type="number"
                 value={form.yearTo}
                 onChange={(e) => setForm({ ...form, yearTo: parseInt(e.target.value) })}
-                className="w-full bg-white border border-[#e5e5e5] rounded-xl px-4 py-3 text-sm text-[#1a1a1a] focus:outline-none focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/10 transition-all"
+                className="w-full bg-white border border-[#e5e5e5] rounded-xl dark:bg-[#1a1a1a] dark:border-[#333] dark:text-white px-4 py-3 text-sm text-[#1a1a1a] focus:outline-none focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/10 transition-all"
               />
             </div>
           </div>
@@ -85,7 +85,7 @@ export default function NewResearch() {
               onChange={(e) => setForm({ ...form, maxPapers: parseInt(e.target.value) })}
               min={10}
               max={200}
-              className="w-full bg-white border border-[#e5e5e5] rounded-xl px-4 py-3 text-sm text-[#1a1a1a] focus:outline-none focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/10 transition-all"
+              className="w-full bg-white border border-[#e5e5e5] rounded-xl dark:bg-[#1a1a1a] dark:border-[#333] dark:text-white px-4 py-3 text-sm text-[#1a1a1a] focus:outline-none focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/10 transition-all"
             />
           </div>
 
@@ -96,7 +96,7 @@ export default function NewResearch() {
               value={form.focusAreas}
               onChange={(e) => setForm({ ...form, focusAreas: e.target.value })}
               placeholder="e.g., attention mechanisms, pre-training, fine-tuning"
-              className="w-full bg-white border border-[#e5e5e5] rounded-xl px-4 py-3 text-sm text-[#1a1a1a] placeholder:text-[#ccc] focus:outline-none focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/10 transition-all"
+              className="w-full bg-white border border-[#e5e5e5] rounded-xl dark:bg-[#1a1a1a] dark:border-[#333] dark:text-white px-4 py-3 text-sm text-[#1a1a1a] placeholder:text-[#ccc] focus:outline-none focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/10 transition-all"
             />
           </div>
 

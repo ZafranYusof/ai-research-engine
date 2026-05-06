@@ -57,7 +57,7 @@ export default function PaperSearch() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search academic papers..."
-                className="w-full bg-white border border-[#e5e5e5] rounded-xl pl-11 pr-4 py-3 text-sm text-[#1a1a1a] placeholder:text-[#ccc] focus:outline-none focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/10 transition-all"
+                className="w-full bg-white border border-[#e5e5e5] rounded-xl dark:bg-[#1a1a1a] dark:border-[#333] dark:text-white pl-11 pr-4 py-3 text-sm text-[#1a1a1a] placeholder:text-[#ccc] focus:outline-none focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/10 transition-all"
               />
             </div>
             <button
@@ -102,7 +102,7 @@ export default function PaperSearch() {
                 value={yearFrom}
                 onChange={(e) => setYearFrom(e.target.value)}
                 placeholder="2019"
-                className="w-16 bg-white border border-[#e5e5e5] rounded-lg px-2 py-1.5 text-xs text-[#1a1a1a] focus:outline-none focus:border-[#2563eb]"
+                className="w-16 bg-white border border-[#e5e5e5] rounded-lg dark:bg-[#1a1a1a] dark:border-[#333] dark:text-white px-2 py-1.5 text-xs text-[#1a1a1a] focus:outline-none focus:border-[#2563eb]"
               />
               <span>-</span>
               <input
@@ -110,7 +110,7 @@ export default function PaperSearch() {
                 value={yearTo}
                 onChange={(e) => setYearTo(e.target.value)}
                 placeholder="2026"
-                className="w-16 bg-white border border-[#e5e5e5] rounded-lg px-2 py-1.5 text-xs text-[#1a1a1a] focus:outline-none focus:border-[#2563eb]"
+                className="w-16 bg-white border border-[#e5e5e5] rounded-lg dark:bg-[#1a1a1a] dark:border-[#333] dark:text-white px-2 py-1.5 text-xs text-[#1a1a1a] focus:outline-none focus:border-[#2563eb]"
               />
             </div>
           </div>
@@ -138,7 +138,7 @@ export default function PaperSearch() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.03 }}
-              className="bg-white border border-[#eee] rounded-xl p-5 hover:border-[#ddd] hover:shadow-sm transition-all"
+              className="bg-white border border-[#eee] rounded-xl p-5 hover:border-[#ddd] hover:shadow-sm transition-all dark:bg-[#1a1a1a] dark:border-[#2a2a2a] dark:hover:border-[#444]"
             >
               <div className="flex items-start justify-between gap-2">
                 <h3 className="font-medium text-sm leading-snug">{paper.title}</h3>

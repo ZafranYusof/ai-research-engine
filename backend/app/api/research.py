@@ -122,6 +122,64 @@ async def get_research_results(project_id: str):
 
     return job["results"]
 
+@router.get("/stats")
+async def get_research_stats():
+    """Get aggregated research statistics."""
+    completed_projects = []
+    cursor = mongodb.projects.find({"status": "completed"}, {"_id": 0})
+    async for doc in cursor:
+        completed_projects.append(doc)
+
+    total_projects = await mongodb.projects.count_documents({})
+    completed_count = len(completed_projects)
+
+    total_papers = 0
+    total_words = 0
+    total_themes = 0
+    total_gaps = 0
+    total_duration = 0
+    scores = []
+
+    for proj in completed_projects:
+        results = proj.get("results", {}) or {}
+        papers = results.get("papers", [])
+        total_papers += len(papers)
+
+        # Count words from synthesis/report
+        report = results.get("report", "") or results.get("synthesis", "")
+        if isinstance(report, str):
+            total_words += len(report.split())
+
+        # Themes and gaps
+        themes = results.get("themes", []) or []
+        total_themes += len(themes)
+        gaps = results.get("gaps", []) or results.get("research_gaps", [])
+        if isinstance(gaps, list):
+            total_gaps += len(gaps)
+
+        # Score
+        score = results.get("quality_score") or results.get("score")
+        if score is not None:
+            scores.append(float(score))
+
+        # Duration
+        duration = results.get("duration_seconds") or results.get("duration")
+        if duration is not None:
+            total_duration += float(duration)
+
+    avg_score = round(sum(scores) / len(scores), 2) if scores else 0
+
+    return {
+        "total_projects": total_projects,
+        "completed_projects": completed_count,
+        "total_papers_analyzed": total_papers,
+        "total_words_generated": total_words,
+        "total_themes_found": total_themes,
+        "total_gaps_found": total_gaps,
+        "avg_score": avg_score,
+        "total_duration_seconds": round(total_duration, 1),
+    }
+
 @router.get("/list")
 async def list_research_projects():
     """List all research projects."""

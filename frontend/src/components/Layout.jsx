@@ -1,6 +1,10 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
 import { Home, Search, BookOpen, GitBranch, LogOut, User, FileText, Upload } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import ThemeToggle from './ThemeToggle'
+import CommandPalette from './CommandPalette'
+import useKeyboardShortcuts from '../hooks/useKeyboardShortcuts'
+import '../utils/theme'
 
 const navItems = [
   { path: '/app', icon: Home, label: 'Dashboard' },
@@ -15,6 +19,15 @@ export default function Layout() {
   const location = useLocation()
   const navigate = useNavigate()
   const [user, setUser] = useState(null)
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false)
+
+  useKeyboardShortcuts({
+    onOpenSearch: () => setCommandPaletteOpen(true),
+    onNewResearch: () => navigate('/new'),
+    onGoGraph: () => navigate('/graph'),
+    onGoDashboard: () => navigate('/app'),
+    onEscape: () => setCommandPaletteOpen(false),
+  })
 
   useEffect(() => {
     const stored = localStorage.getItem('user')
@@ -32,9 +45,9 @@ export default function Layout() {
   }
 
   return (
-    <div className="min-h-screen bg-[#fafaf9] text-[#1a1a1a]">
+    <div className="min-h-screen bg-[#fafaf9] text-[#1a1a1a] dark:bg-[#0f0f0f] dark:text-[#e5e5e5]">
       {/* Sidebar */}
-      <aside className="fixed left-0 top-0 h-full w-60 bg-white border-r border-[#eee] p-5 flex flex-col">
+      <aside className="fixed left-0 top-0 h-full w-60 bg-white border-r border-[#eee] p-5 flex flex-col dark:bg-[#0f0f0f] dark:border-[#222]">
         <Link to="/" className="flex items-center gap-2 mb-10">
           <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
             <path d="M4 6C4 4.9 4.9 4 6 4h4v20H6c-1.1 0-2-.9-2-2V6z" fill="#2563eb" opacity="0.8"/>
@@ -53,8 +66,8 @@ export default function Layout() {
                 to={path}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-sm ${
                   isActive
-                    ? 'bg-[#f0f0f0] text-[#1a1a1a] font-medium'
-                    : 'text-[#888] hover:text-[#555] hover:bg-[#f8f8f8]'
+                    ? 'bg-[#f0f0f0] text-[#1a1a1a] font-medium dark:bg-[#1a1a1a] dark:text-[#e5e5e5]'
+                    : 'text-[#888] hover:text-[#555] hover:bg-[#f8f8f8] dark:hover:text-[#ccc] dark:hover:bg-[#1a1a1a]'
                 }`}
               >
                 <Icon size={18} strokeWidth={isActive ? 2 : 1.5} />
@@ -65,7 +78,7 @@ export default function Layout() {
         </nav>
 
         {/* User section */}
-        <div className="border-t border-[#eee] pt-4 mt-4">
+        <div className="border-t border-[#eee] pt-4 mt-4 dark:border-[#222]">
           {user ? (
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -91,9 +104,14 @@ export default function Layout() {
             </Link>
           )}
 
-          <div className="mt-4 bg-[#f8f8f8] border border-[#eee] rounded-xl p-3">
-            <p className="text-[10px] text-[#999] font-mono uppercase tracking-wider">Powered by</p>
-            <p className="text-xs text-[#555] font-medium mt-0.5">Groq Llama 3.3 70B</p>
+          <div className="mt-3 flex items-center justify-between">
+            <div className="bg-[#f8f8f8] border border-[#eee] rounded-xl p-3 flex-1 dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
+              <p className="text-[10px] text-[#999] font-mono uppercase tracking-wider">Powered by</p>
+              <p className="text-xs text-[#555] font-medium mt-0.5 dark:text-[#aaa]">Groq Llama 3.3 70B</p>
+            </div>
+            <div className="ml-2">
+              <ThemeToggle />
+            </div>
           </div>
         </div>
       </aside>
@@ -102,6 +120,12 @@ export default function Layout() {
       <main className="ml-60 p-8 min-h-screen">
         <Outlet />
       </main>
+
+      {/* Command Palette */}
+      <CommandPalette
+        isOpen={commandPaletteOpen}
+        onClose={() => setCommandPaletteOpen(false)}
+      />
     </div>
   )
 }
