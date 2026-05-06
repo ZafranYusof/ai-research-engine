@@ -11,7 +11,14 @@ class MongoDB:
 
     async def connect(self):
         """Connect to MongoDB."""
-        self.client = AsyncIOMotorClient(settings.MONGODB_URI)
+        uri = settings.MONGODB_URI
+        print(f"[MongoDB] Connecting to: {uri[:30]}...")
+        self.client = AsyncIOMotorClient(
+            uri,
+            serverSelectionTimeoutMS=10000,
+            connectTimeoutMS=10000,
+            tls=True if "mongodb.net" in uri else False,
+        )
         self.db = self.client["ai_research_engine"]
         # Create indexes
         await self.db.users.create_index("email", unique=True)

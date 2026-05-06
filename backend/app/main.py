@@ -51,3 +51,11 @@ app.include_router(analytics.router, prefix="/api/analytics", tags=["analytics"]
 @app.get("/health")
 async def health_check():
     return {"status": "healthy", "version": "0.1.0"}
+
+@app.get("/health/db")
+async def health_db():
+    try:
+        result = await mongodb.db.command("ping")
+        return {"status": "connected", "ping": result}
+    except Exception as e:
+        return {"status": "error", "detail": str(e), "uri_prefix": settings.MONGODB_URI[:40]}
