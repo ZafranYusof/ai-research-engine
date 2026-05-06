@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from app.services.semantic_scholar import SemanticScholarService
 from app.services.arxiv_service import ArxivService
 from app.services.google_scholar import GoogleScholarService
+from app.services.cache import get_paper_cache, set_paper_cache
 
 router = APIRouter()
 scholar = SemanticScholarService()
@@ -22,6 +23,16 @@ class PaperSearchRequest(BaseModel):
 @router.post("/search")
 async def search_papers(request: PaperSearchRequest):
     """Search for papers across multiple sources."""
+    # Check cache first
+    cached = get_paper_cache(
+        query=request.query,
+        sources=request.sources,
+        year_from=request.year_from,
+        year_to=request.year_to,
+    )
+    if cached is not None:
+        return cached
+
     all_papers = []
 
     year_range = None
@@ -55,7 +66,18 @@ async def search_papers(request: PaperSearchRequest):
     # Deduplicate by title similarity
     all_papers = _deduplicate_papers(all_papers)
 
-    return {"papers": all_papers, "total": len(all_papers)}
+    result = {"papers": all_papers, "total": len(all_papers)}
+
+    # Cache the result
+    set_paper_cache(
+        query=request.query,
+        sources=request.sources,
+        year_from=request.year_from,
+        year_to=request.year_to,
+        results=result,
+    )
+
+    return result
 
 
 def _deduplicate_papers(papers: List[dict]) -> List[dict]:

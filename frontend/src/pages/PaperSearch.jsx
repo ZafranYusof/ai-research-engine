@@ -2,6 +2,8 @@ import { useState } from 'react'
 import api from '../utils/api'
 import { Search } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { SkeletonPaperCard } from '../components/Skeleton'
+import { toast } from '../utils/toast'
 
 const SOURCES = [
   { id: 'semantic_scholar', label: 'Semantic Scholar', color: '#2563eb' },
@@ -31,7 +33,9 @@ export default function PaperSearch() {
         year_to: yearTo ? parseInt(yearTo) : null,
       })
       setResults(res.data.papers)
+      toast.success(`Found ${res.data.total} papers`)
     } catch (err) {
+      toast.error(err.response?.data?.detail || 'Search failed')
       console.error(err)
     } finally {
       setLoading(false)
@@ -111,6 +115,14 @@ export default function PaperSearch() {
             </div>
           </div>
         </form>
+
+        {loading && (
+          <div className="space-y-3">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <SkeletonPaperCard key={i} />
+            ))}
+          </div>
+        )}
 
         {results.length === 0 && !loading && (
           <div className="text-center py-20 text-[#999]">

@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import api from '../utils/api'
+import api, { API_URL } from '../utils/api'
 import { motion } from 'framer-motion'
 import { CheckCircle, Clock, AlertCircle } from 'lucide-react'
+import { toast } from '../utils/toast'
 
 export default function ResearchView() {
   const { id } = useParams()
@@ -10,26 +11,105 @@ export default function ResearchView() {
   const [results, setResults] = useState(null)
   const [activeTab, setActiveTab] = useState('papers')
 
+  const wsRef = useRef(null)
+
   useEffect(() => {
-    const poll = setInterval(async () => {
+    let poll = null
+    let wsConnected = false
+
+    // Try WebSocket first
+    const connectWS = () => {
       try {
-        const res = await api.get(`/api/research/status/${id}`)
-        setStatus(res.data)
+        const wsBase = (API_URL || window.location.origin).replace(/^http/, 'ws')
+        const ws = new WebSocket(`${wsBase}/api/research/ws/${id}`)
+        wsRef.current = ws
 
-        if (res.data.status === 'completed') {
-          clearInterval(poll)
-          const resultsRes = await api.get(`/api/research/results/${id}`)
-          setResults(resultsRes.data)
+        ws.onopen = () => {
+          wsConnected = true
+          // Clear polling if WS connects
+          if (poll) {
+            clearInterval(poll)
+            poll = null
+          }
         }
-        if (res.data.status === 'failed') {
-          clearInterval(poll)
+
+        ws.onmessage = async (event) => {
+          const data = JSON.parse(event.data)
+          if (data.type === 'ping') return
+
+          setStatus(prev => ({
+            ...prev,
+            ...data,
+            topic: prev?.topic || data.topic,
+          }))
+
+          if (data.status === 'completed') {
+            toast.success('Research complete!')
+            const resultsRes = await api.get(`/api/research/results/${id}`)
+            setResults(resultsRes.data)
+            ws.close()
+          }
+          if (data.status === 'failed') {
+            toast.error(data.message || 'Research failed')
+            ws.close()
+          }
         }
-      } catch (err) {
-        console.error(err)
+
+        ws.onerror = () => {
+          wsConnected = false
+          startPolling()
+        }
+
+        ws.onclose = () => {
+          wsConnected = false
+        }
+      } catch {
+        startPolling()
       }
-    }, 3000)
+    }
 
-    return () => clearInterval(poll)
+    // Fallback polling
+    const startPolling = () => {
+      if (poll) return
+      poll = setInterval(async () => {
+        try {
+          const res = await api.get(`/api/research/status/${id}`)
+          setStatus(res.data)
+
+          if (res.data.status === 'completed') {
+            clearInterval(poll)
+            poll = null
+            const resultsRes = await api.get(`/api/research/results/${id}`)
+            setResults(resultsRes.data)
+          }
+          if (res.data.status === 'failed') {
+            clearInterval(poll)
+            poll = null
+          }
+        } catch (err) {
+          console.error(err)
+        }
+      }, 3000)
+    }
+
+    // Initial status fetch then try WS
+    api.get(`/api/research/status/${id}`).then(res => {
+      setStatus(res.data)
+      if (res.data.status === 'completed') {
+        api.get(`/api/research/results/${id}`).then(r => setResults(r.data))
+      } else if (res.data.status !== 'failed') {
+        connectWS()
+        // Start polling as backup in case WS doesn't connect within 3s
+        setTimeout(() => {
+          if (!wsConnected) startPolling()
+        }, 3000)
+      }
+    }).catch(() => startPolling())
+
+    return () => {
+      if (poll) clearInterval(poll)
+      if (wsRef.current) wsRef.current.close()
+    }
   }, [id])
 
   if (!status) return (

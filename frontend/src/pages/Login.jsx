@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import api from '../utils/api'
+import { toast } from '../utils/toast'
 
 // Floating particles background
 function FloatingParticles() {
@@ -107,9 +108,12 @@ export default function Login() {
       const res = await api.post('/api/auth/login', form)
       localStorage.setItem('token', res.data.token)
       localStorage.setItem('user', JSON.stringify(res.data.user))
+      toast.success('Welcome back!')
       navigate('/app')
     } catch (err) {
-      setError(err.response?.data?.detail || 'Login failed')
+      const msg = err.response?.data?.detail || 'Login failed'
+      setError(msg)
+      toast.error(msg)
     } finally {
       setLoading(false)
     }

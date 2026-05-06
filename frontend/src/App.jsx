@@ -11,10 +11,12 @@ import KnowledgeGraph from './pages/KnowledgeGraph'
 import PaperSearch from './pages/PaperSearch'
 import Writing from './pages/Writing'
 import PDFUpload from './pages/PDFUpload'
+import ToastContainer from './components/Toast'
 
 function App() {
   return (
     <BrowserRouter>
+      <ToastContainer />
       <Routes>
         {/* Public */}
         <Route path="/" element={<Landing />} />

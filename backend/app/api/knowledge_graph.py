@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import List, Optional
 from app.services.knowledge_graph import get_kg_service
+from app.services.cache import get_stats_cache, set_stats_cache
 
 router = APIRouter()
 
@@ -64,8 +65,13 @@ async def get_collaboration_network():
 @router.get("/stats")
 async def get_graph_stats():
     """Get graph statistics."""
+    cached = get_stats_cache()
+    if cached is not None:
+        return cached
     kg = get_kg_service()
-    return kg.get_stats()
+    stats = kg.get_stats()
+    set_stats_cache(stats)
+    return stats
 
 
 @router.post("/papers")

@@ -17,3 +17,5 @@ PyMuPDF
 pdfplumber
 regex
 python-docx
+cachetools
+websockets

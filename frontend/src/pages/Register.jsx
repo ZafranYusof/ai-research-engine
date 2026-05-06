@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import api from '../utils/api'
+import { toast } from '../utils/toast'
 
 // Animated feature list
 function FeatureList() {
@@ -62,9 +63,12 @@ export default function Register() {
       })
       localStorage.setItem('token', res.data.token)
       localStorage.setItem('user', JSON.stringify(res.data.user))
+      toast.success('Account created!')
       navigate('/app')
     } catch (err) {
-      setError(err.response?.data?.detail || 'Registration failed')
+      const msg = err.response?.data?.detail || 'Registration failed'
+      setError(msg)
+      toast.error(msg)
     } finally {
       setLoading(false)
     }

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../utils/api'
 import { motion } from 'framer-motion'
+import { toast } from '../utils/toast'
 
 export default function NewResearch() {
   const navigate = useNavigate()
@@ -27,8 +28,10 @@ export default function NewResearch() {
         focus_areas: form.focusAreas.split(',').map(s => s.trim()).filter(Boolean),
       })
 
+      toast.success('Pipeline started')
       navigate(`/research/${response.data.project_id}`)
     } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to start research')
       console.error('Failed to start research:', error)
     } finally {
       setLoading(false)

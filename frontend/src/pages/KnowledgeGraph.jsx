@@ -3,6 +3,7 @@ import ForceGraph2D from 'react-force-graph-2d'
 import api from '../utils/api'
 import { motion } from 'framer-motion'
 import { RefreshCw, X, Maximize2 } from 'lucide-react'
+import { SkeletonText } from '../components/Skeleton'
 
 export default function KnowledgeGraph() {
   const graphRef = useRef()
@@ -68,8 +69,22 @@ export default function KnowledgeGraph() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-96">
-        <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }} className="w-6 h-6 border-2 border-[#e5e5e5] border-t-[#2563eb] rounded-full" />
+      <div className="space-y-6">
+        <div>
+          <SkeletonText width="200px" height="24px" />
+          <div className="mt-2">
+            <SkeletonText width="320px" height="12px" />
+          </div>
+        </div>
+        <div className="relative overflow-hidden bg-white border border-[#eee] rounded-2xl h-96">
+          <motion.div
+            className="absolute inset-0"
+            style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)' }}
+            animate={{ x: ['-100%', '100%'] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
+          />
+          <div className="absolute inset-0 bg-[#e5e5e5]/30" />
+        </div>
       </div>
     )
   }

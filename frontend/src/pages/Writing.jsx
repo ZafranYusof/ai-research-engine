@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import api from '../utils/api'
 import ReactMarkdown from 'react-markdown'
 import { motion } from 'framer-motion'
+import { toast } from '../utils/toast'
 
 const SECTION_TYPES = [
   { value: 'introduction', label: 'Introduction' },
@@ -107,7 +108,9 @@ export default function Writing() {
         a.click()
         URL.revokeObjectURL(url)
       }
+      toast.success('Downloaded!')
     } catch (err) {
+      toast.error('Export failed')
       console.error(err)
     }
   }

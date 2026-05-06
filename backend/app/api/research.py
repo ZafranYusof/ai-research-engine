@@ -1,10 +1,14 @@
-from fastapi import APIRouter, BackgroundTasks
+from fastapi import APIRouter, BackgroundTasks, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional, List, Dict, Set
 from app.services.pipeline import ResearchPipeline
 from app.db.mongodb import mongodb
 import asyncio
 import uuid
+import json
+
+# WebSocket connections per project
+_ws_connections: Dict[str, Set[WebSocket]] = {}
 
 router = APIRouter()
 
@@ -15,6 +19,60 @@ class ResearchRequest(BaseModel):
     year_from: Optional[int] = 2019
     year_to: Optional[int] = 2026
     focus_areas: List[str] = []
+
+@router.websocket("/ws/{project_id}")
+async def websocket_progress(websocket: WebSocket, project_id: str):
+    """WebSocket endpoint for real-time pipeline progress."""
+    await websocket.accept()
+
+    if project_id not in _ws_connections:
+        _ws_connections[project_id] = set()
+    _ws_connections[project_id].add(websocket)
+
+    try:
+        # Send current status immediately
+        job = await mongodb.projects.find_one({"id": project_id}, {"_id": 0})
+        if job:
+            await websocket.send_json({
+                "step": job.get("current_step", "initializing"),
+                "progress": job.get("progress", 0),
+                "message": job.get("message", ""),
+                "status": job.get("status", "started"),
+            })
+
+        # Keep connection alive until client disconnects or pipeline completes
+        while True:
+            try:
+                await asyncio.wait_for(websocket.receive_text(), timeout=60)
+            except asyncio.TimeoutError:
+                # Send ping to keep alive
+                try:
+                    await websocket.send_json({"type": "ping"})
+                except Exception:
+                    break
+    except WebSocketDisconnect:
+        pass
+    finally:
+        _ws_connections.get(project_id, set()).discard(websocket)
+        if project_id in _ws_connections and not _ws_connections[project_id]:
+            del _ws_connections[project_id]
+
+
+async def _broadcast_progress(project_id: str, step: str, progress: float, message: str, status: str = "running"):
+    """Broadcast progress to all connected WebSocket clients."""
+    connections = _ws_connections.get(project_id, set()).copy()
+    payload = {
+        "step": step,
+        "progress": progress,
+        "message": message,
+        "status": status,
+    }
+    for ws in connections:
+        try:
+            await ws.send_json(payload)
+        except Exception:
+            _ws_connections.get(project_id, set()).discard(ws)
+
 
 @router.post("/start")
 async def start_research(request: ResearchRequest, background_tasks: BackgroundTasks):
@@ -82,7 +140,7 @@ async def run_research_pipeline(project_id: str, request: ResearchRequest):
     """Execute the full research pipeline."""
 
     def on_progress(step: str, progress: float, message: str):
-        """Sync callback that schedules async MongoDB update."""
+        """Sync callback that schedules async MongoDB update + WS broadcast."""
         try:
             loop = asyncio.get_event_loop()
             loop.create_task(
@@ -94,6 +152,10 @@ async def run_research_pipeline(project_id: str, request: ResearchRequest):
                         "message": message,
                     }}
                 )
+            )
+            # Broadcast to WebSocket clients
+            loop.create_task(
+                _broadcast_progress(project_id, step, max(0, progress), message, "running")
             )
         except Exception:
             pass  # Don't let progress updates break the pipeline
@@ -116,6 +178,7 @@ async def run_research_pipeline(project_id: str, request: ResearchRequest):
                 "results": results,
             }}
         )
+        await _broadcast_progress(project_id, "completed", 1.0, "Research complete!", "completed")
     else:
         await mongodb.projects.update_one(
             {"id": project_id},
@@ -124,3 +187,4 @@ async def run_research_pipeline(project_id: str, request: ResearchRequest):
                 "message": results.get("error", "Unknown error"),
             }}
         )
+        await _broadcast_progress(project_id, "failed", 0, results.get("error", "Unknown error"), "failed")

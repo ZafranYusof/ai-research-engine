@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import api from '../utils/api'
 import { Plus, Clock, CheckCircle, AlertCircle, BookOpen, GitBranch, TrendingUp, Zap, Search, FileText, Upload } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { SkeletonStatCard, SkeletonProjectRow } from '../components/Skeleton'
 
 // Animated stat card
 function StatCard({ icon: Icon, label, value, color, delay }) {
@@ -182,13 +183,10 @@ export default function Dashboard() {
         </div>
 
         {loading ? (
-          <div className="text-center py-20 text-[#999]">
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-              className="w-6 h-6 border-2 border-[#e5e5e5] border-t-[#2563eb] rounded-full mx-auto mb-3"
-            />
-            <p className="text-sm">Loading...</p>
+          <div className="space-y-2">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <SkeletonProjectRow key={i} />
+            ))}
           </div>
         ) : projects.length === 0 ? (
           <motion.div
