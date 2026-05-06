@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, UserPlus, Trash2, Users } from 'lucide-react'
 import api from '../utils/api'
-import toast from '../utils/toast'
+import { toast } from '../utils/toast'
 
 export default function ShareModal({ isOpen, onClose, projectId }) {
   const [email, setEmail] = useState('')
