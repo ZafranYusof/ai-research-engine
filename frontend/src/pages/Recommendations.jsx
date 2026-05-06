@@ -192,15 +192,21 @@ export default function Recommendations() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await api.get('/api/research/projects')
+        const res = await api.get('/api/research/list')
         const completed = (res.data.projects || []).filter(p => p.status === 'completed')
         setProjects(completed)
         if (completed.length > 0) {
           setSelectedProject(completed[0].id)
           setTrendingTopic(completed[0].topic || '')
+        } else {
+          // No completed projects, switch to trending tab
+          setActiveTab('trending')
+          setTrendingTopic('large language models')
         }
       } catch (err) {
         console.error('Failed to load projects:', err)
+        setActiveTab('trending')
+        setTrendingTopic('large language models')
       }
     }
     fetchProjects()
