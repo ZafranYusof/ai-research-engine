@@ -28,6 +28,7 @@ class Settings(BaseSettings):
 
     # External APIs
     SEMANTIC_SCHOLAR_API_KEY: str = ""
+    SERPAPI_KEY: str = ""  # Optional: for reliable Google Scholar search
 
     # Auth
     JWT_SECRET: str = "change-me-in-production"

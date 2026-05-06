@@ -2,6 +2,7 @@ from typing import Any, Dict, List
 from app.agents.base import BaseAgent
 from app.services.semantic_scholar import SemanticScholarService
 from app.services.arxiv_service import ArxivService
+from app.services.google_scholar import GoogleScholarService
 import json
 
 
@@ -12,6 +13,7 @@ class RetrieverAgent(BaseAgent):
         super().__init__(name="Retriever")
         self.scholar = SemanticScholarService()
         self.arxiv = ArxivService()
+        self.google_scholar = GoogleScholarService()
 
     async def execute(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -50,6 +52,17 @@ class RetrieverAgent(BaseAgent):
                     max_results=max_papers // len(queries),
                 )
                 all_papers.extend(arxiv_results)
+            except Exception:
+                pass
+
+            try:
+                gs_results = await self.google_scholar.search(
+                    query=query,
+                    max_results=max_papers // (len(queries) * 2),
+                    year_from=year_range[0] if year_range else None,
+                    year_to=year_range[1] if year_range else None,
+                )
+                all_papers.extend(gs_results)
             except Exception:
                 pass
 
