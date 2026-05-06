@@ -1,9 +1,8 @@
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from datetime import datetime, timedelta
 from jose import jwt
 from app.core.config import settings
-from app.core.rate_limit import limiter
 from app.db.mongodb import mongodb
 from app.services.email import send_verification_email, send_reset_email
 import hashlib
@@ -55,7 +54,7 @@ class ResendVerificationRequest(BaseModel):
 
 
 @router.post("/register")
-async def register(request: RegisterRequest, req: Request = None):
+async def register(request: RegisterRequest):
     try:
         # Check if user already exists
         existing = await mongodb.users.find_one({"email": request.email})
@@ -89,8 +88,7 @@ async def register(request: RegisterRequest, req: Request = None):
 
 
 @router.post("/login")
-@limiter.limit("10/minute")
-async def login(request: LoginRequest, req: Request):
+async def login(request: LoginRequest):
     try:
         user = await mongodb.users.find_one({"email": request.email})
         if not user or not verify_password(request.password, user["password_hash"]):
@@ -132,8 +130,7 @@ async def verify_email(request: VerifyRequest):
 
 
 @router.post("/resend-verification")
-@limiter.limit("3/minute")
-async def resend_verification(request: ResendVerificationRequest, req: Request):
+async def resend_verification(request: ResendVerificationRequest):
     user = await mongodb.users.find_one({"email": request.email})
     if not user:
         # Don't reveal if email exists
@@ -160,8 +157,7 @@ async def resend_verification(request: ResendVerificationRequest, req: Request):
 
 
 @router.post("/forgot-password")
-@limiter.limit("3/minute")
-async def forgot_password(request: ForgotPasswordRequest, req: Request):
+async def forgot_password(request: ForgotPasswordRequest):
     user = await mongodb.users.find_one({"email": request.email})
 
     if user:
