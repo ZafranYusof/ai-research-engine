@@ -209,16 +209,40 @@ Example: [{{"index": 1, "score": 8, "reason": "Directly addresses gap in X metho
         from datetime import datetime
 
         current_year = datetime.now().year
+        all_papers = []
 
-        # Search Semantic Scholar for recent high-citation papers
-        papers = await self.s2.search(
-            query=topic,
-            limit=50,
-            year_range=(current_year - 2, current_year),
-        )
+        # Try Semantic Scholar first
+        try:
+            s2_papers = await self.s2.search(
+                query=topic,
+                limit=30,
+                year_range=(current_year - 2, current_year),
+            )
+            all_papers.extend(s2_papers)
+        except Exception:
+            pass
+
+        # Always also search arXiv as backup/supplement
+        try:
+            arxiv_papers = await self.arxiv.search(
+                query=topic,
+                max_results=20,
+            )
+            all_papers.extend(arxiv_papers)
+        except Exception:
+            pass
+
+        # Deduplicate by title
+        seen = set()
+        unique = []
+        for p in all_papers:
+            key = p.get("title", "").lower().strip()[:80]
+            if key and key not in seen:
+                seen.add(key)
+                unique.append(p)
 
         # Sort by citation count
-        papers.sort(key=lambda x: x.get("citation_count", 0), reverse=True)
+        unique.sort(key=lambda x: x.get("citation_count", 0), reverse=True)
 
         # Return top 10
-        return papers[:10]
+        return unique[:10]
