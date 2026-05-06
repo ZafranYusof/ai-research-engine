@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import ForceGraph2D from 'react-force-graph-2d'
 import axios from 'axios'
+import { motion } from 'framer-motion'
+import { RefreshCw, X, Maximize2 } from 'lucide-react'
 
 export default function KnowledgeGraph() {
   const graphRef = useRef()
@@ -8,7 +10,8 @@ export default function KnowledgeGraph() {
   const [selectedNode, setSelectedNode] = useState(null)
   const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState('all') // all, papers, themes, authors
+  const [filter, setFilter] = useState('all')
+  const [fullscreen, setFullscreen] = useState(false)
 
   useEffect(() => {
     loadGraph()
@@ -29,28 +32,21 @@ export default function KnowledgeGraph() {
 
   const getNodeColor = (node) => {
     const colors = {
-      paper: '#10b981',
-      theme: '#f59e0b',
-      author: '#3b82f6',
-      unknown: '#6b7280',
+      paper: '#2563eb',
+      theme: '#d97706',
+      author: '#7c3aed',
+      unknown: '#999',
     }
     return colors[node.type] || colors.unknown
   }
 
   const getNodeSize = (node) => {
-    if (node.type === 'theme') return 12
+    if (node.type === 'theme') return 14
     if (node.type === 'paper') return 6 + Math.min((node.citation_count || 0) / 10, 10)
     return 4
   }
 
-  const getLinkColor = (link) => {
-    const colors = {
-      cites: '#ef4444',
-      authored: '#3b82f6',
-      relates_to: '#f59e0b',
-    }
-    return colors[link.relation] || '#374151'
-  }
+  const getLinkColor = () => '#e5e5e5'
 
   const filteredData = useCallback(() => {
     if (filter === 'all') return graphData
@@ -73,137 +69,195 @@ export default function KnowledgeGraph() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-gray-400">Loading knowledge graph...</div>
+        <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }} className="w-6 h-6 border-2 border-[#e5e5e5] border-t-[#2563eb] rounded-full" />
       </div>
     )
   }
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
-        <div>
-          <h1 className="text-3xl font-bold">Knowledge Graph</h1>
-          <p className="text-gray-400 mt-1">Visual map of paper relationships and citation networks</p>
-        </div>
-        <button
-          onClick={loadGraph}
-          className="bg-gray-800 hover:bg-gray-700 text-gray-300 px-4 py-2 rounded-lg text-sm"
-        >
-          🔄 Refresh
-        </button>
-      </div>
-
-      {/* Stats bar */}
-      {stats && (
-        <div className="flex gap-4 mb-4 text-sm">
-          <span className="bg-gray-900 px-3 py-1 rounded-lg">
-            📊 {stats.total_nodes} nodes
-          </span>
-          <span className="bg-gray-900 px-3 py-1 rounded-lg">
-            🔗 {stats.total_edges} edges
-          </span>
-          {stats.node_types && Object.entries(stats.node_types).map(([type, count]) => (
-            <span key={type} className="bg-gray-900 px-3 py-1 rounded-lg">
-              {type}: {count}
-            </span>
-          ))}
-        </div>
-      )}
-
-      {/* Filter buttons */}
-      <div className="flex gap-2 mb-4">
-        {['all', 'papers', 'themes', 'authors'].map((f) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`px-3 py-1 rounded-lg text-sm capitalize ${
-              filter === f
-                ? 'bg-emerald-500 text-white'
-                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-            }`}
-          >
-            {f}
-          </button>
-        ))}
-      </div>
-
-      {/* Graph */}
-      <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden" style={{ height: '550px' }}>
-        {graphData.nodes.length > 0 ? (
-          <ForceGraph2D
-            ref={graphRef}
-            graphData={filteredData()}
-            nodeLabel={(node) => `${node.label} (${node.type})`}
-            nodeColor={getNodeColor}
-            nodeRelSize={1}
-            nodeVal={getNodeSize}
-            linkColor={getLinkColor}
-            linkDirectionalArrowLength={4}
-            linkDirectionalArrowRelPos={0.8}
-            onNodeClick={(node) => setSelectedNode(node)}
-            backgroundColor="#111827"
-            linkWidth={1.5}
-            cooldownTicks={100}
-          />
-        ) : (
-          <div className="flex items-center justify-center h-full text-gray-500">
-            <div className="text-center">
-              <p className="text-lg mb-2">No data in knowledge graph yet</p>
-              <p className="text-sm">Run a research pipeline to populate the graph</p>
-            </div>
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+        <div className="flex justify-between items-start mb-6">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Knowledge Graph</h1>
+            <p className="text-[#888] text-sm mt-1">Visual map of paper relationships and citation networks</p>
           </div>
-        )}
-      </div>
-
-      {/* Selected node detail */}
-      {selectedNode && (
-        <div className="mt-4 bg-gray-900 border border-gray-800 rounded-lg p-4">
-          <div className="flex justify-between items-start">
-            <div>
-              <span className={`text-xs px-2 py-0.5 rounded-full ${
-                selectedNode.type === 'paper' ? 'bg-emerald-500/20 text-emerald-400' :
-                selectedNode.type === 'theme' ? 'bg-yellow-500/20 text-yellow-400' :
-                'bg-blue-500/20 text-blue-400'
-              }`}>
-                {selectedNode.type}
-              </span>
-              <h3 className="font-semibold text-lg mt-2">{selectedNode.label}</h3>
-            </div>
+          <div className="flex gap-2">
             <button
-              onClick={() => setSelectedNode(null)}
-              className="text-gray-500 hover:text-gray-300"
+              onClick={() => setFullscreen(!fullscreen)}
+              className="flex items-center gap-1.5 bg-white border border-[#eee] text-[#555] px-3 py-2 rounded-xl text-xs font-medium hover:border-[#ddd] transition-all"
             >
-              ✕
+              <Maximize2 size={14} />
+            </button>
+            <button
+              onClick={loadGraph}
+              className="flex items-center gap-1.5 bg-white border border-[#eee] text-[#555] px-3 py-2 rounded-xl text-xs font-medium hover:border-[#ddd] transition-all"
+            >
+              <RefreshCw size={14} />
+              Refresh
             </button>
           </div>
-          {selectedNode.year && <p className="text-sm text-gray-400 mt-1">Year: {selectedNode.year}</p>}
-          {selectedNode.citation_count > 0 && (
-            <p className="text-sm text-gray-400">Citations: {selectedNode.citation_count}</p>
+        </div>
+
+        {/* Stats bar */}
+        {stats && (
+          <div className="flex gap-3 mb-4 flex-wrap">
+            <span className="text-[11px] bg-white border border-[#eee] px-3 py-1.5 rounded-full text-[#555] font-medium">
+              {stats.total_nodes} nodes
+            </span>
+            <span className="text-[11px] bg-white border border-[#eee] px-3 py-1.5 rounded-full text-[#555] font-medium">
+              {stats.total_edges} edges
+            </span>
+            {stats.node_types && Object.entries(stats.node_types).map(([type, count]) => (
+              <span key={type} className="text-[11px] bg-white border border-[#eee] px-3 py-1.5 rounded-full text-[#888]">
+                {type}: {count}
+              </span>
+            ))}
+            {stats.density > 0 && (
+              <span className="text-[11px] bg-white border border-[#eee] px-3 py-1.5 rounded-full text-[#888] font-mono">
+                density: {stats.density}
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Filter buttons */}
+        <div className="flex gap-1.5 mb-4">
+          {[
+            { id: 'all', label: 'All' },
+            { id: 'papers', label: 'Papers & Themes' },
+            { id: 'themes', label: 'Themes Only' },
+            { id: 'authors', label: 'Authors' },
+          ].map((f) => (
+            <button
+              key={f.id}
+              onClick={() => setFilter(f.id)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                filter === f.id
+                  ? 'bg-[#1a1a1a] text-white'
+                  : 'bg-white border border-[#eee] text-[#888] hover:text-[#555] hover:border-[#ddd]'
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Graph */}
+        <div
+          className={`bg-white border border-[#eee] rounded-2xl overflow-hidden transition-all ${
+            fullscreen ? 'fixed inset-4 z-50 shadow-2xl' : ''
+          }`}
+          style={{ height: fullscreen ? 'auto' : '550px' }}
+        >
+          {fullscreen && (
+            <button
+              onClick={() => setFullscreen(false)}
+              className="absolute top-4 right-4 z-10 bg-white border border-[#eee] rounded-xl p-2 shadow-sm hover:shadow-md transition-all"
+            >
+              <X size={16} className="text-[#555]" />
+            </button>
           )}
-          {selectedNode.description && (
-            <p className="text-sm text-gray-300 mt-2">{selectedNode.description}</p>
+
+          {graphData.nodes.length > 0 ? (
+            <ForceGraph2D
+              ref={graphRef}
+              graphData={filteredData()}
+              nodeLabel={(node) => `${node.label} (${node.type})`}
+              nodeColor={getNodeColor}
+              nodeRelSize={1}
+              nodeVal={getNodeSize}
+              linkColor={getLinkColor}
+              linkDirectionalArrowLength={3}
+              linkDirectionalArrowRelPos={0.8}
+              onNodeClick={(node) => setSelectedNode(node)}
+              backgroundColor="#ffffff"
+              linkWidth={1}
+              linkOpacity={0.4}
+              cooldownTicks={100}
+              nodeCanvasObject={(node, ctx, globalScale) => {
+                const size = getNodeSize(node)
+                const color = getNodeColor(node)
+
+                // Draw node
+                ctx.beginPath()
+                ctx.arc(node.x, node.y, size, 0, 2 * Math.PI)
+                ctx.fillStyle = color
+                ctx.fill()
+
+                // Draw label for themes and high-citation papers
+                if (node.type === 'theme' || (node.type === 'paper' && (node.citation_count || 0) > 50)) {
+                  const label = node.label?.slice(0, 25) || ''
+                  const fontSize = node.type === 'theme' ? 11 / globalScale : 9 / globalScale
+                  ctx.font = `${fontSize}px Inter, sans-serif`
+                  ctx.textAlign = 'center'
+                  ctx.textBaseline = 'top'
+                  ctx.fillStyle = '#555'
+                  ctx.fillText(label, node.x, node.y + size + 2)
+                }
+              }}
+            />
+          ) : (
+            <div className="flex items-center justify-center h-full">
+              <div className="text-center">
+                <div className="w-14 h-14 bg-[#2563eb]/5 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl">🕸️</span>
+                </div>
+                <p className="text-sm font-medium text-[#555] mb-1">No data in knowledge graph yet</p>
+                <p className="text-xs text-[#aaa]">Run a research pipeline to populate the graph</p>
+              </div>
+            </div>
           )}
         </div>
-      )}
 
-      {/* Legend */}
-      <div className="flex gap-6 mt-4 text-sm text-gray-400">
-        <span className="flex items-center gap-2">
-          <span className="w-3 h-3 rounded-full bg-emerald-500" /> Papers
-        </span>
-        <span className="flex items-center gap-2">
-          <span className="w-3 h-3 rounded-full bg-yellow-500" /> Themes
-        </span>
-        <span className="flex items-center gap-2">
-          <span className="w-3 h-3 rounded-full bg-blue-500" /> Authors
-        </span>
-        <span className="flex items-center gap-2">
-          <span className="w-6 h-0.5 bg-red-500" /> Cites
-        </span>
-        <span className="flex items-center gap-2">
-          <span className="w-6 h-0.5 bg-yellow-500" /> Relates to
-        </span>
-      </div>
+        {/* Selected node detail */}
+        {selectedNode && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-4 bg-white border border-[#eee] rounded-xl p-5"
+          >
+            <div className="flex justify-between items-start">
+              <div>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
+                  selectedNode.type === 'paper' ? 'bg-[#2563eb]/10 text-[#2563eb]' :
+                  selectedNode.type === 'theme' ? 'bg-[#d97706]/10 text-[#d97706]' :
+                  'bg-[#7c3aed]/10 text-[#7c3aed]'
+                }`}>
+                  {selectedNode.type}
+                </span>
+                <h3 className="font-medium text-sm mt-2">{selectedNode.label}</h3>
+              </div>
+              <button
+                onClick={() => setSelectedNode(null)}
+                className="text-[#ccc] hover:text-[#888] transition-colors"
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <div className="flex gap-4 mt-2 text-xs text-[#888]">
+              {selectedNode.year && <span>📅 {selectedNode.year}</span>}
+              {selectedNode.citation_count > 0 && <span>📊 {selectedNode.citation_count} citations</span>}
+            </div>
+            {selectedNode.description && (
+              <p className="text-xs text-[#666] mt-2 leading-relaxed">{selectedNode.description}</p>
+            )}
+          </motion.div>
+        )}
+
+        {/* Legend */}
+        <div className="flex gap-5 mt-4 text-xs text-[#888]">
+          <span className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#2563eb]" /> Papers
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#d97706]" /> Themes
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#7c3aed]" /> Authors
+          </span>
+        </div>
+      </motion.div>
     </div>
   )
 }

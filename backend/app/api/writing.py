@@ -1,7 +1,9 @@
 from fastapi import APIRouter
+from fastapi.responses import Response
 from pydantic import BaseModel
 from typing import List, Optional
 from app.agents import WriterAgent, CriticAgent
+import io
 
 router = APIRouter()
 
@@ -26,7 +28,7 @@ class ExportRequest(BaseModel):
     sections: List[dict]  # [{section_type, content, citations}]
     title: str
     authors: List[str] = []
-    format: str = "markdown"  # markdown, latex, bibtex
+    format: str = "markdown"  # markdown, latex, bibtex, docx
 
 
 @router.post("/generate")
@@ -173,7 +175,14 @@ Provide the revised version:""",
 @router.post("/export")
 async def export_document(request: ExportRequest):
     """Export sections as formatted document."""
-    if request.format == "latex":
+    if request.format == "docx":
+        docx_bytes = _export_docx(request)
+        return Response(
+            content=docx_bytes,
+            media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            headers={"Content-Disposition": f'attachment; filename="{request.title or "research_paper"}.docx"'},
+        )
+    elif request.format == "latex":
         output = _export_latex(request)
     elif request.format == "bibtex":
         output = _export_bibtex(request)
@@ -281,3 +290,79 @@ def _export_bibtex(request: ExportRequest) -> str:
             entries.append(entry)
 
     return "\n\n".join(entries)
+
+
+def _export_docx(request: ExportRequest) -> bytes:
+    """Export as Word document (.docx)."""
+    from docx import Document
+    from docx.shared import Pt, Inches, RGBColor
+    from docx.enum.text import WD_ALIGN_PARAGRAPH
+
+    doc = Document()
+
+    # Set default font
+    style = doc.styles['Normal']
+    font = style.font
+    font.name = 'Times New Roman'
+    font.size = Pt(12)
+
+    # Title
+    title_para = doc.add_heading(request.title, level=0)
+    title_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+    # Authors
+    if request.authors:
+        authors_para = doc.add_paragraph()
+        authors_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        run = authors_para.add_run(', '.join(request.authors))
+        run.font.size = Pt(12)
+        run.font.italic = True
+
+    doc.add_paragraph()  # Spacing
+
+    # Sections
+    for section in request.sections:
+        section_title = section.get('section_type', '').replace('_', ' ').title()
+        doc.add_heading(section_title, level=1)
+
+        content = section.get('content', '')
+        # Split by paragraphs
+        paragraphs = content.split('\n\n')
+        for para_text in paragraphs:
+            para_text = para_text.strip()
+            if para_text:
+                p = doc.add_paragraph(para_text)
+                p.paragraph_format.first_line_indent = Inches(0.5)
+                p.paragraph_format.space_after = Pt(6)
+
+    # References
+    all_citations = []
+    for section in request.sections:
+        all_citations.extend(section.get('citations', []))
+
+    if all_citations:
+        doc.add_heading('References', level=1)
+        seen = set()
+        for cite in all_citations:
+            title = cite.get('title', '')
+            if title in seen:
+                continue
+            seen.add(title)
+
+            authors = cite.get('authors', [])
+            author_str = ', '.join(authors[:3])
+            if len(authors) > 3:
+                author_str += ' et al.'
+            year = cite.get('year', 'n.d.')
+
+            ref_text = f"{author_str} ({year}). {title}."
+            p = doc.add_paragraph(ref_text)
+            p.paragraph_format.left_indent = Inches(0.5)
+            p.paragraph_format.first_line_indent = Inches(-0.5)
+            p.paragraph_format.space_after = Pt(6)
+
+    # Save to bytes
+    buffer = io.BytesIO()
+    doc.save(buffer)
+    buffer.seek(0)
+    return buffer.getvalue()

@@ -77,20 +77,36 @@ export default function Writing() {
   const handleExport = async () => {
     if (sections.length === 0) return
     try {
-      const res = await axios.post('/api/writing/export', {
-        sections,
-        title: 'Research Paper',
-        authors: [],
-        format: exportFormat,
-      })
-      const blob = new Blob([res.data.content], { type: 'text/plain' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      const ext = exportFormat === 'latex' ? 'tex' : exportFormat === 'bibtex' ? 'bib' : 'md'
-      a.download = `research_paper.${ext}`
-      a.click()
-      URL.revokeObjectURL(url)
+      if (exportFormat === 'docx') {
+        const res = await axios.post('/api/writing/export', {
+          sections,
+          title: 'Research Paper',
+          authors: [],
+          format: 'docx',
+        }, { responseType: 'blob' })
+        const blob = new Blob([res.data], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = 'research_paper.docx'
+        a.click()
+        URL.revokeObjectURL(url)
+      } else {
+        const res = await axios.post('/api/writing/export', {
+          sections,
+          title: 'Research Paper',
+          authors: [],
+          format: exportFormat,
+        })
+        const blob = new Blob([res.data.content], { type: 'text/plain' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        const ext = exportFormat === 'latex' ? 'tex' : exportFormat === 'bibtex' ? 'bib' : 'md'
+        a.download = `research_paper.${ext}`
+        a.click()
+        URL.revokeObjectURL(url)
+      }
     } catch (err) {
       console.error(err)
     }
@@ -236,6 +252,7 @@ export default function Writing() {
                       className="flex-1 bg-white border border-[#e5e5e5] rounded-xl px-3 py-2 text-xs text-[#1a1a1a] focus:outline-none focus:border-[#2563eb]"
                     >
                       <option value="markdown">Markdown</option>
+                      <option value="docx">Word (.docx)</option>
                       <option value="latex">LaTeX</option>
                       <option value="bibtex">BibTeX</option>
                     </select>
