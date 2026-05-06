@@ -77,27 +77,6 @@ async def login(request: LoginRequest):
         raise HTTPException(status_code=500, detail=f"Login error: {str(e)}")
 
 
-@router.get("/debug")
-async def debug_auth():
-    """Debug endpoint to check auth dependencies."""
-    info = {}
-    try:
-        from passlib.context import CryptContext
-        ctx = CryptContext(schemes=["bcrypt"], deprecated="auto")
-        test_hash = ctx.hash("test")
-        info["passlib"] = "ok"
-        info["bcrypt_hash"] = test_hash[:20] + "..."
-    except Exception as e:
-        info["passlib"] = f"error: {str(e)}"
-    try:
-        from jose import jwt as jose_jwt
-        token = jose_jwt.encode({"test": True}, "secret", algorithm="HS256")
-        info["jose"] = "ok"
-    except Exception as e:
-        info["jose"] = f"error: {str(e)}"
-    info["hash_method"] = "passlib" if "passlib" in str(hash_password) else "fallback"
-    return info
-
 def _create_token(email: str) -> str:
     expire = datetime.utcnow() + timedelta(hours=settings.JWT_EXPIRY_HOURS)
     payload = {"sub": email, "exp": expire}
