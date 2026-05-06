@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../utils/api'
-import { Plus, Clock, CheckCircle, AlertCircle, BookOpen, GitBranch, TrendingUp, Zap, Search, FileText, Upload, BarChart3, FileCheck, Timer } from 'lucide-react'
+import { Plus, Clock, CheckCircle, AlertCircle, BookOpen, GitBranch, TrendingUp, Zap, Search, FileText, Upload, BarChart3, FileCheck, Timer, Mail } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { SkeletonStatCard, SkeletonProjectRow } from '../components/Skeleton'
 
@@ -152,6 +152,20 @@ export default function Dashboard() {
 
   return (
     <div>
+      {/* Email verification banner */}
+      {user && user.verified === false && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-6 flex items-center gap-3"
+        >
+          <Mail size={16} className="text-amber-600 flex-shrink-0" />
+          <p className="text-sm text-amber-800">
+            Please verify your email address. Check your inbox for a verification link.
+          </p>
+        </motion.div>
+      )}
+
       {/* Header with greeting */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}

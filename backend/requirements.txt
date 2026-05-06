@@ -19,3 +19,4 @@ regex
 python-docx
 cachetools
 websockets
+slowapi

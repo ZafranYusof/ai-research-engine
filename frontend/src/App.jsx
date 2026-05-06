@@ -11,6 +11,9 @@ import KnowledgeGraph from './pages/KnowledgeGraph'
 import PaperSearch from './pages/PaperSearch'
 import Writing from './pages/Writing'
 import PDFUpload from './pages/PDFUpload'
+import VerifyEmail from './pages/VerifyEmail'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 import ToastContainer from './components/Toast'
 
 function App() {
@@ -23,6 +26,9 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/docs" element={<Docs />} />
+        <Route path="/verify" element={<VerifyEmail />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* App */}
         <Route path="/app" element={<Layout />}>
