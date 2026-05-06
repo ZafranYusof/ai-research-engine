@@ -1,4 +1,4 @@
-from fastapi import APIRouter, BackgroundTasks, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, BackgroundTasks, WebSocket, WebSocketDisconnect, HTTPException
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Set
 from app.services.pipeline import ResearchPipeline
@@ -74,6 +74,10 @@ async def _broadcast_progress(project_id: str, step: str, progress: float, messa
             _ws_connections.get(project_id, set()).discard(ws)
 
 
+class ShareRequest(BaseModel):
+    email: str
+
+
 @router.post("/start")
 async def start_research(request: ResearchRequest, background_tasks: BackgroundTasks):
     """Start a new research pipeline."""
@@ -87,6 +91,8 @@ async def start_research(request: ResearchRequest, background_tasks: BackgroundT
         "current_step": "initializing",
         "message": "Starting research pipeline...",
         "results": None,
+        "owner_email": "",
+        "collaborators": [],
     }
     await mongodb.projects.insert_one(project_doc)
 
@@ -182,17 +188,73 @@ async def get_research_stats():
 
 @router.get("/list")
 async def list_research_projects():
-    """List all research projects."""
+    """List all research projects (owned + collaborated)."""
     projects = []
-    cursor = mongodb.projects.find({}, {"_id": 0, "id": 1, "topic": 1, "status": 1, "progress": 1})
+    cursor = mongodb.projects.find(
+        {},
+        {"_id": 0, "id": 1, "topic": 1, "status": 1, "progress": 1, "owner_email": 1, "collaborators": 1}
+    )
     async for doc in cursor:
         projects.append({
             "id": doc["id"],
             "topic": doc["topic"],
             "status": doc["status"],
             "progress": doc["progress"],
+            "owner_email": doc.get("owner_email", ""),
+            "collaborators": doc.get("collaborators", []),
         })
     return {"projects": projects}
+
+
+@router.post("/{project_id}/share")
+async def add_collaborator(project_id: str, request: ShareRequest):
+    """Add a collaborator to a project by email."""
+    project = await mongodb.projects.find_one({"id": project_id})
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    collaborators = project.get("collaborators", [])
+    if request.email in collaborators:
+        return {"status": "already_added", "collaborators": collaborators}
+
+    collaborators.append(request.email)
+    await mongodb.projects.update_one(
+        {"id": project_id},
+        {"$set": {"collaborators": collaborators}}
+    )
+    return {"status": "added", "collaborators": collaborators}
+
+
+@router.delete("/{project_id}/share/{email}")
+async def remove_collaborator(project_id: str, email: str):
+    """Remove a collaborator from a project."""
+    project = await mongodb.projects.find_one({"id": project_id})
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    collaborators = project.get("collaborators", [])
+    if email not in collaborators:
+        raise HTTPException(status_code=404, detail="Collaborator not found")
+
+    collaborators.remove(email)
+    await mongodb.projects.update_one(
+        {"id": project_id},
+        {"$set": {"collaborators": collaborators}}
+    )
+    return {"status": "removed", "collaborators": collaborators}
+
+
+@router.get("/{project_id}/collaborators")
+async def get_collaborators(project_id: str):
+    """List collaborators for a project."""
+    project = await mongodb.projects.find_one({"id": project_id}, {"_id": 0, "collaborators": 1, "owner_email": 1})
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    return {
+        "owner_email": project.get("owner_email", ""),
+        "collaborators": project.get("collaborators", []),
+    }
 
 async def run_research_pipeline(project_id: str, request: ResearchRequest):
     """Execute the full research pipeline."""

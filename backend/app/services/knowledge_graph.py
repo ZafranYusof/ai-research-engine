@@ -267,6 +267,138 @@ class KnowledgeGraphService:
 
         return {"collaborations": collab_list}
 
+    def get_pagerank(self, top_n: int = 20) -> List[Dict]:
+        """Compute PageRank on paper subgraph and return top N papers."""
+        paper_nodes = [n for n, d in self.graph.nodes(data=True) if d.get("type") == "paper"]
+
+        if len(paper_nodes) < 2:
+            # Return all papers with equal score if too few
+            results = []
+            for pid in paper_nodes:
+                data = self.graph.nodes[pid]
+                themes = [
+                    self.graph.nodes[t].get("name", "")
+                    for t in self.graph.successors(pid)
+                    if self.graph.nodes[t].get("type") == "theme"
+                ]
+                results.append({
+                    "id": pid,
+                    "title": data.get("title", ""),
+                    "score": 1.0,
+                    "citation_count": data.get("citation_count", 0),
+                    "year": data.get("year"),
+                    "connected_themes": themes,
+                })
+            return results
+
+        # Build subgraph of papers + citation edges
+        subgraph = self.graph.subgraph(paper_nodes).copy()
+
+        # If no edges between papers, use full graph for PageRank
+        if subgraph.number_of_edges() == 0:
+            pr = nx.pagerank(self.graph, alpha=0.85)
+        else:
+            pr = nx.pagerank(subgraph, alpha=0.85)
+
+        # Sort papers by PageRank score
+        paper_scores = [(pid, pr.get(pid, 0)) for pid in paper_nodes]
+        paper_scores.sort(key=lambda x: x[1], reverse=True)
+
+        results = []
+        for pid, score in paper_scores[:top_n]:
+            data = self.graph.nodes[pid]
+            themes = [
+                self.graph.nodes[t].get("name", "")
+                for t in self.graph.successors(pid)
+                if self.graph.nodes[t].get("type") == "theme"
+            ]
+            results.append({
+                "id": pid,
+                "title": data.get("title", ""),
+                "score": round(score, 6),
+                "citation_count": data.get("citation_count", 0),
+                "year": data.get("year"),
+                "connected_themes": themes,
+            })
+
+        return results
+
+    def get_influential_papers(self, top_n: int = 10) -> List[Dict]:
+        """Find most influential papers combining PageRank + betweenness + degree centrality."""
+        paper_nodes = [n for n, d in self.graph.nodes(data=True) if d.get("type") == "paper"]
+
+        if len(paper_nodes) < 2:
+            return [{
+                "id": pid,
+                "title": self.graph.nodes[pid].get("title", ""),
+                "combined_score": 1.0,
+                "pagerank": 1.0,
+                "betweenness": 0.0,
+                "degree": 0.0,
+                "reason": "Only paper in graph",
+            } for pid in paper_nodes]
+
+        # Compute centrality metrics on full graph (papers interact via themes/authors)
+        pr = nx.pagerank(self.graph, alpha=0.85)
+        betweenness = nx.betweenness_centrality(self.graph)
+        degree = nx.degree_centrality(self.graph)
+
+        # Normalize and combine scores for paper nodes only
+        paper_metrics = []
+        for pid in paper_nodes:
+            paper_metrics.append({
+                "id": pid,
+                "pagerank": pr.get(pid, 0),
+                "betweenness": betweenness.get(pid, 0),
+                "degree": degree.get(pid, 0),
+            })
+
+        # Normalize each metric to [0, 1]
+        if paper_metrics:
+            max_pr = max(m["pagerank"] for m in paper_metrics) or 1
+            max_bt = max(m["betweenness"] for m in paper_metrics) or 1
+            max_dg = max(m["degree"] for m in paper_metrics) or 1
+
+            for m in paper_metrics:
+                m["norm_pr"] = m["pagerank"] / max_pr
+                m["norm_bt"] = m["betweenness"] / max_bt
+                m["norm_dg"] = m["degree"] / max_dg
+                # Weighted combination: PageRank 40%, Betweenness 35%, Degree 25%
+                m["combined_score"] = round(
+                    0.4 * m["norm_pr"] + 0.35 * m["norm_bt"] + 0.25 * m["norm_dg"], 4
+                )
+
+        # Sort by combined score
+        paper_metrics.sort(key=lambda x: x["combined_score"], reverse=True)
+
+        results = []
+        for m in paper_metrics[:top_n]:
+            data = self.graph.nodes[m["id"]]
+            # Generate reason
+            reasons = []
+            if m["norm_pr"] > 0.7:
+                reasons.append("High PageRank (many papers reference it)")
+            if m["norm_bt"] > 0.7:
+                reasons.append("High betweenness (bridges different research clusters)")
+            if m["norm_dg"] > 0.7:
+                reasons.append("High connectivity (connected to many nodes)")
+            if not reasons:
+                reasons.append("Balanced influence across metrics")
+
+            results.append({
+                "id": m["id"],
+                "title": data.get("title", ""),
+                "combined_score": m["combined_score"],
+                "pagerank": round(m["pagerank"], 6),
+                "betweenness": round(m["betweenness"], 6),
+                "degree": round(m["degree"], 6),
+                "citation_count": data.get("citation_count", 0),
+                "year": data.get("year"),
+                "reason": "; ".join(reasons),
+            })
+
+        return results
+
     def get_stats(self) -> Dict:
         """Get graph statistics."""
         node_types = {}

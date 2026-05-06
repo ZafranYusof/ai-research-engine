@@ -1,11 +1,74 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from fastapi.responses import Response
 from pydantic import BaseModel
 from typing import List, Optional
 from app.agents import WriterAgent, CriticAgent
+from app.db.mongodb import mongodb
+from datetime import datetime, timezone
 import io
 
 router = APIRouter()
+
+
+# --- Draft Models ---
+class SaveDraftRequest(BaseModel):
+    project_id: str
+    section_type: str
+    content: str
+    citations: List[dict] = []
+    word_count: int = 0
+
+
+# --- Draft Endpoints ---
+@router.post("/drafts/save")
+async def save_draft(request: SaveDraftRequest):
+    """Save or update a writing draft."""
+    draft_doc = {
+        "project_id": request.project_id,
+        "section_type": request.section_type,
+        "content": request.content,
+        "citations": request.citations,
+        "word_count": request.word_count or len(request.content.split()),
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+    }
+    await mongodb.drafts.update_one(
+        {"project_id": request.project_id, "section_type": request.section_type},
+        {"$set": draft_doc},
+        upsert=True,
+    )
+    return {"status": "saved", "updated_at": draft_doc["updated_at"]}
+
+
+@router.get("/drafts/{project_id}")
+async def get_project_drafts(project_id: str):
+    """Get all drafts for a project."""
+    drafts = []
+    cursor = mongodb.drafts.find({"project_id": project_id}, {"_id": 0})
+    async for doc in cursor:
+        drafts.append(doc)
+    return {"drafts": drafts}
+
+
+@router.get("/drafts/{project_id}/{section_type}")
+async def get_draft(project_id: str, section_type: str):
+    """Get a specific draft."""
+    draft = await mongodb.drafts.find_one(
+        {"project_id": project_id, "section_type": section_type}, {"_id": 0}
+    )
+    if not draft:
+        return {"draft": None}
+    return {"draft": draft}
+
+
+@router.delete("/drafts/{project_id}/{section_type}")
+async def delete_draft(project_id: str, section_type: str):
+    """Delete a specific draft."""
+    result = await mongodb.drafts.delete_one(
+        {"project_id": project_id, "section_type": section_type}
+    )
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Draft not found")
+    return {"status": "deleted"}
 
 
 class WriteRequest(BaseModel):

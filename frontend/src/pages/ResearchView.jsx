@@ -2,12 +2,14 @@ import { useState, useEffect, useRef } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import api, { API_URL } from '../utils/api'
 import { motion } from 'framer-motion'
-import { CheckCircle, Clock, AlertCircle } from 'lucide-react'
+import { CheckCircle, Clock, AlertCircle, Share2 } from 'lucide-react'
+import ShareModal from '../components/ShareModal'
 import { toast } from '../utils/toast'
 
 export default function ResearchView() {
   const { id } = useParams()
   const [status, setStatus] = useState(null)
+  const [showShare, setShowShare] = useState(false)
   const [results, setResults] = useState(null)
   const [activeTab, setActiveTab] = useState('papers')
 
@@ -175,12 +177,23 @@ export default function ResearchView() {
             Completed &middot; {results?.papers?.length || 0} papers analyzed
           </p>
         </div>
-        <Link
-          to={`/write/${id}`}
-          className="flex items-center gap-2 bg-[#1a1a1a] text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-[#333] transition-all hover:shadow-lg hover:shadow-black/10"
-        >
-          ✍️ Write Paper
-        </Link>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowShare(true)}
+            className="flex items-center gap-2 border border-[#e5e5e5] dark:border-[#333] text-[#555] dark:text-[#aaa] px-4 py-2.5 rounded-xl text-sm font-medium hover:border-[#ccc] hover:bg-[#f8f8f8] dark:hover:bg-[#222] transition-all"
+          >
+            <Share2 size={15} />
+            Share
+          </button>
+          <Link
+            to={`/write/${id}`}
+            className="flex items-center gap-2 bg-[#1a1a1a] text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-[#333] transition-all hover:shadow-lg hover:shadow-black/10"
+          >
+            ✍️ Write Paper
+          </Link>
+        </div>
+
+        <ShareModal isOpen={showShare} onClose={() => setShowShare(false)} projectId={id} />
       </div>
 
       {/* Tabs */}

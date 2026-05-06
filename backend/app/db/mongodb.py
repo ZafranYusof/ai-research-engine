@@ -16,6 +16,9 @@ class MongoDB:
         # Create indexes
         await self.db.users.create_index("email", unique=True)
         await self.db.projects.create_index("id", unique=True)
+        await self.db.drafts.create_index(
+            [("project_id", 1), ("section_type", 1)], unique=True
+        )
         print(f"Connected to MongoDB: {settings.MONGODB_URI}")
 
     async def disconnect(self):
@@ -32,6 +35,9 @@ class MongoDB:
     def projects(self):
         return self.db["projects"]
 
+    @property
+    def drafts(self):
+        return self.db["drafts"]
 
 # Singleton instance
 mongodb = MongoDB()

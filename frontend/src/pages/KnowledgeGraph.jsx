@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import ForceGraph2D from 'react-force-graph-2d'
 import api from '../utils/api'
-import { motion } from 'framer-motion'
-import { RefreshCw, X, Maximize2 } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { RefreshCw, X, Maximize2, Crown, ToggleLeft, ToggleRight } from 'lucide-react'
 import { SkeletonText } from '../components/Skeleton'
 
 export default function KnowledgeGraph() {
@@ -13,6 +13,12 @@ export default function KnowledgeGraph() {
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('all')
   const [fullscreen, setFullscreen] = useState(false)
+
+  // PageRank state
+  const [influentialPapers, setInfluentialPapers] = useState([])
+  const [pagerankData, setPagerankData] = useState([])
+  const [showPageRank, setShowPageRank] = useState(false)
+  const [loadingPageRank, setLoadingPageRank] = useState(false)
 
   useEffect(() => {
     loadGraph()
@@ -31,7 +37,41 @@ export default function KnowledgeGraph() {
     }
   }
 
+  const loadPageRank = async () => {
+    setLoadingPageRank(true)
+    try {
+      const [prRes, infRes] = await Promise.all([
+        api.get('/api/graph/pagerank'),
+        api.get('/api/graph/influential'),
+      ])
+      setPagerankData(prRes.data.papers || [])
+      setInfluentialPapers(infRes.data.papers || [])
+    } catch (err) {
+      console.error('Failed to load PageRank:', err)
+    } finally {
+      setLoadingPageRank(false)
+    }
+  }
+
+  // Load PageRank data when section is first shown
+  useEffect(() => {
+    if (influentialPapers.length === 0 && !loadingPageRank && graphData.nodes.length > 0) {
+      loadPageRank()
+    }
+  }, [graphData.nodes.length])
+
   const getNodeColor = (node) => {
+    // Highlight influential papers when PageRank toggle is on
+    if (showPageRank && node.type === 'paper') {
+      const prEntry = pagerankData.find(p => p.id === node.id)
+      if (prEntry) {
+        const rank = pagerankData.indexOf(prEntry)
+        if (rank < 3) return '#f59e0b' // Gold for top 3
+        if (rank < 10) return '#8b5cf6' // Purple for top 10
+        return '#3b82f6' // Blue for rest of top 20
+      }
+    }
+
     const colors = {
       paper: '#2563eb',
       theme: '#d97706',
@@ -42,6 +82,16 @@ export default function KnowledgeGraph() {
   }
 
   const getNodeSize = (node) => {
+    // Resize by PageRank when toggle is on
+    if (showPageRank && node.type === 'paper') {
+      const prEntry = pagerankData.find(p => p.id === node.id)
+      if (prEntry) {
+        const maxScore = pagerankData[0]?.score || 1
+        const normalized = prEntry.score / maxScore
+        return 6 + normalized * 20 // Scale between 6 and 26
+      }
+    }
+
     if (node.type === 'theme') return 14
     if (node.type === 'paper') return 6 + Math.min((node.citation_count || 0) / 10, 10)
     return 4
@@ -76,7 +126,7 @@ export default function KnowledgeGraph() {
             <SkeletonText width="320px" height="12px" />
           </div>
         </div>
-        <div className="relative overflow-hidden bg-white border border-[#eee] rounded-2xl h-96">
+        <div className="relative overflow-hidden bg-white border border-[#eee] rounded-2xl h-96 dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
           <motion.div
             className="absolute inset-0"
             style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)' }}
@@ -98,15 +148,27 @@ export default function KnowledgeGraph() {
             <p className="text-[#888] text-sm mt-1">Visual map of paper relationships and citation networks</p>
           </div>
           <div className="flex gap-2">
+            {/* PageRank Toggle */}
+            <button
+              onClick={() => setShowPageRank(!showPageRank)}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all ${
+                showPageRank
+                  ? 'bg-[#f59e0b]/10 border border-[#f59e0b]/30 text-[#d97706]'
+                  : 'bg-white border border-[#eee] text-[#555] hover:border-[#ddd] dark:bg-[#1a1a1a] dark:border-[#2a2a2a]'
+              }`}
+            >
+              {showPageRank ? <ToggleRight size={14} /> : <ToggleLeft size={14} />}
+              PageRank
+            </button>
             <button
               onClick={() => setFullscreen(!fullscreen)}
-              className="flex items-center gap-1.5 bg-white border border-[#eee] text-[#555] px-3 py-2 rounded-xl text-xs font-medium hover:border-[#ddd] transition-all"
+              className="flex items-center gap-1.5 bg-white border border-[#eee] text-[#555] px-3 py-2 rounded-xl text-xs font-medium hover:border-[#ddd] transition-all dark:bg-[#1a1a1a] dark:border-[#2a2a2a]"
             >
               <Maximize2 size={14} />
             </button>
             <button
               onClick={loadGraph}
-              className="flex items-center gap-1.5 bg-white border border-[#eee] text-[#555] px-3 py-2 rounded-xl text-xs font-medium hover:border-[#ddd] transition-all"
+              className="flex items-center gap-1.5 bg-white border border-[#eee] text-[#555] px-3 py-2 rounded-xl text-xs font-medium hover:border-[#ddd] transition-all dark:bg-[#1a1a1a] dark:border-[#2a2a2a]"
             >
               <RefreshCw size={14} />
               Refresh
@@ -117,19 +179,19 @@ export default function KnowledgeGraph() {
         {/* Stats bar */}
         {stats && (
           <div className="flex gap-3 mb-4 flex-wrap">
-            <span className="text-[11px] bg-white border border-[#eee] px-3 py-1.5 rounded-full text-[#555] font-medium">
+            <span className="text-[11px] bg-white border border-[#eee] px-3 py-1.5 rounded-full text-[#555] font-medium dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
               {stats.total_nodes} nodes
             </span>
-            <span className="text-[11px] bg-white border border-[#eee] px-3 py-1.5 rounded-full text-[#555] font-medium">
+            <span className="text-[11px] bg-white border border-[#eee] px-3 py-1.5 rounded-full text-[#555] font-medium dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
               {stats.total_edges} edges
             </span>
             {stats.node_types && Object.entries(stats.node_types).map(([type, count]) => (
-              <span key={type} className="text-[11px] bg-white border border-[#eee] px-3 py-1.5 rounded-full text-[#888]">
+              <span key={type} className="text-[11px] bg-white border border-[#eee] px-3 py-1.5 rounded-full text-[#888] dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
                 {type}: {count}
               </span>
             ))}
             {stats.density > 0 && (
-              <span className="text-[11px] bg-white border border-[#eee] px-3 py-1.5 rounded-full text-[#888] font-mono">
+              <span className="text-[11px] bg-white border border-[#eee] px-3 py-1.5 rounded-full text-[#888] font-mono dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
                 density: {stats.density}
               </span>
             )}
@@ -149,8 +211,8 @@ export default function KnowledgeGraph() {
               onClick={() => setFilter(f.id)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 filter === f.id
-                  ? 'bg-[#1a1a1a] text-white'
-                  : 'bg-white border border-[#eee] text-[#888] hover:text-[#555] hover:border-[#ddd]'
+                  ? 'bg-[#1a1a1a] text-white dark:bg-white dark:text-[#1a1a1a]'
+                  : 'bg-white border border-[#eee] text-[#888] hover:text-[#555] hover:border-[#ddd] dark:bg-[#1a1a1a] dark:border-[#2a2a2a]'
               }`}
             >
               {f.label}
@@ -160,7 +222,7 @@ export default function KnowledgeGraph() {
 
         {/* Graph */}
         <div
-          className={`bg-white border border-[#eee] rounded-2xl overflow-hidden transition-all ${
+          className={`bg-white border border-[#eee] rounded-2xl overflow-hidden transition-all dark:bg-[#1a1a1a] dark:border-[#2a2a2a] ${
             fullscreen ? 'fixed inset-4 z-50 shadow-2xl' : ''
           }`}
           style={{ height: fullscreen ? 'auto' : '550px' }}
@@ -168,7 +230,7 @@ export default function KnowledgeGraph() {
           {fullscreen && (
             <button
               onClick={() => setFullscreen(false)}
-              className="absolute top-4 right-4 z-10 bg-white border border-[#eee] rounded-xl p-2 shadow-sm hover:shadow-md transition-all"
+              className="absolute top-4 right-4 z-10 bg-white border border-[#eee] rounded-xl p-2 shadow-sm hover:shadow-md transition-all dark:bg-[#1a1a1a] dark:border-[#2a2a2a]"
             >
               <X size={16} className="text-[#555]" />
             </button>
@@ -193,6 +255,17 @@ export default function KnowledgeGraph() {
               nodeCanvasObject={(node, ctx, globalScale) => {
                 const size = getNodeSize(node)
                 const color = getNodeColor(node)
+
+                // Glow effect for influential papers when PageRank is on
+                if (showPageRank && node.type === 'paper') {
+                  const prEntry = pagerankData.find(p => p.id === node.id)
+                  if (prEntry && pagerankData.indexOf(prEntry) < 5) {
+                    ctx.beginPath()
+                    ctx.arc(node.x, node.y, size + 4, 0, 2 * Math.PI)
+                    ctx.fillStyle = color + '30'
+                    ctx.fill()
+                  }
+                }
 
                 // Draw node
                 ctx.beginPath()
@@ -230,7 +303,7 @@ export default function KnowledgeGraph() {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-4 bg-white border border-[#eee] rounded-xl p-5"
+            className="mt-4 bg-white border border-[#eee] rounded-xl p-5 dark:bg-[#1a1a1a] dark:border-[#2a2a2a]"
           >
             <div className="flex justify-between items-start">
               <div>
@@ -260,6 +333,127 @@ export default function KnowledgeGraph() {
           </motion.div>
         )}
 
+        {/* Influential Papers Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mt-6"
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <Crown size={16} className="text-[#f59e0b]" />
+            <h2 className="text-sm font-semibold">Influential Papers</h2>
+            {loadingPageRank && (
+              <motion.span
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                className="inline-block w-3 h-3 border border-[#ccc] border-t-[#2563eb] rounded-full"
+              />
+            )}
+          </div>
+
+          {influentialPapers.length > 0 ? (
+            <div className="space-y-2">
+              {influentialPapers.map((paper, i) => (
+                <motion.div
+                  key={paper.id}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 + i * 0.05 }}
+                  className="bg-white border border-[#eee] rounded-xl p-4 hover:border-[#ddd] hover:shadow-sm transition-all dark:bg-[#1a1a1a] dark:border-[#2a2a2a]"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-bold text-[#f59e0b] bg-[#f59e0b]/10 px-1.5 py-0.5 rounded">
+                          #{i + 1}
+                        </span>
+                        <h3 className="font-medium text-sm truncate">{paper.title}</h3>
+                      </div>
+                      <div className="flex gap-3 mt-1.5 text-[10px] text-[#888]">
+                        {paper.year && <span>📅 {paper.year}</span>}
+                        <span>📊 {paper.citation_count} citations</span>
+                      </div>
+                      <p className="text-[10px] text-[#666] mt-1.5 italic">{paper.reason}</p>
+                    </div>
+                    {/* Score bar */}
+                    <div className="w-24 shrink-0">
+                      <div className="flex justify-between text-[9px] text-[#888] mb-1">
+                        <span>Score</span>
+                        <span className="font-mono">{(paper.combined_score * 100).toFixed(0)}%</span>
+                      </div>
+                      <div className="w-full bg-[#f0f0f0] rounded-full h-2 overflow-hidden dark:bg-[#222]">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${paper.combined_score * 100}%` }}
+                          transition={{ delay: 0.5 + i * 0.05, duration: 0.6, ease: 'easeOut' }}
+                          className="h-2 rounded-full"
+                          style={{
+                            background: i < 3
+                              ? 'linear-gradient(90deg, #f59e0b, #d97706)'
+                              : 'linear-gradient(90deg, #8b5cf6, #6d28d9)'
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          ) : !loadingPageRank ? (
+            <div className="bg-white border border-[#eee] rounded-xl p-8 text-center dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
+              <p className="text-sm text-[#888]">No papers in graph yet</p>
+              <p className="text-xs text-[#aaa] mt-1">Run a research pipeline to analyze paper influence</p>
+            </div>
+          ) : null}
+        </motion.div>
+
+        {/* PageRank Rankings */}
+        {pagerankData.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="mt-6"
+          >
+            <h2 className="text-sm font-semibold mb-3">PageRank Rankings (Top 20)</h2>
+            <div className="bg-white border border-[#eee] rounded-xl overflow-hidden dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
+              <div className="divide-y divide-[#eee] dark:divide-[#2a2a2a]">
+                {pagerankData.map((paper, i) => (
+                  <div key={paper.id} className="flex items-center gap-3 px-4 py-3 hover:bg-[#fafaf9] transition-colors dark:hover:bg-[#222]">
+                    <span className={`text-[10px] font-bold w-5 text-center ${
+                      i < 3 ? 'text-[#f59e0b]' : 'text-[#888]'
+                    }`}>
+                      {i + 1}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-medium truncate">{paper.title}</p>
+                      <div className="flex gap-2 mt-0.5 text-[9px] text-[#aaa]">
+                        {paper.year && <span>{paper.year}</span>}
+                        <span>{paper.citation_count} cites</span>
+                        {paper.connected_themes?.length > 0 && (
+                          <span>· {paper.connected_themes.slice(0, 2).join(', ')}</span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="w-16 shrink-0">
+                      <div className="w-full bg-[#f0f0f0] rounded-full h-1.5 dark:bg-[#222]">
+                        <div
+                          className="h-1.5 rounded-full bg-[#2563eb]"
+                          style={{ width: `${(paper.score / (pagerankData[0]?.score || 1)) * 100}%` }}
+                        />
+                      </div>
+                    </div>
+                    <span className="text-[9px] font-mono text-[#888] w-12 text-right">
+                      {(paper.score * 1000).toFixed(2)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         {/* Legend */}
         <div className="flex gap-5 mt-4 text-xs text-[#888]">
           <span className="flex items-center gap-1.5">
@@ -271,6 +465,16 @@ export default function KnowledgeGraph() {
           <span className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-[#7c3aed]" /> Authors
           </span>
+          {showPageRank && (
+            <>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#f59e0b]" /> Top 3 PageRank
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#8b5cf6]" /> Top 10 PageRank
+              </span>
+            </>
+          )}
         </div>
       </motion.div>
     </div>

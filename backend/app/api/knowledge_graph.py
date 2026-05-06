@@ -98,6 +98,22 @@ async def add_citation(request: AddCitationRequest):
     return {"status": "added"}
 
 
+@router.get("/pagerank")
+async def get_pagerank():
+    """Run PageRank on paper nodes and return top 20."""
+    kg = get_kg_service()
+    results = kg.get_pagerank()
+    return {"papers": results}
+
+
+@router.get("/influential")
+async def get_influential_papers():
+    """Find most influential papers using combined centrality metrics."""
+    kg = get_kg_service()
+    results = kg.get_influential_papers()
+    return {"papers": results}
+
+
 @router.delete("/clear")
 async def clear_graph():
     """Clear the entire graph."""
