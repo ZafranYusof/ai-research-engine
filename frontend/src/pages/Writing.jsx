@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import axios from 'axios'
+import api from '../utils/api'
 import ReactMarkdown from 'react-markdown'
 import { motion } from 'framer-motion'
 
@@ -27,7 +27,7 @@ export default function Writing() {
     setLoading(true)
     try {
       const endpoint = iterative ? '/api/writing/generate-iterative' : '/api/writing/generate'
-      const res = await axios.post(endpoint, {
+      const res = await api.post(endpoint, {
         section_type: sectionType,
         project_id: projectId,
         max_words: maxWords,
@@ -45,7 +45,7 @@ export default function Writing() {
     if (!reviseInput.trim() || !generated) return
     setLoading(true)
     try {
-      const res = await axios.post('/api/writing/revise', {
+      const res = await api.post('/api/writing/revise', {
         content: generated.content,
         feedback: reviseInput,
         section_type: sectionType,
@@ -78,7 +78,7 @@ export default function Writing() {
     if (sections.length === 0) return
     try {
       if (exportFormat === 'docx') {
-        const res = await axios.post('/api/writing/export', {
+        const res = await api.post('/api/writing/export', {
           sections,
           title: 'Research Paper',
           authors: [],
@@ -92,7 +92,7 @@ export default function Writing() {
         a.click()
         URL.revokeObjectURL(url)
       } else {
-        const res = await axios.post('/api/writing/export', {
+        const res = await api.post('/api/writing/export', {
           sections,
           title: 'Research Paper',
           authors: [],

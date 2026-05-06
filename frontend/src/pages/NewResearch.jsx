@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import api from '../utils/api'
 import { motion } from 'framer-motion'
 
 export default function NewResearch() {
@@ -19,7 +19,7 @@ export default function NewResearch() {
     setLoading(true)
 
     try {
-      const response = await axios.post('/api/research/start', {
+      const response = await api.post('/api/research/start', {
         topic: form.topic,
         max_papers: form.maxPapers,
         year_from: form.yearFrom,

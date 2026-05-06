@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import axios from 'axios'
+import api from '../utils/api'
 import { motion } from 'framer-motion'
 import { CheckCircle, Clock, AlertCircle } from 'lucide-react'
 
@@ -13,12 +13,12 @@ export default function ResearchView() {
   useEffect(() => {
     const poll = setInterval(async () => {
       try {
-        const res = await axios.get(`/api/research/status/${id}`)
+        const res = await api.get(`/api/research/status/${id}`)
         setStatus(res.data)
 
         if (res.data.status === 'completed') {
           clearInterval(poll)
-          const resultsRes = await axios.get(`/api/research/results/${id}`)
+          const resultsRes = await api.get(`/api/research/results/${id}`)
           setResults(resultsRes.data)
         }
         if (res.data.status === 'failed') {

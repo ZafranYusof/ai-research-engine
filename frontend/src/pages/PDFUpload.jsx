@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import axios from 'axios'
+import api from '../utils/api'
 import { Upload, FileText, X, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -35,14 +35,14 @@ export default function PDFUpload() {
       if (files.length === 1) {
         const formData = new FormData()
         formData.append('file', files[0])
-        const res = await axios.post('/api/pdf/parse-full', formData, {
+        const res = await api.post('/api/pdf/parse-full', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         })
         setResults([{ filename: files[0].name, ...res.data, success: true }])
       } else {
         const formData = new FormData()
         files.forEach(f => formData.append('files', f))
-        const res = await axios.post('/api/pdf/batch-upload', formData, {
+        const res = await api.post('/api/pdf/batch-upload', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         })
         setResults(res.data.parsed.map(p => ({ ...p, success: true })))
@@ -64,7 +64,7 @@ export default function PDFUpload() {
     const formData = new FormData()
     formData.append('file', files[index])
     try {
-      const res = await axios.post('/api/pdf/parse-full', formData, {
+      const res = await api.post('/api/pdf/parse-full', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
       setSelectedPaper({ filename: files[index].name, ...res.data })

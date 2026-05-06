@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import ForceGraph2D from 'react-force-graph-2d'
-import axios from 'axios'
+import api from '../utils/api'
 import { motion } from 'framer-motion'
 import { RefreshCw, X, Maximize2 } from 'lucide-react'
 
@@ -20,7 +20,7 @@ export default function KnowledgeGraph() {
   const loadGraph = async () => {
     setLoading(true)
     try {
-      const res = await axios.get('/api/graph/full')
+      const res = await api.get('/api/graph/full')
       setGraphData(res.data.graph)
       setStats(res.data.stats)
     } catch (err) {

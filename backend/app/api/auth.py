@@ -2,11 +2,29 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from datetime import datetime, timedelta
 from jose import jwt
-from passlib.context import CryptContext
 from app.core.config import settings
+import hashlib
+import os
 
 router = APIRouter()
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+# Use passlib if available, fallback to hashlib
+try:
+    from passlib.context import CryptContext
+    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+    def hash_password(password: str) -> str:
+        return pwd_context.hash(password)
+    def verify_password(password: str, hashed: str) -> bool:
+        return pwd_context.verify(password, hashed)
+except Exception:
+    # Fallback: SHA-256 with salt
+    def hash_password(password: str) -> str:
+        salt = os.urandom(16).hex()
+        hashed = hashlib.sha256(f"{salt}{password}".encode()).hexdigest()
+        return f"{salt}${hashed}"
+    def verify_password(password: str, hashed: str) -> bool:
+        salt, stored_hash = hashed.split("$", 1)
+        return hashlib.sha256(f"{salt}{password}".encode()).hexdigest() == stored_hash
 
 # In-memory users (replace with DB)
 users_db = {}
@@ -31,7 +49,7 @@ async def register(request: RegisterRequest):
     users_db[request.email] = {
         "email": request.email,
         "name": request.name,
-        "password_hash": pwd_context.hash(request.password),
+        "password_hash": hash_password(request.password),
         "created_at": datetime.utcnow().isoformat(),
     }
 
@@ -42,7 +60,7 @@ async def register(request: RegisterRequest):
 @router.post("/login")
 async def login(request: LoginRequest):
     user = users_db.get(request.email)
-    if not user or not pwd_context.verify(request.password, user["password_hash"]):
+    if not user or not verify_password(request.password, user["password_hash"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     token = _create_token(request.email)

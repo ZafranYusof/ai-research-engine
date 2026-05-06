@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import axios from 'axios'
+import api from '../utils/api'
 import { Search } from 'lucide-react'
 import { motion } from 'framer-motion'
 
@@ -23,7 +23,7 @@ export default function PaperSearch() {
 
     setLoading(true)
     try {
-      const res = await axios.post('/api/papers/search', {
+      const res = await api.post('/api/papers/search', {
         query,
         max_results: 20,
         sources,

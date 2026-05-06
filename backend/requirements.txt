@@ -10,7 +10,7 @@ passlib[bcrypt]
 httpx
 numpy
 python-dotenv
-bcrypt
+bcrypt==4.0.1
 networkx
 PyMuPDF
 pdfplumber

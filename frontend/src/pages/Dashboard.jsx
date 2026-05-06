@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import axios from 'axios'
+import api from '../utils/api'
 import { Plus, Clock, CheckCircle, AlertCircle, BookOpen, GitBranch, TrendingUp, Zap } from 'lucide-react'
 import { motion } from 'framer-motion'
 
@@ -18,8 +18,8 @@ export default function Dashboard() {
   const loadData = async () => {
     try {
       const [projectsRes, graphRes] = await Promise.all([
-        axios.get('/api/research/list'),
-        axios.get('/api/graph/stats'),
+        api.get('/api/research/list'),
+        api.get('/api/graph/stats'),
       ])
       setProjects(projectsRes.data.projects || [])
       setGraphStats(graphRes.data)
