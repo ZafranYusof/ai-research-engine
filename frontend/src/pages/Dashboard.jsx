@@ -128,7 +128,7 @@ function TrendingTopics() {
           transition={{ delay: 0.6 + i * 0.05 }}
         >
           <Link
-            to={`/new`}
+            to="/recommendations"
             className="flex items-center gap-3 bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-xl px-4 py-3 hover:border-[#ddd] dark:hover:border-[#444] hover:shadow-sm transition-all group"
           >
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#2563eb]/10 to-[#7c3aed]/10 flex items-center justify-center shrink-0">
@@ -364,7 +364,7 @@ export default function Dashboard() {
         >
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-xs font-medium text-[#888] uppercase tracking-wider">Trending Topics</h2>
-            <Link to="/new" className="text-[10px] text-[#2563eb] hover:underline flex items-center gap-0.5">
+            <Link to="/recommendations" className="text-[10px] text-[#2563eb] hover:underline flex items-center gap-0.5">
               Explore <ArrowRight size={10} />
             </Link>
           </div>
