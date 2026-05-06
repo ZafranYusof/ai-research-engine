@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
-import { Home, Search, BookOpen, GitBranch, LogOut, User, FileText, Upload } from 'lucide-react'
+import { Home, Search, BookOpen, GitBranch, LogOut, User, FileText, Upload, Sparkles } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import ThemeToggle from './ThemeToggle'
 import CommandPalette from './CommandPalette'
@@ -11,6 +11,7 @@ const navItems = [
   { path: '/search', icon: Search, label: 'Search' },
   { path: '/new', icon: BookOpen, label: 'New Research' },
   { path: '/graph', icon: GitBranch, label: 'Graph' },
+  { path: '/recommendations', icon: Sparkles, label: 'Discover' },
   { path: '/pdf', icon: Upload, label: 'PDF Parser' },
   { path: '/docs', icon: FileText, label: 'Docs' },
 ]

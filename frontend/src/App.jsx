@@ -11,6 +11,7 @@ import KnowledgeGraph from './pages/KnowledgeGraph'
 import PaperSearch from './pages/PaperSearch'
 import Writing from './pages/Writing'
 import PDFUpload from './pages/PDFUpload'
+import Recommendations from './pages/Recommendations'
 import VerifyEmail from './pages/VerifyEmail'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
@@ -51,6 +52,9 @@ function App() {
         </Route>
         <Route path="/pdf" element={<Layout />}>
           <Route index element={<PDFUpload />} />
+        </Route>
+        <Route path="/recommendations" element={<Layout />}>
+          <Route index element={<Recommendations />} />
         </Route>
       </Routes>
     </BrowserRouter>
