@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from datetime import datetime, timedelta
 from jose import jwt
 from app.core.config import settings
+from app.db.mongodb import mongodb
 import hashlib
 import os
 
@@ -26,33 +27,31 @@ except Exception:
         salt, stored_hash = hashed.split("$", 1)
         return hashlib.sha256(f"{salt}{password}".encode()).hexdigest() == stored_hash
 
-# In-memory users (replace with DB)
-users_db = {}
-
 
 class RegisterRequest(BaseModel):
     email: str
     password: str
     name: str
 
-
 class LoginRequest(BaseModel):
     email: str
     password: str
 
-
 @router.post("/register")
 async def register(request: RegisterRequest):
     try:
-        if request.email in users_db:
+        # Check if user already exists
+        existing = await mongodb.users.find_one({"email": request.email})
+        if existing:
             raise HTTPException(status_code=400, detail="Email already registered")
 
-        users_db[request.email] = {
+        user_doc = {
             "email": request.email,
             "name": request.name,
             "password_hash": hash_password(request.password),
             "created_at": datetime.utcnow().isoformat(),
         }
+        await mongodb.users.insert_one(user_doc)
 
         token = _create_token(request.email)
         return {"token": token, "user": {"email": request.email, "name": request.name}}
@@ -61,11 +60,10 @@ async def register(request: RegisterRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Registration error: {str(e)}")
 
-
 @router.post("/login")
 async def login(request: LoginRequest):
     try:
-        user = users_db.get(request.email)
+        user = await mongodb.users.find_one({"email": request.email})
         if not user or not verify_password(request.password, user["password_hash"]):
             raise HTTPException(status_code=401, detail="Invalid credentials")
 
@@ -75,7 +73,6 @@ async def login(request: LoginRequest):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Login error: {str(e)}")
-
 
 def _create_token(email: str) -> str:
     expire = datetime.utcnow() + timedelta(hours=settings.JWT_EXPIRY_HOURS)
