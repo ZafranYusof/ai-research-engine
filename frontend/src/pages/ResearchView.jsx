@@ -248,12 +248,12 @@ export default function ResearchView() {
               initial={{ opacity: 0, scale: 0.97 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: i * 0.05 }}
-              className="bg-white border border-[#eee] rounded-xl p-5 hover:shadow-sm transition-all"
+              className="bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-xl p-5 hover:shadow-sm transition-all"
             >
               <h3 className="font-medium text-sm text-[#2563eb]">{theme.theme}</h3>
               <p className="text-xs text-[#666] dark:text-[#bbb] mt-2 leading-relaxed">{theme.description}</p>
               {theme.paper_count && (
-                <span className="inline-block mt-3 text-[10px] bg-[#f5f5f4] dark:bg-[#333] text-[#888] px-2 py-0.5 rounded-full border border-[#eee]">
+                <span className="inline-block mt-3 text-[10px] bg-[#f5f5f4] dark:bg-[#333] text-[#888] px-2 py-0.5 rounded-full border border-[#eee] dark:border-[#2a2a2a]">
                   {theme.paper_count} papers
                 </span>
               )}
@@ -287,7 +287,7 @@ export default function ResearchView() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="bg-white border border-[#eee] rounded-xl p-5 hover:shadow-sm transition-all"
+              className="bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-xl p-5 hover:shadow-sm transition-all"
             >
               <h3 className="font-medium text-sm dark:text-white">{h.hypothesis}</h3>
               <p className="text-xs text-[#666] dark:text-[#bbb] mt-2 leading-relaxed">{h.reasoning}</p>

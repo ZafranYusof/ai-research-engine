@@ -85,7 +85,7 @@ export default function PDFUpload() {
           onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
           onDragLeave={() => setDragOver(false)}
           className={`border-2 border-dashed rounded-2xl p-10 text-center dark:bg-[#1a1a1a] transition-all cursor-pointer ${
-            dragOver ? 'border-[#2563eb] bg-[#2563eb]/5' : 'border-[#e5e5e5] hover:border-[#ccc] bg-white'
+            dragOver ? 'border-[#2563eb] bg-[#2563eb]/5' : 'border-[#e5e5e5] hover:border-[#ccc] bg-white dark:bg-[#1a1a1a]'
           }`}
           onClick={() => document.getElementById('pdf-input').click()}
         >

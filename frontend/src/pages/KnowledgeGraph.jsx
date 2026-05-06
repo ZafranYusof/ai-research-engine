@@ -328,7 +328,7 @@ export default function KnowledgeGraph() {
               {selectedNode.citation_count > 0 && <span>📊 {selectedNode.citation_count} citations</span>}
             </div>
             {selectedNode.description && (
-              <p className="text-xs text-[#666] mt-2 leading-relaxed">{selectedNode.description}</p>
+              <p className="text-xs text-[#666] dark:text-[#bbb] mt-2 leading-relaxed">{selectedNode.description}</p>
             )}
           </motion.div>
         )}
@@ -374,7 +374,7 @@ export default function KnowledgeGraph() {
                         {paper.year && <span>📅 {paper.year}</span>}
                         <span>📊 {paper.citation_count} citations</span>
                       </div>
-                      <p className="text-[10px] text-[#666] mt-1.5 italic">{paper.reason}</p>
+                      <p className="text-[10px] text-[#666] dark:text-[#bbb] mt-1.5 italic">{paper.reason}</p>
                     </div>
                     {/* Score bar */}
                     <div className="w-24 shrink-0">

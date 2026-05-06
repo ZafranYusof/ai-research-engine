@@ -33,7 +33,7 @@ export function SkeletonText({ width = '100%', height = '12px', className = '' }
 
 export function SkeletonCard({ className = '' }) {
   return (
-    <div className={`bg-white border border-[#eee] rounded-2xl p-5 ${className}`}>
+    <div className={`bg-white dark:bg-[#1a1a1a] border border-[#eee] rounded-2xl p-5 ${className}`}>
       <div className="space-y-3">
         <SkeletonText width="70%" height="14px" />
         <SkeletonText width="90%" height="10px" />
@@ -55,7 +55,7 @@ export function SkeletonGrid({ count = 6, cols = 3, className = '' }) {
 
 export function SkeletonStatCard() {
   return (
-    <div className="bg-white border border-[#eee] rounded-2xl p-5">
+    <div className="bg-white dark:bg-[#1a1a1a] border border-[#eee] rounded-2xl p-5">
       <div className="flex items-center gap-3">
         <div className="relative overflow-hidden w-10 h-10 rounded-xl bg-[#e5e5e5]/60">
           <ShimmerOverlay />
@@ -71,7 +71,7 @@ export function SkeletonStatCard() {
 
 export function SkeletonProjectRow() {
   return (
-    <div className="flex items-center gap-4 bg-white border border-[#eee] rounded-xl px-5 py-4">
+    <div className="flex items-center gap-4 bg-white dark:bg-[#1a1a1a] border border-[#eee] rounded-xl px-5 py-4">
       <div className="relative overflow-hidden w-10 h-10 rounded-xl bg-[#e5e5e5]/60 shrink-0">
         <ShimmerOverlay />
       </div>
@@ -85,7 +85,7 @@ export function SkeletonProjectRow() {
 
 export function SkeletonPaperCard() {
   return (
-    <div className="bg-white border border-[#eee] rounded-xl p-5">
+    <div className="bg-white dark:bg-[#1a1a1a] border border-[#eee] rounded-xl p-5">
       <div className="space-y-3">
         <SkeletonText width="85%" height="14px" />
         <SkeletonText width="60%" height="10px" />
