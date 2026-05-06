@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import papers, research, auth, knowledge_graph, writing
+from app.api import papers, research, auth, knowledge_graph, writing, pdf
 from app.core.config import settings
 
 app = FastAPI(
@@ -23,6 +23,7 @@ app.include_router(papers.router, prefix="/api/papers", tags=["papers"])
 app.include_router(research.router, prefix="/api/research", tags=["research"])
 app.include_router(knowledge_graph.router, prefix="/api/graph", tags=["knowledge-graph"])
 app.include_router(writing.router, prefix="/api/writing", tags=["writing"])
+app.include_router(pdf.router, prefix="/api/pdf", tags=["pdf"])
 
 
 @app.get("/health")

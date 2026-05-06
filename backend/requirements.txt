@@ -12,3 +12,6 @@ numpy
 python-dotenv
 bcrypt
 networkx
+PyMuPDF
+pdfplumber
+regex

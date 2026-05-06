@@ -10,6 +10,7 @@ import ResearchView from './pages/ResearchView'
 import KnowledgeGraph from './pages/KnowledgeGraph'
 import PaperSearch from './pages/PaperSearch'
 import Writing from './pages/Writing'
+import PDFUpload from './pages/PDFUpload'
 
 function App() {
   return (
@@ -39,6 +40,9 @@ function App() {
         </Route>
         <Route path="/write/:projectId" element={<Layout />}>
           <Route index element={<Writing />} />
+        </Route>
+        <Route path="/pdf" element={<Layout />}>
+          <Route index element={<PDFUpload />} />
         </Route>
       </Routes>
     </BrowserRouter>
