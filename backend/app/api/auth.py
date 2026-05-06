@@ -43,29 +43,60 @@ class LoginRequest(BaseModel):
 
 @router.post("/register")
 async def register(request: RegisterRequest):
-    if request.email in users_db:
-        raise HTTPException(status_code=400, detail="Email already registered")
+    try:
+        if request.email in users_db:
+            raise HTTPException(status_code=400, detail="Email already registered")
 
-    users_db[request.email] = {
-        "email": request.email,
-        "name": request.name,
-        "password_hash": hash_password(request.password),
-        "created_at": datetime.utcnow().isoformat(),
-    }
+        users_db[request.email] = {
+            "email": request.email,
+            "name": request.name,
+            "password_hash": hash_password(request.password),
+            "created_at": datetime.utcnow().isoformat(),
+        }
 
-    token = _create_token(request.email)
-    return {"token": token, "user": {"email": request.email, "name": request.name}}
+        token = _create_token(request.email)
+        return {"token": token, "user": {"email": request.email, "name": request.name}}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Registration error: {str(e)}")
 
 
 @router.post("/login")
 async def login(request: LoginRequest):
-    user = users_db.get(request.email)
-    if not user or not verify_password(request.password, user["password_hash"]):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+    try:
+        user = users_db.get(request.email)
+        if not user or not verify_password(request.password, user["password_hash"]):
+            raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    token = _create_token(request.email)
-    return {"token": token, "user": {"email": user["email"], "name": user["name"]}}
+        token = _create_token(request.email)
+        return {"token": token, "user": {"email": user["email"], "name": user["name"]}}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Login error: {str(e)}")
 
+
+@router.get("/debug")
+async def debug_auth():
+    """Debug endpoint to check auth dependencies."""
+    info = {}
+    try:
+        from passlib.context import CryptContext
+        ctx = CryptContext(schemes=["bcrypt"], deprecated="auto")
+        test_hash = ctx.hash("test")
+        info["passlib"] = "ok"
+        info["bcrypt_hash"] = test_hash[:20] + "..."
+    except Exception as e:
+        info["passlib"] = f"error: {str(e)}"
+    try:
+        from jose import jwt as jose_jwt
+        token = jose_jwt.encode({"test": True}, "secret", algorithm="HS256")
+        info["jose"] = "ok"
+    except Exception as e:
+        info["jose"] = f"error: {str(e)}"
+    info["hash_method"] = "passlib" if "passlib" in str(hash_password) else "fallback"
+    return info
 
 def _create_token(email: str) -> str:
     expire = datetime.utcnow() + timedelta(hours=settings.JWT_EXPIRY_HOURS)
