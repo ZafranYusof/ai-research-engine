@@ -3,6 +3,7 @@ import { Home, Search, BookOpen, GitBranch, LogOut, User, FileText, Upload, Spar
 import { useState, useEffect } from 'react'
 import ThemeToggle from './ThemeToggle'
 import CommandPalette from './CommandPalette'
+import ChatWidget from './ChatWidget'
 import useKeyboardShortcuts from '../hooks/useKeyboardShortcuts'
 import '../utils/theme'
 
@@ -129,6 +130,9 @@ export default function Layout() {
         isOpen={commandPaletteOpen}
         onClose={() => setCommandPaletteOpen(false)}
       />
+
+      {/* Chat Widget */}
+      <ChatWidget />
     </div>
   )
 }

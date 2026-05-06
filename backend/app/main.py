@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
-from app.api import papers, research, auth, knowledge_graph, writing, pdf, recommendations, plagiarism, activity
+from app.api import papers, research, auth, knowledge_graph, writing, pdf, recommendations, plagiarism, activity, chat
 from app.core.config import settings
 from app.core.rate_limit import limiter
 from app.db.mongodb import mongodb
@@ -45,6 +45,7 @@ app.include_router(pdf.router, prefix="/api/pdf", tags=["pdf"])
 app.include_router(recommendations.router, prefix="/api/recommendations", tags=["recommendations"])
 app.include_router(plagiarism.router, prefix="/api/plagiarism", tags=["plagiarism"])
 app.include_router(activity.router, prefix="/api/activity", tags=["activity"])
+app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
 
 @app.get("/health")
 async def health_check():
