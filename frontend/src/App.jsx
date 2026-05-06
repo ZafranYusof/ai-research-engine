@@ -14,6 +14,7 @@ import PDFUpload from './pages/PDFUpload'
 import Recommendations from './pages/Recommendations'
 import PlagiarismCheck from './pages/PlagiarismCheck'
 import Activity from './pages/Activity'
+import Analytics from './pages/Analytics'
 import VerifyEmail from './pages/VerifyEmail'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
@@ -63,6 +64,9 @@ function App() {
         </Route>
         <Route path="/activity" element={<Layout />}>
           <Route index element={<Activity />} />
+        </Route>
+        <Route path="/analytics" element={<Layout />}>
+          <Route index element={<Analytics />} />
         </Route>
       </Routes>
     </BrowserRouter>
