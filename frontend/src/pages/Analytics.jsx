@@ -206,11 +206,11 @@ export default function Analytics() {
             {!themes || themes.length === 0 ? (
               <EmptyState message="No themes found yet" />
             ) : (
-              <ResponsiveContainer width="100%" height={280}>
-                <BarChart data={themes} layout="vertical" margin={{ top: 5, right: 20, bottom: 5, left: 80 }}>
+              <ResponsiveContainer width="100%" height={380}>
+                <BarChart data={themes.map(t => ({ ...t, theme: t.theme.length > 30 ? t.theme.slice(0, 30) + '...' : t.theme }))} layout="vertical" margin={{ top: 5, right: 20, bottom: 5, left: 10 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--tooltip-border)" horizontal={false} />
                   <XAxis type="number" tick={{ fontSize: 11, fill: '#888' }} />
-                  <YAxis type="category" dataKey="theme" tick={{ fontSize: 10, fill: '#888' }} width={75} />
+                  <YAxis type="category" dataKey="theme" tick={{ fontSize: 11, fill: '#999' }} width={180} />
                   <Tooltip {...darkTooltipStyle} />
                   <Bar dataKey="count" radius={[0, 6, 6, 0]}>
                     {themes.map((_, idx) => (
