@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import Optional
 from app.services.plagiarism import plagiarism_service
+from app.services.activity import activity_service
 from app.db.mongodb import mongodb
 
 router = APIRouter()
@@ -56,6 +57,15 @@ async def check_plagiarism(request: PlagiarismCheckRequest):
                         })
 
     result = await plagiarism_service.check_similarity(request.content, source_papers)
+
+    # Log activity
+    await activity_service.log_activity(
+        user_email="",
+        action="plagiarism_checked",
+        details=f"Plagiarism check ({len(request.content.split())} words)",
+        project_id=request.project_id,
+    )
+
     return result
 
 

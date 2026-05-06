@@ -7,6 +7,7 @@ from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
 from typing import Optional
 from pydantic import BaseModel
 from app.services.pdf_parser import PDFParserService, ParsedPaper
+from app.services.activity import activity_service
 
 router = APIRouter()
 pdf_service = PDFParserService()
@@ -46,6 +47,13 @@ async def upload_pdf(file: UploadFile = File(...)):
         raise HTTPException(status_code=422, detail=f"Failed to parse PDF: {str(e)}")
 
     word_count = len(parsed.full_text.split())
+
+    # Log activity
+    await activity_service.log_activity(
+        user_email="",
+        action="pdf_uploaded",
+        details=f"Uploaded PDF: {file.filename}",
+    )
 
     return PDFUploadResponse(
         success=True,

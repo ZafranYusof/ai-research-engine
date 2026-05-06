@@ -13,6 +13,7 @@ import Writing from './pages/Writing'
 import PDFUpload from './pages/PDFUpload'
 import Recommendations from './pages/Recommendations'
 import PlagiarismCheck from './pages/PlagiarismCheck'
+import Activity from './pages/Activity'
 import VerifyEmail from './pages/VerifyEmail'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
@@ -59,6 +60,9 @@ function App() {
         </Route>
         <Route path="/plagiarism" element={<Layout />}>
           <Route index element={<PlagiarismCheck />} />
+        </Route>
+        <Route path="/activity" element={<Layout />}>
+          <Route index element={<Activity />} />
         </Route>
       </Routes>
     </BrowserRouter>

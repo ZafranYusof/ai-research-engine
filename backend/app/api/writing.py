@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from typing import List, Optional
 from app.agents import WriterAgent, CriticAgent
 from app.db.mongodb import mongodb
+from app.services.activity import activity_service
 from datetime import datetime, timezone
 import io
 
@@ -36,6 +37,15 @@ async def save_draft(request: SaveDraftRequest):
         {"$set": draft_doc},
         upsert=True,
     )
+
+    # Log activity
+    await activity_service.log_activity(
+        user_email="",
+        action="draft_saved",
+        details=f"Saved draft: {request.section_type}",
+        project_id=request.project_id,
+    )
+
     return {"status": "saved", "updated_at": draft_doc["updated_at"]}
 
 
@@ -238,6 +248,13 @@ Provide the revised version:""",
 @router.post("/export")
 async def export_document(request: ExportRequest):
     """Export sections as formatted document."""
+    # Log activity
+    await activity_service.log_activity(
+        user_email="",
+        action="draft_exported",
+        details=f"Exported document: {request.title} ({request.format})",
+    )
+
     if request.format == "docx":
         docx_bytes = _export_docx(request)
         return Response(

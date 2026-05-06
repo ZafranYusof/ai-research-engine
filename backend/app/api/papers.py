@@ -5,6 +5,7 @@ from app.services.semantic_scholar import SemanticScholarService
 from app.services.arxiv_service import ArxivService
 from app.services.google_scholar import GoogleScholarService
 from app.services.cache import get_paper_cache, set_paper_cache
+from app.services.activity import activity_service
 
 router = APIRouter()
 scholar = SemanticScholarService()
@@ -75,6 +76,13 @@ async def search_papers(request: PaperSearchRequest):
         year_from=request.year_from,
         year_to=request.year_to,
         results=result,
+    )
+
+    # Log activity
+    await activity_service.log_activity(
+        user_email="",
+        action="paper_searched",
+        details=f"Searched: {request.query} ({len(all_papers)} results)",
     )
 
     return result

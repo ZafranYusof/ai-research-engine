@@ -2,6 +2,7 @@ from fastapi import APIRouter, BackgroundTasks, WebSocket, WebSocketDisconnect, 
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Set
 from app.services.pipeline import ResearchPipeline
+from app.services.activity import activity_service
 from app.db.mongodb import mongodb
 import asyncio
 import uuid
@@ -95,6 +96,14 @@ async def start_research(request: ResearchRequest, background_tasks: BackgroundT
         "collaborators": [],
     }
     await mongodb.projects.insert_one(project_doc)
+
+    # Log activity
+    await activity_service.log_activity(
+        user_email="",
+        action="research_started",
+        details=f"Started research: {request.topic}",
+        project_id=project_id,
+    )
 
     background_tasks.add_task(run_research_pipeline, project_id, request)
 
@@ -299,6 +308,13 @@ async def run_research_pipeline(project_id: str, request: ResearchRequest):
             }}
         )
         await _broadcast_progress(project_id, "completed", 1.0, "Research complete!", "completed")
+        # Log completion
+        await activity_service.log_activity(
+            user_email="",
+            action="research_completed",
+            details=f"Research completed: {request.topic}",
+            project_id=project_id,
+        )
     else:
         await mongodb.projects.update_one(
             {"id": project_id},
