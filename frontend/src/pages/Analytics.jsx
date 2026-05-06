@@ -5,9 +5,9 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, ReferenceLine
 } from 'recharts'
 import { FileText, BookOpen, Type, Star, Clock, TrendingUp } from 'lucide-react'
-import axios from 'axios'
+import api from '../utils/api'
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+
 
 const COLORS = ['#2563eb', '#7c3aed', '#06b6d4', '#10b981', '#f59e0b', '#ef4444']
 const THEME_GRADIENT = [
@@ -80,16 +80,14 @@ export default function Analytics() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    const headers = token ? { Authorization: `Bearer ${token}` } : {}
 
     Promise.all([
-      axios.get(`${API}/api/analytics/overview`, { headers }),
-      axios.get(`${API}/api/analytics/papers-by-year`, { headers }),
-      axios.get(`${API}/api/analytics/themes-distribution`, { headers }),
-      axios.get(`${API}/api/analytics/quality-over-time`, { headers }),
-      axios.get(`${API}/api/analytics/source-breakdown`, { headers }),
-      axios.get(`${API}/api/analytics/research-velocity`, { headers }),
+      api.get(`/api/analytics/overview`),
+      api.get(`/api/analytics/papers-by-year`),
+      api.get(`/api/analytics/themes-distribution`),
+      api.get(`/api/analytics/quality-over-time`),
+      api.get(`/api/analytics/source-breakdown`),
+      api.get(`/api/analytics/research-velocity`),
     ]).then(([ov, pby, th, qu, src, vel]) => {
       setOverview(ov.data)
       setPapersByYear(pby.data)

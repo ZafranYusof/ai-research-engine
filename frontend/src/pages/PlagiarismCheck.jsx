@@ -28,7 +28,7 @@ export default function PlagiarismCheck() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await api.get('/api/research/projects')
+        const res = await api.get('/api/research/list')
         setProjects(res.data || [])
       } catch (err) {
         console.error('Failed to load projects:', err)
