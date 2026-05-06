@@ -38,7 +38,7 @@ function Typewriter({ words }) {
 }
 
 // Animated counter
-function Counter({ target, duration = 2 }) {
+function Counter({ target, duration = 2, suffix = '' }) {
   const [count, setCount] = useState(0)
   const ref = useRef(null)
   const [started, setStarted] = useState(false)
@@ -64,7 +64,7 @@ function Counter({ target, duration = 2 }) {
     return () => observer.disconnect()
   }, [target, duration, started])
 
-  return <span ref={ref}>{count}</span>
+  return <span ref={ref}>{count}{suffix}</span>
 }
 
 // Live pipeline simulation
@@ -249,10 +249,99 @@ function OrbitingNodes() {
   )
 }
 
+// FAQ Accordion Item
+function FAQItem({ question, answer, isOpen, onClick }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="border border-[#e5e5e5] rounded-2xl overflow-hidden bg-white"
+    >
+      <button
+        onClick={onClick}
+        className="w-full flex items-center justify-between p-6 text-left hover:bg-[#fafaf9] transition-colors"
+      >
+        <span className="font-semibold text-[#1a1a1a] pr-4">{question}</span>
+        <motion.span
+          animate={{ rotate: isOpen ? 45 : 0 }}
+          transition={{ duration: 0.2 }}
+          className="text-xl text-[#888] shrink-0"
+        >
+          +
+        </motion.span>
+      </button>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className="overflow-hidden"
+          >
+            <p className="px-6 pb-6 text-[#666] leading-relaxed">{answer}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  )
+}
+
+// Floating tech badges
+function FloatingBadges() {
+  const techs = [
+    { name: 'FastAPI', color: '#059669', x: 0, y: 0 },
+    { name: 'React', color: '#2563eb', x: 1, y: 1 },
+    { name: 'Groq', color: '#7c3aed', x: 2, y: 0 },
+    { name: 'NetworkX', color: '#d97706', x: 0, y: 2 },
+    { name: 'Semantic Scholar', color: '#2563eb', x: 1, y: 2 },
+    { name: 'arXiv', color: '#dc2626', x: 2, y: 1 },
+    { name: 'Google Scholar', color: '#059669', x: 2, y: 2 },
+  ]
+
+  return (
+    <div className="flex flex-wrap justify-center gap-4">
+      {techs.map((tech, i) => (
+        <motion.div
+          key={i}
+          initial={{ opacity: 0, scale: 0.5 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: i * 0.08, type: 'spring', stiffness: 200 }}
+          whileHover={{ y: -5, scale: 1.05 }}
+          animate={{ y: [0, -6, 0] }}
+          className="px-5 py-3 bg-white border border-[#e5e5e5] rounded-xl shadow-sm hover:shadow-lg transition-shadow cursor-default"
+          style={{ animationDelay: `${i * 0.3}s` }}
+        >
+          <motion.span
+            animate={{ y: [0, -4, 0] }}
+            transition={{ duration: 3 + i * 0.5, repeat: Infinity, ease: 'easeInOut' }}
+            className="font-medium text-sm"
+            style={{ color: tech.color }}
+          >
+            {tech.name}
+          </motion.span>
+        </motion.div>
+      ))}
+    </div>
+  )
+}
+
 export default function Landing() {
   const { scrollYProgress } = useScroll()
   const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0])
   const heroY = useTransform(scrollYProgress, [0, 0.15], [0, -50])
+  const [openFAQ, setOpenFAQ] = useState(null)
+
+  const faqs = [
+    { q: 'How many papers can it search?', a: 'The system queries Semantic Scholar (200M+ papers), arXiv, and Google Scholar simultaneously. The Retriever agent uses AI-powered query expansion to find relevant papers you might miss with manual searches.' },
+    { q: 'How long does a full review take?', a: 'A typical literature review with 30-50 papers takes under 2 minutes. The pipeline runs all five agents sequentially, with the Critic agent ensuring quality before delivering results.' },
+    { q: 'Is the output publication-ready?', a: 'The Writer agent generates academic prose with proper APA citations. The Critic agent scores output on multiple axes and rejects anything below 7/10, triggering automatic revision. Most outputs need minimal human editing.' },
+    { q: 'What makes this different from ChatGPT?', a: 'Unlike single-model approaches, this uses 5 specialized agents in a pipeline. Each agent has a focused role, and the Critic agent provides quality control. The system also searches real academic databases rather than relying on training data.' },
+    { q: 'Can I customize the research scope?', a: 'Yes. You can specify date ranges, preferred sources, minimum citation counts, and focus areas. The system also supports iterative refinement where you can guide the agents based on initial results.' },
+    { q: 'Is it free to use?', a: 'Yes, the core functionality is free with no signup required. The system is powered by Groq for fast inference and uses open academic APIs for paper retrieval.' },
+  ]
 
   return (
     <div className="min-h-screen bg-[#fafaf9] text-[#1a1a1a] overflow-hidden">
@@ -479,6 +568,358 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
+      {/* ===== NEW SECTIONS START ===== */}
+
+      {/* How It Works - 3 Step Process */}
+      <section className="relative z-10 py-24 border-t border-[#eee] bg-[#f5f5f4]">
+        <div className="max-w-6xl mx-auto px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <p className="text-sm font-mono text-[#888] mb-3 tracking-wide uppercase">How It Works</p>
+            <h2 className="text-4xl font-bold tracking-tight">
+              <span className="bg-gradient-to-r from-[#2563eb] to-[#7c3aed] bg-clip-text text-transparent">Three steps</span> to breakthrough research
+            </h2>
+          </motion.div>
+
+          <div className="relative flex items-center justify-between max-w-4xl mx-auto">
+            {/* Connecting line */}
+            <div className="absolute top-[60px] left-[15%] right-[15%] h-[2px] hidden md:block">
+              <motion.div
+                initial={{ scaleX: 0 }}
+                whileInView={{ scaleX: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1, delay: 0.5 }}
+                className="h-full bg-gradient-to-r from-[#2563eb] via-[#7c3aed] to-[#059669] origin-left"
+              />
+            </div>
+
+            {[
+              { step: '01', title: 'Search', desc: 'Enter your topic. Our Retriever agent queries 200M+ papers across Semantic Scholar, arXiv, and Google Scholar simultaneously.', icon: '🔍', color: '#2563eb' },
+              { step: '02', title: 'Analyze', desc: 'AI agents extract findings, identify themes, spot contradictions, and map research gaps automatically.', icon: '🧠', color: '#7c3aed' },
+              { step: '03', title: 'Write', desc: 'Get a publication-ready literature review with APA citations, knowledge graph, and novel hypotheses.', icon: '✍️', color: '#059669' },
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.2, duration: 0.5 }}
+                className="relative flex flex-col items-center text-center w-[280px]"
+              >
+                <motion.div
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  className="w-[120px] h-[120px] rounded-3xl bg-white border border-[#e5e5e5] flex items-center justify-center text-4xl shadow-lg mb-6 relative"
+                  style={{ boxShadow: `0 20px 40px ${item.color}15` }}
+                >
+                  {item.icon}
+                  <span className="absolute -top-2 -right-2 w-7 h-7 rounded-full text-white text-xs font-bold flex items-center justify-center" style={{ backgroundColor: item.color }}>
+                    {item.step}
+                  </span>
+                </motion.div>
+                <h3 className="font-bold text-xl mb-2">{item.title}</h3>
+                <p className="text-sm text-[#666] leading-relaxed">{item.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Agents Section - Interactive Cards */}
+      <section className="relative z-10 py-24 border-t border-[#eee]">
+        <div className="max-w-6xl mx-auto px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <p className="text-sm font-mono text-[#888] mb-3 tracking-wide uppercase">Meet The Team</p>
+            <h2 className="text-4xl font-bold tracking-tight">
+              <span className="bg-gradient-to-r from-[#7c3aed] to-[#2563eb] bg-clip-text text-transparent">Five specialized agents</span> working in harmony
+            </h2>
+          </motion.div>
+
+          <div className="grid grid-cols-5 gap-5">
+            {[
+              { name: 'Retriever', emoji: '🔍', role: 'Discovery', desc: 'Searches 200M+ papers across multiple databases with AI-powered query expansion', color: '#2563eb', glow: 'shadow-blue-500/20' },
+              { name: 'Analyzer', emoji: '🔬', role: 'Extraction', desc: 'Extracts findings, methods, and limitations from each paper in structured batches', color: '#059669', glow: 'shadow-emerald-500/20' },
+              { name: 'Synthesizer', emoji: '🧠', role: 'Connection', desc: 'Builds narrative threads, identifies contradictions, generates novel hypotheses', color: '#7c3aed', glow: 'shadow-purple-500/20' },
+              { name: 'Writer', emoji: '✍️', role: 'Generation', desc: 'Produces academic prose with proper APA inline citations and logical flow', color: '#d97706', glow: 'shadow-amber-500/20' },
+              { name: 'Critic', emoji: '⚖️', role: 'Quality', desc: 'Multi-axis review scoring. Rejects below 7/10 and triggers revision cycles', color: '#dc2626', glow: 'shadow-red-500/20' },
+            ].map((agent, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                whileHover={{ y: -8, scale: 1.02 }}
+                className={`relative bg-white border border-[#e5e5e5] rounded-2xl p-6 cursor-default transition-all hover:shadow-2xl hover:${agent.glow}`}
+                style={{ '--glow-color': agent.color }}
+              >
+                {/* Subtle glow effect on hover */}
+                <div className="absolute inset-0 rounded-2xl opacity-0 hover:opacity-100 transition-opacity pointer-events-none" style={{ boxShadow: `0 0 40px ${agent.color}15, inset 0 0 40px ${agent.color}05` }} />
+                
+                <div className="relative">
+                  <motion.div
+                    whileHover={{ rotate: [0, -10, 10, 0] }}
+                    transition={{ duration: 0.5 }}
+                    className="text-3xl mb-4"
+                  >
+                    {agent.emoji}
+                  </motion.div>
+                  <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full border" style={{ color: agent.color, borderColor: agent.color + '40', backgroundColor: agent.color + '10' }}>
+                    {agent.role}
+                  </span>
+                  <h3 className="font-bold text-base mt-3 mb-2">{agent.name}</h3>
+                  <p className="text-[11px] text-[#666] leading-relaxed">{agent.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Stats / Social Proof with Gradient Background */}
+      <section className="relative z-10 py-24 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#2563eb]/5 via-[#7c3aed]/5 to-[#059669]/5" />
+        <div className="absolute inset-0 bg-[#fafaf9]/60" />
+        
+        <div className="relative max-w-6xl mx-auto px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <p className="text-sm font-mono text-[#888] mb-3 tracking-wide uppercase">By The Numbers</p>
+            <h2 className="text-4xl font-bold tracking-tight">
+              <span className="bg-gradient-to-r from-[#2563eb] to-[#059669] bg-clip-text text-transparent">Built for scale</span>
+            </h2>
+          </motion.div>
+
+          <div className="grid grid-cols-4 gap-8">
+            {[
+              { value: 200, suffix: 'M+', label: 'Papers indexed', desc: 'Across Semantic Scholar, arXiv & Google Scholar', icon: '📚' },
+              { value: 5, suffix: '', label: 'AI Agents', desc: 'Specialized roles working in concert', icon: '🤖' },
+              { value: 3, suffix: '', label: 'Sources', desc: 'Academic databases queried simultaneously', icon: '🔗' },
+              { value: 2, suffix: ' min', label: 'Per review', desc: 'From topic to complete literature review', icon: '⚡' },
+            ].map((stat, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, type: 'spring' }}
+                className="bg-white/80 backdrop-blur-sm border border-[#e5e5e5] rounded-2xl p-8 text-center hover:shadow-xl transition-shadow"
+              >
+                <span className="text-3xl mb-3 block">{stat.icon}</span>
+                <p className="text-5xl font-bold tracking-tight bg-gradient-to-br from-[#2563eb] to-[#7c3aed] bg-clip-text text-transparent">
+                  <Counter target={stat.value} />{stat.suffix}
+                </p>
+                <p className="font-semibold text-[#1a1a1a] mt-2">{stat.label}</p>
+                <p className="text-xs text-[#888] mt-1">{stat.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Comparison - Before/After */}
+      <section className="relative z-10 py-24 border-t border-[#eee]">
+        <div className="max-w-6xl mx-auto px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <p className="text-sm font-mono text-[#888] mb-3 tracking-wide uppercase">Comparison</p>
+            <h2 className="text-4xl font-bold tracking-tight">
+              <span className="bg-gradient-to-r from-[#dc2626] to-[#2563eb] bg-clip-text text-transparent">Manual vs AI-Powered</span> Research
+            </h2>
+          </motion.div>
+
+          <div className="grid grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* Before - Manual */}
+            <motion.div
+              initial={{ opacity: 0, x: -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="bg-white border border-[#e5e5e5] rounded-2xl p-8 relative overflow-hidden"
+            >
+              <div className="absolute top-0 left-0 right-0 h-1 bg-[#dc2626]/40" />
+              <div className="flex items-center gap-3 mb-6">
+                <span className="text-2xl">😩</span>
+                <div>
+                  <h3 className="font-bold text-lg">Manual Research</h3>
+                  <span className="text-xs text-[#dc2626] font-mono">THE OLD WAY</span>
+                </div>
+              </div>
+              <div className="space-y-4">
+                {[
+                  { label: 'Time to review', value: '2-4 weeks', bad: true },
+                  { label: 'Papers covered', value: '20-30 max', bad: true },
+                  { label: 'Missed connections', value: 'Many', bad: true },
+                  { label: 'Citation formatting', value: 'Manual', bad: true },
+                  { label: 'Quality consistency', value: 'Variable', bad: true },
+                  { label: 'Gap identification', value: 'Subjective', bad: true },
+                ].map((item, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.3 + i * 0.08 }}
+                    className="flex items-center justify-between py-2 border-b border-[#f0f0f0] last:border-0"
+                  >
+                    <span className="text-sm text-[#666]">{item.label}</span>
+                    <span className="text-sm font-medium text-[#dc2626]">{item.value}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* After - AI */}
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="bg-white border border-[#e5e5e5] rounded-2xl p-8 relative overflow-hidden shadow-xl shadow-blue-500/5"
+            >
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#2563eb] to-[#7c3aed]" />
+              <div className="flex items-center gap-3 mb-6">
+                <span className="text-2xl">🚀</span>
+                <div>
+                  <h3 className="font-bold text-lg">AI Research</h3>
+                  <span className="text-xs text-[#2563eb] font-mono">WITH RESEARCHAI</span>
+                </div>
+              </div>
+              <div className="space-y-4">
+                {[
+                  { label: 'Time to review', value: '< 2 minutes' },
+                  { label: 'Papers covered', value: '50+ papers' },
+                  { label: 'Missed connections', value: 'Near zero' },
+                  { label: 'Citation formatting', value: 'Auto APA' },
+                  { label: 'Quality consistency', value: '7+/10 guaranteed' },
+                  { label: 'Gap identification', value: 'Systematic' },
+                ].map((item, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: 20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.3 + i * 0.08 }}
+                    className="flex items-center justify-between py-2 border-b border-[#f0f0f0] last:border-0"
+                  >
+                    <span className="text-sm text-[#666]">{item.label}</span>
+                    <span className="text-sm font-medium text-[#2563eb]">{item.value}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Time saved callout */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5 }}
+            className="text-center mt-12"
+          >
+            <div className="inline-flex items-center gap-3 bg-white border border-[#e5e5e5] rounded-full px-8 py-4 shadow-lg">
+              <span className="text-2xl">⏱️</span>
+              <span className="text-lg font-bold">Save <span className="bg-gradient-to-r from-[#2563eb] to-[#7c3aed] bg-clip-text text-transparent">99%</span> of your research time</span>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Tech Stack - Floating Badges */}
+      <section className="relative z-10 py-24 border-t border-[#eee] bg-[#f5f5f4]">
+        <div className="max-w-6xl mx-auto px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <p className="text-sm font-mono text-[#888] mb-3 tracking-wide uppercase">Tech Stack</p>
+            <h2 className="text-4xl font-bold tracking-tight">
+              <span className="bg-gradient-to-r from-[#059669] to-[#2563eb] bg-clip-text text-transparent">Built with the best</span>
+            </h2>
+            <p className="text-[#666] mt-4 max-w-lg mx-auto">Modern, fast, and reliable. Every component chosen for performance and developer experience.</p>
+          </motion.div>
+
+          <FloatingBadges />
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5 }}
+            className="mt-12 grid grid-cols-3 gap-6 max-w-3xl mx-auto"
+          >
+            {[
+              { label: 'Backend', tech: 'FastAPI + Python', desc: 'Async API with type safety' },
+              { label: 'Frontend', tech: 'React + Vite', desc: 'Fast builds, smooth UX' },
+              { label: 'AI Inference', tech: 'Groq (LPU)', desc: 'Ultra-fast LLM responses' },
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.6 + i * 0.1 }}
+                className="text-center"
+              >
+                <p className="text-xs font-mono text-[#888] uppercase tracking-wider">{item.label}</p>
+                <p className="font-bold mt-1">{item.tech}</p>
+                <p className="text-xs text-[#666] mt-0.5">{item.desc}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="relative z-10 py-24 border-t border-[#eee]">
+        <div className="max-w-3xl mx-auto px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <p className="text-sm font-mono text-[#888] mb-3 tracking-wide uppercase">FAQ</p>
+            <h2 className="text-4xl font-bold tracking-tight">
+              <span className="bg-gradient-to-r from-[#2563eb] to-[#7c3aed] bg-clip-text text-transparent">Common questions</span>
+            </h2>
+          </motion.div>
+
+          <div className="space-y-3">
+            {faqs.map((faq, i) => (
+              <FAQItem
+                key={i}
+                question={faq.q}
+                answer={faq.a}
+                isOpen={openFAQ === i}
+                onClick={() => setOpenFAQ(openFAQ === i ? null : i)}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ===== NEW SECTIONS END ===== */}
 
       {/* CTA */}
       <section className="relative z-10 py-24 border-t border-[#eee] bg-[#f5f5f4]">
