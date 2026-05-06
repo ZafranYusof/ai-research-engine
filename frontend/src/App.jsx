@@ -12,6 +12,7 @@ import PaperSearch from './pages/PaperSearch'
 import Writing from './pages/Writing'
 import PDFUpload from './pages/PDFUpload'
 import Recommendations from './pages/Recommendations'
+import PlagiarismCheck from './pages/PlagiarismCheck'
 import VerifyEmail from './pages/VerifyEmail'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
@@ -55,6 +56,9 @@ function App() {
         </Route>
         <Route path="/recommendations" element={<Layout />}>
           <Route index element={<Recommendations />} />
+        </Route>
+        <Route path="/plagiarism" element={<Layout />}>
+          <Route index element={<PlagiarismCheck />} />
         </Route>
       </Routes>
     </BrowserRouter>

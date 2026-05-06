@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import api from '../utils/api'
 import ReactMarkdown from 'react-markdown'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from '../utils/toast'
-import { Save, Check, Clock } from 'lucide-react'
+import { Save, Check, Clock, Shield } from 'lucide-react'
 
 const SECTION_TYPES = [
   { value: 'introduction', label: 'Introduction' },
@@ -16,6 +16,7 @@ const SECTION_TYPES = [
 
 export default function Writing() {
   const { projectId } = useParams()
+  const navigate = useNavigate()
   const [sectionType, setSectionType] = useState('literature_review')
   const [maxWords, setMaxWords] = useState(2000)
   const [iterative, setIterative] = useState(true)
@@ -400,6 +401,14 @@ export default function Writing() {
                     </button>
                   </div>
                 )}
+
+                <button
+                  onClick={() => navigate('/plagiarism', { state: { content: generated.content, projectId } })}
+                  className="w-full flex items-center justify-center gap-2 bg-violet-500 hover:bg-violet-600 text-white py-2.5 rounded-xl text-xs font-medium transition-all"
+                >
+                  <Shield size={14} />
+                  Check Originality
+                </button>
               </div>
             )}
           </div>
