@@ -41,12 +41,12 @@ export default function NewResearch() {
   return (
     <div className="max-w-2xl">
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-2xl font-bold tracking-tight mb-2">New Research Project</h1>
+        <h1 className="text-2xl font-bold tracking-tight mb-2 dark:text-white">New Research Project</h1>
         <p className="text-[#888] text-sm mb-8">Define your research topic and let AI find, analyze, and synthesize the literature.</p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-[#555] mb-1.5">Research Topic</label>
+            <label className="block text-sm font-medium text-[#555] dark:text-[#ccc] mb-1.5">Research Topic</label>
             <textarea
               value={form.topic}
               onChange={(e) => setForm({ ...form, topic: e.target.value })}
@@ -58,7 +58,7 @@ export default function NewResearch() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-[#555] mb-1.5">Year From</label>
+              <label className="block text-sm font-medium text-[#555] dark:text-[#ccc] mb-1.5">Year From</label>
               <input
                 type="number"
                 value={form.yearFrom}
@@ -67,7 +67,7 @@ export default function NewResearch() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[#555] mb-1.5">Year To</label>
+              <label className="block text-sm font-medium text-[#555] dark:text-[#ccc] mb-1.5">Year To</label>
               <input
                 type="number"
                 value={form.yearTo}
@@ -78,7 +78,7 @@ export default function NewResearch() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#555] mb-1.5">Max Papers to Analyze</label>
+            <label className="block text-sm font-medium text-[#555] dark:text-[#ccc] mb-1.5">Max Papers to Analyze</label>
             <input
               type="number"
               value={form.maxPapers}
@@ -90,7 +90,7 @@ export default function NewResearch() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#555] mb-1.5">Focus Areas (comma separated)</label>
+            <label className="block text-sm font-medium text-[#555] dark:text-[#ccc] mb-1.5">Focus Areas (comma separated)</label>
             <input
               type="text"
               value={form.focusAreas}

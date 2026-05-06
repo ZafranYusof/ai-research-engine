@@ -215,7 +215,7 @@ export default function Writing() {
   return (
     <div>
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-2xl font-bold tracking-tight mb-2">Academic Writing</h1>
+        <h1 className="text-2xl font-bold tracking-tight mb-2 dark:text-white">Academic Writing</h1>
         <p className="text-[#888] text-sm mb-8">Generate publication-ready sections with AI critique and revision.</p>
 
         {/* Draft restore offer */}
@@ -241,7 +241,7 @@ export default function Writing() {
               <div className="flex gap-2">
                 <button
                   onClick={dismissDraft}
-                  className="px-3 py-1.5 text-xs text-[#888] hover:text-[#555] transition-colors"
+                  className="px-3 py-1.5 text-xs text-[#888] hover:text-[#555] dark:text-[#ccc] transition-colors"
                 >
                   Dismiss
                 </button>
@@ -260,11 +260,11 @@ export default function Writing() {
           {/* Controls */}
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-[#555] mb-1.5">Section Type</label>
+              <label className="block text-xs font-medium text-[#555] dark:text-[#ccc] mb-1.5">Section Type</label>
               <select
                 value={sectionType}
                 onChange={(e) => setSectionType(e.target.value)}
-                className="w-full bg-white border border-[#e5e5e5] rounded-xl px-4 py-3 text-sm text-[#1a1a1a] focus:outline-none focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/10 transition-all dark:bg-[#1a1a1a] dark:border-[#2a2a2a] dark:text-[#e5e5e5]"
+                className="w-full bg-white dark:bg-[#1a1a1a] border border-[#e5e5e5] dark:border-[#333] rounded-xl px-4 py-3 text-sm text-[#1a1a1a] dark:text-white focus:outline-none focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/10 transition-all dark:bg-[#1a1a1a] dark:border-[#2a2a2a] dark:text-[#e5e5e5]"
               >
                 {SECTION_TYPES.map((s) => (
                   <option key={s.value} value={s.value}>{s.label}</option>
@@ -273,12 +273,12 @@ export default function Writing() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-[#555] mb-1.5">Max Words</label>
+              <label className="block text-xs font-medium text-[#555] dark:text-[#ccc] mb-1.5">Max Words</label>
               <input
                 type="number"
                 value={maxWords}
                 onChange={(e) => setMaxWords(parseInt(e.target.value))}
-                className="w-full bg-white border border-[#e5e5e5] rounded-xl px-4 py-3 text-sm text-[#1a1a1a] focus:outline-none focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/10 transition-all dark:bg-[#1a1a1a] dark:border-[#2a2a2a] dark:text-[#e5e5e5]"
+                className="w-full bg-white dark:bg-[#1a1a1a] border border-[#e5e5e5] dark:border-[#333] rounded-xl px-4 py-3 text-sm text-[#1a1a1a] dark:text-white focus:outline-none focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/10 transition-all dark:bg-[#1a1a1a] dark:border-[#2a2a2a] dark:text-[#e5e5e5]"
               />
             </div>
 
@@ -290,7 +290,7 @@ export default function Writing() {
                 onChange={(e) => setIterative(e.target.checked)}
                 className="rounded border-[#ddd] text-[#2563eb] focus:ring-[#2563eb]/20"
               />
-              <label htmlFor="iterative" className="text-xs text-[#666]">
+              <label htmlFor="iterative" className="text-xs text-[#666] dark:text-[#bbb]">
                 Iterative refinement (auto-revise until quality passes)
               </label>
             </div>
@@ -315,7 +315,7 @@ export default function Writing() {
                 animate={{ opacity: 1, y: 0 }}
                 className="bg-white border border-[#eee] rounded-xl p-4 dark:bg-[#1a1a1a] dark:border-[#2a2a2a]"
               >
-                <h3 className="font-medium text-xs text-[#555] mb-2">Quality Review</h3>
+                <h3 className="font-medium text-xs text-[#555] dark:text-[#ccc] mb-2">Quality Review</h3>
                 <div className={`text-2xl font-bold ${review.score >= 7 ? 'text-[#059669]' : review.score >= 5 ? 'text-amber-500' : 'text-red-500'}`}>
                   {review.score}/10
                 </div>
@@ -357,7 +357,7 @@ export default function Writing() {
             {/* Iterations info */}
             {generated?.iterations && (
               <div className="bg-white border border-[#eee] rounded-xl p-4 dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
-                <h3 className="font-medium text-xs text-[#555] mb-2">Iterations: {generated.total_iterations}</h3>
+                <h3 className="font-medium text-xs text-[#555] dark:text-[#ccc] mb-2">Iterations: {generated.total_iterations}</h3>
                 {generated.iterations.map((iter, i) => (
                   <div key={i} className="flex justify-between text-[10px] text-[#888] py-1">
                     <span>v{iter.version}</span>
@@ -372,7 +372,7 @@ export default function Writing() {
 
             {/* Save & Export */}
             {generated && (
-              <div className="space-y-2 border-t border-[#eee] pt-4 dark:border-[#2a2a2a]">
+              <div className="space-y-2 border-t border-[#eee] dark:border-[#333] pt-4 dark:border-[#2a2a2a]">
                 <button
                   onClick={handleSaveSection}
                   className="w-full bg-[#2563eb] hover:bg-[#1d4ed8] text-white py-2.5 rounded-xl text-xs font-medium transition-all"
@@ -470,13 +470,13 @@ export default function Writing() {
                       )}
                     </div>
                   </div>
-                  <div className="prose prose-sm max-w-none text-[#444] leading-relaxed dark:text-[#ccc]">
+                  <div className="prose prose-sm max-w-none text-[#444] dark:text-[#ccc] leading-relaxed dark:text-[#ccc]">
                     <ReactMarkdown>{generated.content}</ReactMarkdown>
                   </div>
 
                   {generated.citations?.length > 0 && (
-                    <div className="mt-6 border-t border-[#eee] pt-4 dark:border-[#2a2a2a]">
-                      <h3 className="font-medium text-xs text-[#555] mb-2">References ({generated.citations.length})</h3>
+                    <div className="mt-6 border-t border-[#eee] dark:border-[#333] pt-4 dark:border-[#2a2a2a]">
+                      <h3 className="font-medium text-xs text-[#555] dark:text-[#ccc] mb-2">References ({generated.citations.length})</h3>
                       <ul className="space-y-1">
                         {generated.citations.map((c, i) => (
                           <li key={i} className="text-[10px] text-[#888] leading-relaxed">
@@ -490,7 +490,7 @@ export default function Writing() {
 
                 {/* Revise input */}
                 <div className="bg-white border border-[#eee] rounded-xl p-4 dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
-                  <h3 className="font-medium text-xs text-[#555] mb-2">Request Revision</h3>
+                  <h3 className="font-medium text-xs text-[#555] dark:text-[#ccc] mb-2">Request Revision</h3>
                   <div className="flex gap-2">
                     <input
                       type="text"
@@ -514,7 +514,7 @@ export default function Writing() {
               <div className="flex items-center justify-center h-96 bg-white border border-[#eee] rounded-xl dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
                 <div className="text-center">
                   <p className="text-3xl mb-3">✍️</p>
-                  <p className="text-sm text-[#555]">Select a section type and click Generate</p>
+                  <p className="text-sm text-[#555] dark:text-[#ccc]">Select a section type and click Generate</p>
                   <p className="text-xs text-[#aaa] mt-1.5">
                     Iterative mode will auto-revise until quality score ≥ 7/10
                   </p>

@@ -144,7 +144,7 @@ export default function KnowledgeGraph() {
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
         <div className="flex justify-between items-start mb-6">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Knowledge Graph</h1>
+            <h1 className="text-2xl font-bold tracking-tight dark:text-white">Knowledge Graph</h1>
             <p className="text-[#888] text-sm mt-1">Visual map of paper relationships and citation networks</p>
           </div>
           <div className="flex gap-2">
@@ -154,7 +154,7 @@ export default function KnowledgeGraph() {
               className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all ${
                 showPageRank
                   ? 'bg-[#f59e0b]/10 border border-[#f59e0b]/30 text-[#d97706]'
-                  : 'bg-white border border-[#eee] text-[#555] hover:border-[#ddd] dark:bg-[#1a1a1a] dark:border-[#2a2a2a]'
+                  : 'bg-white border border-[#eee] text-[#555] dark:text-[#ccc] hover:border-[#ddd] dark:bg-[#1a1a1a] dark:border-[#2a2a2a]'
               }`}
             >
               {showPageRank ? <ToggleRight size={14} /> : <ToggleLeft size={14} />}
@@ -162,13 +162,13 @@ export default function KnowledgeGraph() {
             </button>
             <button
               onClick={() => setFullscreen(!fullscreen)}
-              className="flex items-center gap-1.5 bg-white border border-[#eee] text-[#555] px-3 py-2 rounded-xl text-xs font-medium hover:border-[#ddd] transition-all dark:bg-[#1a1a1a] dark:border-[#2a2a2a]"
+              className="flex items-center gap-1.5 bg-white border border-[#eee] text-[#555] dark:text-[#ccc] px-3 py-2 rounded-xl text-xs font-medium hover:border-[#ddd] transition-all dark:bg-[#1a1a1a] dark:border-[#2a2a2a]"
             >
               <Maximize2 size={14} />
             </button>
             <button
               onClick={loadGraph}
-              className="flex items-center gap-1.5 bg-white border border-[#eee] text-[#555] px-3 py-2 rounded-xl text-xs font-medium hover:border-[#ddd] transition-all dark:bg-[#1a1a1a] dark:border-[#2a2a2a]"
+              className="flex items-center gap-1.5 bg-white border border-[#eee] text-[#555] dark:text-[#ccc] px-3 py-2 rounded-xl text-xs font-medium hover:border-[#ddd] transition-all dark:bg-[#1a1a1a] dark:border-[#2a2a2a]"
             >
               <RefreshCw size={14} />
               Refresh
@@ -179,10 +179,10 @@ export default function KnowledgeGraph() {
         {/* Stats bar */}
         {stats && (
           <div className="flex gap-3 mb-4 flex-wrap">
-            <span className="text-[11px] bg-white border border-[#eee] px-3 py-1.5 rounded-full text-[#555] font-medium dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
+            <span className="text-[11px] bg-white border border-[#eee] px-3 py-1.5 rounded-full text-[#555] dark:text-[#ccc] font-medium dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
               {stats.total_nodes} nodes
             </span>
-            <span className="text-[11px] bg-white border border-[#eee] px-3 py-1.5 rounded-full text-[#555] font-medium dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
+            <span className="text-[11px] bg-white border border-[#eee] px-3 py-1.5 rounded-full text-[#555] dark:text-[#ccc] font-medium dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
               {stats.total_edges} edges
             </span>
             {stats.node_types && Object.entries(stats.node_types).map(([type, count]) => (
@@ -212,7 +212,7 @@ export default function KnowledgeGraph() {
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 filter === f.id
                   ? 'bg-[#1a1a1a] text-white dark:bg-white dark:text-[#1a1a1a]'
-                  : 'bg-white border border-[#eee] text-[#888] hover:text-[#555] hover:border-[#ddd] dark:bg-[#1a1a1a] dark:border-[#2a2a2a]'
+                  : 'bg-white border border-[#eee] text-[#888] hover:text-[#555] dark:text-[#ccc] hover:border-[#ddd] dark:bg-[#1a1a1a] dark:border-[#2a2a2a]'
               }`}
             >
               {f.label}
@@ -222,7 +222,7 @@ export default function KnowledgeGraph() {
 
         {/* Graph */}
         <div
-          className={`bg-white border border-[#eee] rounded-2xl overflow-hidden transition-all dark:bg-[#1a1a1a] dark:border-[#2a2a2a] ${
+          className={`bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-2xl overflow-hidden transition-all dark:bg-[#1a1a1a] dark:border-[#2a2a2a] ${
             fullscreen ? 'fixed inset-4 z-50 shadow-2xl' : ''
           }`}
           style={{ height: fullscreen ? 'auto' : '550px' }}
@@ -232,7 +232,7 @@ export default function KnowledgeGraph() {
               onClick={() => setFullscreen(false)}
               className="absolute top-4 right-4 z-10 bg-white border border-[#eee] rounded-xl p-2 shadow-sm hover:shadow-md transition-all dark:bg-[#1a1a1a] dark:border-[#2a2a2a]"
             >
-              <X size={16} className="text-[#555]" />
+              <X size={16} className="text-[#555] dark:text-[#ccc]" />
             </button>
           )}
 
@@ -248,7 +248,7 @@ export default function KnowledgeGraph() {
               linkDirectionalArrowLength={3}
               linkDirectionalArrowRelPos={0.8}
               onNodeClick={(node) => setSelectedNode(node)}
-              backgroundColor="#ffffff"
+              backgroundColor={document.documentElement.classList.contains("dark") ? "#1a1a1a" : "#ffffff"}
               linkWidth={1}
               linkOpacity={0.4}
               cooldownTicks={100}
@@ -291,7 +291,7 @@ export default function KnowledgeGraph() {
                 <div className="w-14 h-14 bg-[#2563eb]/5 rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <span className="text-2xl">🕸️</span>
                 </div>
-                <p className="text-sm font-medium text-[#555] mb-1">No data in knowledge graph yet</p>
+                <p className="text-sm font-medium text-[#555] dark:text-[#ccc] mb-1">No data in knowledge graph yet</p>
                 <p className="text-xs text-[#aaa]">Run a research pipeline to populate the graph</p>
               </div>
             </div>

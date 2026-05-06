@@ -45,7 +45,7 @@ export default function PaperSearch() {
   return (
     <div>
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-2xl font-bold tracking-tight mb-2">Search Papers</h1>
+        <h1 className="text-2xl font-bold tracking-tight mb-2 dark:text-white">Search Papers</h1>
         <p className="text-[#888] text-sm mb-6">Search across Semantic Scholar and arXiv databases.</p>
 
         <form onSubmit={handleSearch} className="space-y-4 mb-8">
@@ -141,7 +141,7 @@ export default function PaperSearch() {
               className="bg-white border border-[#eee] rounded-xl p-5 hover:border-[#ddd] hover:shadow-sm transition-all dark:bg-[#1a1a1a] dark:border-[#2a2a2a] dark:hover:border-[#444]"
             >
               <div className="flex items-start justify-between gap-2">
-                <h3 className="font-medium text-sm leading-snug">{paper.title}</h3>
+                <h3 className="font-medium text-sm leading-snug dark:text-white">{paper.title}</h3>
                 <span className={`text-[9px] px-2 py-0.5 rounded-full shrink-0 font-medium ${
                   paper.source === 'google_scholar' ? 'bg-[#4285f4]/10 text-[#4285f4]' :
                   paper.source === 'arxiv' ? 'bg-[#b31b1b]/10 text-[#b31b1b]' :
@@ -157,12 +157,12 @@ export default function PaperSearch() {
                 {paper.venue} &middot; {paper.year} &middot; {paper.citation_count} citations
               </p>
               {paper.abstract && (
-                <p className="text-xs text-[#666] mt-3 line-clamp-3 leading-relaxed">{paper.abstract}</p>
+                <p className="text-xs text-[#666] dark:text-[#bbb] mt-3 line-clamp-3 leading-relaxed">{paper.abstract}</p>
               )}
               {paper.fields_of_study?.length > 0 && (
                 <div className="flex flex-wrap gap-1.5 mt-3">
                   {paper.fields_of_study.map((field, j) => (
-                    <span key={j} className="text-[10px] bg-[#f5f5f4] text-[#888] px-2 py-0.5 rounded-full border border-[#eee]">
+                    <span key={j} className="text-[10px] bg-[#f5f5f4] dark:bg-[#333] text-[#888] px-2 py-0.5 rounded-full border border-[#eee]">
                       {field}
                     </span>
                   ))}

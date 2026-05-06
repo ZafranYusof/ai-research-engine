@@ -76,7 +76,7 @@ export default function PDFUpload() {
   return (
     <div>
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-2xl font-bold tracking-tight mb-2">PDF Parser</h1>
+        <h1 className="text-2xl font-bold tracking-tight mb-2 dark:text-white">PDF Parser</h1>
         <p className="text-[#888] text-sm mb-8">Upload research papers to extract text, metadata, sections, and references.</p>
 
         {/* Upload Zone */}
@@ -84,7 +84,7 @@ export default function PDFUpload() {
           onDrop={handleDrop}
           onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
           onDragLeave={() => setDragOver(false)}
-          className={`border-2 border-dashed rounded-2xl p-10 text-center transition-all cursor-pointer ${
+          className={`border-2 border-dashed rounded-2xl p-10 text-center dark:bg-[#1a1a1a] transition-all cursor-pointer ${
             dragOver ? 'border-[#2563eb] bg-[#2563eb]/5' : 'border-[#e5e5e5] hover:border-[#ccc] bg-white'
           }`}
           onClick={() => document.getElementById('pdf-input').click()}
@@ -98,7 +98,7 @@ export default function PDFUpload() {
             className="hidden"
           />
           <Upload size={32} className={`mx-auto mb-3 ${dragOver ? 'text-[#2563eb]' : 'text-[#ccc]'}`} />
-          <p className="text-sm text-[#555]">Drop PDF files here or click to browse</p>
+          <p className="text-sm text-[#555] dark:text-[#ccc]">Drop PDF files here or click to browse</p>
           <p className="text-xs text-[#aaa] mt-1">Max 50MB per file, up to 10 files</p>
         </div>
 
@@ -106,12 +106,12 @@ export default function PDFUpload() {
         {files.length > 0 && (
           <div className="mt-6">
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-xs font-medium text-[#555] uppercase tracking-wider">
+              <h2 className="text-xs font-medium text-[#555] dark:text-[#ccc] uppercase tracking-wider">
                 Files ({files.length})
               </h2>
               <button
                 onClick={() => setFiles([])}
-                className="text-xs text-[#999] hover:text-[#555] transition-colors"
+                className="text-xs text-[#999] hover:text-[#555] dark:text-[#ccc] transition-colors"
               >
                 Clear all
               </button>
@@ -123,10 +123,10 @@ export default function PDFUpload() {
                   key={i}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
-                  className="flex items-center gap-3 bg-white border border-[#eee] rounded-xl px-4 py-3"
+                  className="flex items-center gap-3 bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-xl px-4 py-3"
                 >
                   <FileText size={16} className="text-[#2563eb] shrink-0" />
-                  <span className="text-sm text-[#333] truncate flex-1">{file.name}</span>
+                  <span className="text-sm text-[#333] dark:text-[#ddd] truncate flex-1">{file.name}</span>
                   <span className="text-[10px] text-[#aaa] font-mono shrink-0">
                     {(file.size / 1024 / 1024).toFixed(1)}MB
                   </span>
@@ -160,7 +160,7 @@ export default function PDFUpload() {
               animate={{ opacity: 1, y: 0 }}
               className="mt-8"
             >
-              <h2 className="text-xs font-medium text-[#555] uppercase tracking-wider mb-3">Results</h2>
+              <h2 className="text-xs font-medium text-[#555] dark:text-[#ccc] uppercase tracking-wider mb-3">Results</h2>
               <div className="space-y-3">
                 {results.map((result, i) => (
                   <motion.div
@@ -168,7 +168,7 @@ export default function PDFUpload() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05 }}
-                    className="bg-white border border-[#eee] rounded-xl p-5 hover:shadow-sm transition-all cursor-pointer"
+                    className="bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-xl p-5 hover:shadow-sm transition-all cursor-pointer"
                     onClick={() => viewPaper(i)}
                   >
                     {result.success ? (
@@ -195,7 +195,7 @@ export default function PDFUpload() {
                           </div>
                         </div>
                         {(result.metadata?.abstract || result.abstract) && (
-                          <p className="text-xs text-[#666] mt-3 line-clamp-2 leading-relaxed pl-7">
+                          <p className="text-xs text-[#666] dark:text-[#bbb] mt-3 line-clamp-2 leading-relaxed pl-7">
                             {result.metadata?.abstract || result.abstract}
                           </p>
                         )}
@@ -227,12 +227,12 @@ export default function PDFUpload() {
             >
               <button
                 onClick={() => setSelectedPaper(null)}
-                className="text-xs text-[#888] hover:text-[#555] mb-4 flex items-center gap-1 transition-colors"
+                className="text-xs text-[#888] hover:text-[#555] dark:text-[#ccc] mb-4 flex items-center gap-1 transition-colors"
               >
                 ← Back to results
               </button>
 
-              <div className="bg-white border border-[#eee] rounded-xl p-6 mb-4">
+              <div className="bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-xl p-6 mb-4">
                 <h2 className="font-semibold text-lg">{selectedPaper.metadata?.title}</h2>
                 {selectedPaper.metadata?.authors?.length > 0 && (
                   <p className="text-sm text-[#888] mt-1">
@@ -258,14 +258,14 @@ export default function PDFUpload() {
 
               {/* Sections */}
               {selectedPaper.sections?.length > 0 && (
-                <div className="bg-white border border-[#eee] rounded-xl p-6 mb-4">
-                  <h3 className="text-xs font-medium text-[#555] uppercase tracking-wider mb-4">
+                <div className="bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-xl p-6 mb-4">
+                  <h3 className="text-xs font-medium text-[#555] dark:text-[#ccc] uppercase tracking-wider mb-4">
                     Sections ({selectedPaper.sections.length})
                   </h3>
                   <div className="space-y-4">
                     {selectedPaper.sections.map((section, i) => (
                       <div key={i} className="border-l-2 border-[#eee] pl-4">
-                        <h4 className={`font-medium text-sm ${section.level === 1 ? 'text-[#1a1a1a]' : 'text-[#555]'}`}>
+                        <h4 className={`font-medium text-sm ${section.level === 1 ? 'text-[#1a1a1a]' : 'text-[#555] dark:text-[#ccc]'}`}>
                           {section.heading}
                         </h4>
                         <p className="text-xs text-[#888] mt-1 line-clamp-3 leading-relaxed">
@@ -279,13 +279,13 @@ export default function PDFUpload() {
 
               {/* References */}
               {selectedPaper.references?.length > 0 && (
-                <div className="bg-white border border-[#eee] rounded-xl p-6">
-                  <h3 className="text-xs font-medium text-[#555] uppercase tracking-wider mb-4">
+                <div className="bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-xl p-6">
+                  <h3 className="text-xs font-medium text-[#555] dark:text-[#ccc] uppercase tracking-wider mb-4">
                     References ({selectedPaper.references.length})
                   </h3>
                   <div className="space-y-2 max-h-[400px] overflow-y-auto">
                     {selectedPaper.references.map((ref, i) => (
-                      <p key={i} className="text-xs text-[#666] leading-relaxed">
+                      <p key={i} className="text-xs text-[#666] dark:text-[#bbb] leading-relaxed">
                         <span className="text-[#aaa] font-mono mr-2">[{i + 1}]</span>
                         {ref}
                       </p>
