@@ -55,8 +55,7 @@ class ResendVerificationRequest(BaseModel):
 
 
 @router.post("/register")
-@limiter.limit("5/minute")
-async def register(request: RegisterRequest, req: Request):
+async def register(request: RegisterRequest, req: Request = None):
     try:
         # Check if user already exists
         existing = await mongodb.users.find_one({"email": request.email})

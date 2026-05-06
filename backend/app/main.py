@@ -48,6 +48,16 @@ app.include_router(activity.router, prefix="/api/activity", tags=["activity"])
 app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
 app.include_router(analytics.router, prefix="/api/analytics", tags=["analytics"])
 
+from fastapi.responses import JSONResponse
+import traceback
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request, exc):
+    return JSONResponse(
+        status_code=500,
+        content={"detail": str(exc), "type": type(exc).__name__, "trace": traceback.format_exc()[-500:]}
+    )
+
 @app.get("/health")
 async def health_check():
     return {"status": "healthy", "version": "0.1.0"}
