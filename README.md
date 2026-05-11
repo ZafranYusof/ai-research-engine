@@ -75,14 +75,14 @@ npm run dev
 
 ## Features
 
-- 🔍 Multi-source paper search (Semantic Scholar + arXiv)
-- 🧠 AI-powered analysis and synthesis
-- 🕸️ Knowledge graph visualization (citation networks)
-- ✍️ Auto-generate literature review with citations
-- 📊 Gap analysis and hypothesis generation
-- 🔄 Iterative writing with critic feedback loop
-- 📑 APA citation formatting
-- 🎯 Theme clustering and bridge paper detection
+- Multi-source paper search (Semantic Scholar + arXiv)
+- AI-powered analysis and synthesis
+- Knowledge graph visualization (citation networks)
+- Auto-generate literature review with citations
+- Gap analysis and hypothesis generation
+- Iterative writing with critic feedback loop
+- APA citation formatting
+- Theme clustering and bridge paper detection
 
 ## Roadmap
 
