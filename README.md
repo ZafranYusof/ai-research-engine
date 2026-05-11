@@ -1,4 +1,4 @@
-# 🧠 AI Research Paper Engine
+# AI Research Paper Engine
 
 Multi-agent AI system for automated literature review, research synthesis, and academic writing.
 
