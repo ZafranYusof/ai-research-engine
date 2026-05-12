@@ -723,23 +723,54 @@ function WorkflowPreview() {
           desc="The engine mirrors how research is actually written: start with a question, triage the literature, and produce a defensible synthesis."
         />
 
-        <div className="grid lg:grid-cols-3 gap-5">
-          {steps.map((s) => (
-            <motion.div
-              key={s.step}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="bg-[#11202f] border border-[#1c2f42] rounded-2xl p-7 hover:border-[#c89b3c]/30 transition-colors"
-            >
-              <div className="font-serif text-5xl font-medium tabular-nums bg-gradient-to-b from-[#c89b3c] to-[#c89b3c]/20 bg-clip-text text-transparent mb-5 tracking-tight">
-                {s.step}
-              </div>
-              <h3 className="font-serif text-xl font-medium text-[#f5efe0] mb-2">{s.label}</h3>
-              <p className="text-sm text-[#c8bfa8]/65 leading-relaxed">{s.desc}</p>
-            </motion.div>
-          ))}
+        <div className="relative">
+          {/* Horizontal connecting line (desktop) */}
+          <div className="hidden lg:block absolute left-[16.66%] right-[16.66%] top-[52px] h-px bg-[#1c2f42]" />
+          <motion.div
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
+            style={{ originX: 0 }}
+            className="hidden lg:block absolute left-[16.66%] right-[16.66%] top-[52px] h-px bg-gradient-to-r from-[#c89b3c] via-[#c89b3c] to-[#c89b3c]/0"
+          />
+
+          <div className="grid lg:grid-cols-3 gap-5">
+            {steps.map((s, i) => (
+              <motion.div
+                key={s.step}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-60px' }}
+                transition={{ duration: 0.5, delay: i * 0.35 }}
+                className="relative bg-[#11202f] border border-[#1c2f42] rounded-2xl p-7 hover:border-[#c89b3c]/30 transition-colors"
+              >
+                {/* Step number circle */}
+                <div className="flex items-center gap-4 mb-5">
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    whileInView={{ scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: i * 0.35 + 0.2 }}
+                    className="relative w-11 h-11 rounded-full bg-[#0b1626] border border-[#c89b3c]/40 flex items-center justify-center shrink-0"
+                  >
+                    <motion.span
+                      className="absolute inset-0 rounded-full border border-[#c89b3c]"
+                      initial={{ scale: 1, opacity: 0 }}
+                      whileInView={{ scale: [1, 1.5], opacity: [0.6, 0] }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 1.2, delay: i * 0.35 + 0.3 }}
+                    />
+                    <span className="font-mono text-xs text-[#c89b3c] font-medium tabular-nums">{s.step}</span>
+                  </motion.div>
+                  <div className="h-px flex-1 bg-gradient-to-r from-[#c89b3c]/40 to-transparent" />
+                </div>
+
+                <h3 className="font-serif text-xl font-medium text-[#f5efe0] mb-2">{s.label}</h3>
+                <p className="text-sm text-[#c8bfa8]/65 leading-relaxed">{s.desc}</p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -861,6 +892,7 @@ export default function Landing() {
         <Stats />
         <Features />
         <Agents />
+        <WorkflowPreview />
         <FAQ />
         <FinalCTA />
       </main>
