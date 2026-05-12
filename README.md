@@ -12,7 +12,7 @@ An automated research platform that retrieves, analyzes, and synthesizes academi
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev)
 [![MongoDB](https://img.shields.io/badge/MongoDB-6.0-47A248?logo=mongodb&logoColor=white)](https://mongodb.com)
 
-[Live Demo](https://research-kappa-six-83.vercel.app) · [API](https://ai-research-engine-8ctr.onrender.com) · [Report Issue](https://github.com/Vexccz/ai-research-engine/issues)
+[Live Demo](https://ai-research-engine-wine.vercel.app) · [API](https://ai-research-engine-8ctr.onrender.com) · [Report Issue](https://github.com/Vexccz/ai-research-engine/issues)
 
 </div>
 
