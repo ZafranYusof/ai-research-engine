@@ -37,6 +37,9 @@ This platform automates that pipeline. A multi-agent system retrieves relevant p
 ### Writing
 
 - Auto-generated literature reviews with APA citations
+- Citation style switcher: APA, MLA, Chicago, IEEE (preference persisted per user)
+- Streaming draft generation with typewriter reveal and live generating indicator
+- Export drafts to Microsoft Word (.docx) with formatted Title, Abstract, Body, and References
 - Iterative writing with critic feedback loop
 - Plagiarism detection against source corpus
 - Auto-save drafts and activity timeline
@@ -129,11 +132,12 @@ Open `http://localhost:5173`.
 
 ## Roadmap
 
-- LaTeX and Word export
+- LaTeX export alongside DOCX
 - Custom LLM fine-tuning on domain corpora
 - Real-time collaborative editing
+- Zotero and Mendeley import/export
 - Multi-language paper support
-- Citation style switcher (APA, MLA, Chicago, IEEE)
+- PDF annotations and highlights synced across sessions
 
 ## License
 
