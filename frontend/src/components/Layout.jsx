@@ -1,10 +1,10 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
 import { Home, Search, BookOpen, GitBranch, LogOut, User, Upload, Sparkles, Shield, Activity, BarChart3 } from 'lucide-react'
 import { useState, useEffect } from 'react'
-import ThemeToggle from './ThemeToggle'
 import CommandPalette from './CommandPalette'
 import ChatWidget from './ChatWidget'
 import useKeyboardShortcuts from '../hooks/useKeyboardShortcuts'
+import { BrandMark, PageBackground } from './ui'
 import '../utils/theme'
 
 const navItems = [
@@ -17,7 +17,6 @@ const navItems = [
   { path: '/pdf', icon: Upload, label: 'PDF Parser' },
   { path: '/activity', icon: Activity, label: 'Activity' },
   { path: '/analytics', icon: BarChart3, label: 'Analytics' },
-
 ]
 
 export default function Layout() {
@@ -50,16 +49,17 @@ export default function Layout() {
   }
 
   return (
-    <div className="min-h-screen bg-[#fafaf9] text-[#1a1a1a] dark:bg-[#0f0f0f] dark:text-[#e5e5e5]">
+    <div className="relative min-h-screen bg-[#0b1626] text-[#e8e2d4] antialiased">
+      <PageBackground />
+
       {/* Sidebar */}
-      <aside className="fixed left-0 top-0 h-full w-60 bg-white border-r border-[#eee] p-5 flex flex-col dark:bg-[#0f0f0f] dark:border-[#222]">
-        <Link to="/" className="flex items-center gap-2 mb-10">
-          <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
-            <path d="M4 6C4 4.9 4.9 4 6 4h4v20H6c-1.1 0-2-.9-2-2V6z" fill="#2563eb" opacity="0.8"/>
-            <path d="M12 4h4v20h-4V4z" fill="#7c3aed" opacity="0.6"/>
-            <path d="M18 4h4c1.1 0 2 .9 2 2v16c0 1.1-.9 2-2 2h-4V4z" fill="#2563eb" opacity="0.4"/>
-          </svg>
-          <span className="text-base font-semibold tracking-tight">ResearchAI</span>
+      <aside className="fixed left-0 top-0 h-full w-64 bg-[#0a1420]/80 backdrop-blur-xl border-r border-[#1c2f42] p-5 flex flex-col z-20">
+        <Link to="/" className="flex items-center gap-3 mb-10 group">
+          <BrandMark size={32} />
+          <div>
+            <div className="font-serif text-base font-medium text-[#f5efe0] tracking-tight leading-none">ResearchAI</div>
+            <div className="text-[10px] tracking-[0.25em] uppercase text-[#c8bfa8]/50 mt-1">Literature Engine</div>
+          </div>
         </Link>
 
         <nav className="space-y-1 flex-1">
@@ -71,11 +71,11 @@ export default function Layout() {
                 to={path}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-sm ${
                   isActive
-                    ? 'bg-[#f0f0f0] text-[#1a1a1a] font-medium dark:bg-[#1a1a1a] dark:text-[#e5e5e5]'
-                    : 'text-[#888] hover:text-[#555] hover:bg-[#f8f8f8] dark:hover:text-[#ccc] dark:hover:bg-[#1a1a1a]'
+                    ? 'bg-[#c89b3c]/10 text-[#f5efe0] font-medium border border-[#c89b3c]/25'
+                    : 'text-[#c8bfa8]/60 hover:text-[#f5efe0] hover:bg-[#11202f] border border-transparent'
                 }`}
               >
-                <Icon size={18} strokeWidth={isActive ? 2 : 1.5} />
+                <Icon size={17} strokeWidth={isActive ? 2 : 1.5} className={isActive ? 'text-[#c89b3c]' : ''} />
                 <span>{label}</span>
               </Link>
             )
@@ -83,46 +83,41 @@ export default function Layout() {
         </nav>
 
         {/* User section */}
-        <div className="border-t border-[#eee] pt-4 mt-4 dark:border-[#222]">
+        <div className="border-t border-[#1c2f42] pt-4 mt-4">
           {user ? (
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-[#2563eb]/10 rounded-lg flex items-center justify-center">
-                  <User size={14} className="text-[#2563eb]" />
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="w-9 h-9 bg-[#c89b3c]/10 border border-[#c89b3c]/25 rounded-lg flex items-center justify-center shrink-0">
+                  <User size={15} className="text-[#c89b3c]" />
                 </div>
-                <div>
-                  <p className="text-xs font-medium truncate max-w-[100px]">{user.name}</p>
-                  <p className="text-[10px] text-[#999] truncate max-w-[100px]">{user.email}</p>
+                <div className="min-w-0">
+                  <p className="text-xs font-medium truncate text-[#f5efe0]">{user.name}</p>
+                  <p className="text-[10px] text-[#c8bfa8]/50 truncate">{user.email}</p>
                 </div>
               </div>
-              <button onClick={handleLogout} className="text-[#ccc] hover:text-[#888] transition-colors">
+              <button onClick={handleLogout} className="text-[#c8bfa8]/40 hover:text-[#c89b3c] transition-colors shrink-0">
                 <LogOut size={16} />
               </button>
             </div>
           ) : (
             <Link
               to="/login"
-              className="flex items-center gap-2 text-sm text-[#888] hover:text-[#555] transition-colors"
+              className="flex items-center gap-2 text-sm text-[#c8bfa8]/60 hover:text-[#f5efe0] transition-colors"
             >
               <User size={16} />
               <span>Sign in</span>
             </Link>
           )}
 
-          <div className="mt-3 flex items-center justify-between">
-            <div className="bg-[#f8f8f8] border border-[#eee] rounded-xl p-3 flex-1 dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
-              <p className="text-[10px] text-[#999] font-mono uppercase tracking-wider">Powered by</p>
-              <p className="text-xs text-[#555] font-medium mt-0.5 dark:text-[#aaa]">Groq Llama 3.3 70B</p>
-            </div>
-            <div className="ml-2">
-              <ThemeToggle />
-            </div>
+          <div className="mt-3 bg-[#11202f] border border-[#1c2f42] rounded-xl p-3">
+            <p className="text-[10px] text-[#c8bfa8]/40 font-mono uppercase tracking-[0.2em]">Powered by</p>
+            <p className="text-xs text-[#c8bfa8]/80 font-medium mt-1">Groq Llama 3.3 70B</p>
           </div>
         </div>
       </aside>
 
       {/* Main content */}
-      <main className="ml-60 p-8 min-h-screen">
+      <main className="ml-64 p-8 min-h-screen relative">
         <Outlet />
       </main>
 

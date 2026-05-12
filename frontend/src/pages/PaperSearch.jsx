@@ -46,24 +46,24 @@ export default function PaperSearch() {
     <div>
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-2xl font-bold tracking-tight mb-2 dark:text-white">Search Papers</h1>
-        <p className="text-[#888] text-sm mb-6">Search across Semantic Scholar and arXiv databases.</p>
+        <p className="text-[#c8bfa8]/60 text-sm mb-6">Search across Semantic Scholar and arXiv databases.</p>
 
         <form onSubmit={handleSearch} className="space-y-4 mb-8">
           <div className="flex gap-3">
             <div className="flex-1 relative">
-              <Search className="absolute left-4 top-3.5 text-[#ccc]" size={18} />
+              <Search className="absolute left-4 top-3.5 text-[#c8bfa8]/50" size={18} />
               <input
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search academic papers..."
-                className="w-full bg-white border border-[#e5e5e5] rounded-xl dark:bg-[#1a1a1a] dark:border-[#333] dark:text-white pl-11 pr-4 py-3 text-sm text-[#1a1a1a] placeholder:text-[#ccc] focus:outline-none focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/10 transition-all"
+                className="w-full bg-[#11202f] border border-[#e5e5e5] rounded-xl dark:bg-[#11202f] dark:border-[#1c2f42] dark:text-white pl-11 pr-4 py-3 text-sm text-[#f5efe0] placeholder:text-[#c8bfa8]/50 focus:outline-none focus:border-[#c89b3c] focus:ring-2 focus:ring-[#2563eb]/10 transition-all"
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="bg-[#1a1a1a] hover:bg-[#333] disabled:bg-[#e5e5e5] disabled:text-[#999] text-white px-6 py-3 rounded-xl font-medium text-sm transition-all hover:shadow-lg hover:shadow-black/10"
+              className="bg-[#11202f] hover:bg-[#333] disabled:bg-[#e5e5e5] disabled:text-[#c8bfa8]/50 text-white px-6 py-3 rounded-xl font-medium text-sm transition-all hover:shadow-lg hover:shadow-black/10"
             >
               {loading ? 'Searching...' : 'Search'}
             </button>
@@ -85,7 +85,7 @@ export default function PaperSearch() {
                   className={`text-[11px] px-3 py-1.5 rounded-full border transition-all font-medium ${
                     sources.includes(src.id)
                       ? 'border-current text-white'
-                      : 'border-[#e5e5e5] text-[#aaa] hover:border-[#ccc]'
+                      : 'border-[#e5e5e5] text-[#c8bfa8]/70 hover:border-[#ccc]'
                   }`}
                   style={sources.includes(src.id) ? { backgroundColor: src.color, borderColor: src.color } : {}}
                 >
@@ -95,14 +95,14 @@ export default function PaperSearch() {
             </div>
 
             {/* Year range */}
-            <div className="flex items-center gap-1.5 text-xs text-[#888]">
+            <div className="flex items-center gap-1.5 text-xs text-[#c8bfa8]/60">
               <span>Year:</span>
               <input
                 type="number"
                 value={yearFrom}
                 onChange={(e) => setYearFrom(e.target.value)}
                 placeholder="2019"
-                className="w-16 bg-white border border-[#e5e5e5] rounded-lg dark:bg-[#1a1a1a] dark:border-[#333] dark:text-white px-2 py-1.5 text-xs text-[#1a1a1a] focus:outline-none focus:border-[#2563eb]"
+                className="w-16 bg-[#11202f] border border-[#e5e5e5] rounded-lg dark:bg-[#11202f] dark:border-[#1c2f42] dark:text-white px-2 py-1.5 text-xs text-[#f5efe0] focus:outline-none focus:border-[#c89b3c]"
               />
               <span>-</span>
               <input
@@ -110,7 +110,7 @@ export default function PaperSearch() {
                 value={yearTo}
                 onChange={(e) => setYearTo(e.target.value)}
                 placeholder="2026"
-                className="w-16 bg-white border border-[#e5e5e5] rounded-lg dark:bg-[#1a1a1a] dark:border-[#333] dark:text-white px-2 py-1.5 text-xs text-[#1a1a1a] focus:outline-none focus:border-[#2563eb]"
+                className="w-16 bg-[#11202f] border border-[#e5e5e5] rounded-lg dark:bg-[#11202f] dark:border-[#1c2f42] dark:text-white px-2 py-1.5 text-xs text-[#f5efe0] focus:outline-none focus:border-[#c89b3c]"
               />
             </div>
           </div>
@@ -125,8 +125,8 @@ export default function PaperSearch() {
         )}
 
         {results.length === 0 && !loading && (
-          <div className="text-center py-20 text-[#999]">
-            <Search size={32} className="mx-auto mb-3 text-[#ddd]" />
+          <div className="text-center py-20 text-[#c8bfa8]/50">
+            <Search size={32} className="mx-auto mb-3 text-[#c8bfa8]/40" />
             <p className="text-sm">Enter a topic to search papers</p>
           </div>
         )}
@@ -138,22 +138,22 @@ export default function PaperSearch() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.03 }}
-              className="bg-white border border-[#eee] rounded-xl p-5 hover:border-[#ddd] hover:shadow-sm transition-all dark:bg-[#1a1a1a] dark:border-[#2a2a2a] dark:hover:border-[#444]"
+              className="bg-[#11202f] border border-[#1c2f42] rounded-xl p-5 hover:border-[#ddd] hover:shadow-sm transition-all dark:bg-[#11202f] dark:border-[#1c2f42] dark:hover:border-[#444]"
             >
               <div className="flex items-start justify-between gap-2">
                 <h3 className="font-medium text-sm leading-snug dark:text-white">{paper.title}</h3>
                 <span className={`text-[9px] px-2 py-0.5 rounded-full shrink-0 font-medium ${
                   paper.source === 'google_scholar' ? 'bg-[#4285f4]/10 text-[#4285f4]' :
                   paper.source === 'arxiv' ? 'bg-[#b31b1b]/10 text-[#b31b1b]' :
-                  'bg-[#2563eb]/10 text-[#2563eb]'
+                  'bg-[#c89b3c]/10 text-[#c89b3c]'
                 }`}>
                   {paper.source === 'google_scholar' ? 'Scholar' : paper.source === 'arxiv' ? 'arXiv' : 'S2'}
                 </span>
               </div>
-              <p className="text-xs text-[#888] mt-1.5">
+              <p className="text-xs text-[#c8bfa8]/60 mt-1.5">
                 {paper.authors?.slice(0, 5).join(', ')}{paper.authors?.length > 5 ? ' et al.' : ''}
               </p>
-              <p className="text-xs text-[#aaa] mt-1">
+              <p className="text-xs text-[#c8bfa8]/70 mt-1">
                 {paper.venue} &middot; {paper.year} &middot; {paper.citation_count} citations
               </p>
               {paper.abstract && (
@@ -162,7 +162,7 @@ export default function PaperSearch() {
               {paper.fields_of_study?.length > 0 && (
                 <div className="flex flex-wrap gap-1.5 mt-3">
                   {paper.fields_of_study.map((field, j) => (
-                    <span key={j} className="text-[10px] bg-[#f5f5f4] dark:bg-[#333] text-[#888] px-2 py-0.5 rounded-full border border-[#eee]">
+                    <span key={j} className="text-[10px] bg-[#f5f5f4] dark:bg-[#333] text-[#c8bfa8]/60 px-2 py-0.5 rounded-full border border-[#1c2f42]">
                       {field}
                     </span>
                   ))}

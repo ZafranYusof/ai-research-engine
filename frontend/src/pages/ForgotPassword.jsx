@@ -26,7 +26,7 @@ export default function ForgotPassword() {
   }
 
   return (
-    <div className="min-h-screen bg-[#fafaf9] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[#0b1626] flex items-center justify-center px-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -51,11 +51,11 @@ export default function ForgotPassword() {
               exit={{ opacity: 0 }}
             >
               <h1 className="text-3xl font-bold tracking-tight mb-2">Forgot password?</h1>
-              <p className="text-[#888] text-sm mb-8">Enter your email and we'll send you a reset link.</p>
+              <p className="text-[#c8bfa8]/60 text-sm mb-8">Enter your email and we'll send you a reset link.</p>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-[#555] mb-1.5">Email</label>
+                  <label className="block text-sm font-medium text-[#c8bfa8] mb-1.5">Email</label>
                   <div className={`relative rounded-xl transition-all duration-300 ${focused ? 'ring-2 ring-[#2563eb]/20 shadow-lg shadow-[#2563eb]/5' : ''}`}>
                     <input
                       type="email"
@@ -64,7 +64,7 @@ export default function ForgotPassword() {
                       onFocus={() => setFocused(true)}
                       onBlur={() => setFocused(false)}
                       placeholder="you@university.edu"
-                      className="w-full bg-white border border-[#e5e5e5] rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:border-[#2563eb] transition-all placeholder:text-[#ccc]"
+                      className="w-full bg-[#11202f] border border-[#e5e5e5] rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:border-[#c89b3c] transition-all placeholder:text-[#c8bfa8]/50"
                       required
                     />
                   </div>
@@ -75,7 +75,7 @@ export default function ForgotPassword() {
                   disabled={loading}
                   whileHover={{ scale: 1.01, y: -1 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full bg-[#1a1a1a] text-white py-3.5 rounded-xl font-medium text-sm hover:bg-[#333] disabled:bg-[#ccc] disabled:cursor-not-allowed transition-all hover:shadow-xl hover:shadow-black/10"
+                  className="w-full bg-[#11202f] text-white py-3.5 rounded-xl font-medium text-sm hover:bg-[#333] disabled:bg-[#ccc] disabled:cursor-not-allowed transition-all hover:shadow-xl hover:shadow-black/10"
                 >
                   {loading ? (
                     <span className="flex items-center justify-center gap-2">
@@ -86,8 +86,8 @@ export default function ForgotPassword() {
                 </motion.button>
               </form>
 
-              <p className="text-center text-sm text-[#888] mt-6">
-                <Link to="/login" className="text-[#2563eb] hover:underline font-medium inline-flex items-center gap-1">
+              <p className="text-center text-sm text-[#c8bfa8]/60 mt-6">
+                <Link to="/login" className="text-[#c89b3c] hover:underline font-medium inline-flex items-center gap-1">
                   <ArrowLeft size={14} /> Back to Login
                 </Link>
               </p>
@@ -99,16 +99,16 @@ export default function ForgotPassword() {
               animate={{ opacity: 1, scale: 1 }}
               className="text-center"
             >
-              <div className="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-6">
-                <Mail className="w-8 h-8 text-[#2563eb]" />
+              <div className="w-16 h-16 rounded-full bg-[#c89b3c]/10 flex items-center justify-center mx-auto mb-6">
+                <Mail className="w-8 h-8 text-[#c89b3c]" />
               </div>
               <h2 className="text-2xl font-bold mb-2">Check your email</h2>
-              <p className="text-[#888] text-sm mb-6">
+              <p className="text-[#c8bfa8]/60 text-sm mb-6">
                 If an account exists for <strong>{email}</strong>, we've sent a password reset link.
               </p>
               <Link
                 to="/login"
-                className="inline-block text-[#2563eb] text-sm font-medium hover:underline"
+                className="inline-block text-[#c89b3c] text-sm font-medium hover:underline"
               >
                 ← Back to Login
               </Link>

@@ -13,11 +13,11 @@ function CodeBlock({ code, language = 'json' }) {
 
   return (
     <div className="relative group my-4 rounded-xl overflow-hidden border border-[#e5e5e5]">
-      <div className="flex items-center justify-between px-4 py-2 bg-[#f8f8f8] border-b border-[#e5e5e5]">
-        <span className="text-[10px] font-mono text-[#999] uppercase tracking-wider">{language}</span>
+      <div className="flex items-center justify-between px-4 py-2 bg-[#11202f] border-b border-[#e5e5e5]">
+        <span className="text-[10px] font-mono text-[#c8bfa8]/50 uppercase tracking-wider">{language}</span>
         <button
           onClick={handleCopy}
-          className="text-[#999] hover:text-[#555] transition-colors"
+          className="text-[#c8bfa8]/50 hover:text-[#c8bfa8] transition-colors"
         >
           {copied ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
         </button>
@@ -32,7 +32,7 @@ function CodeBlock({ code, language = 'json' }) {
 function Endpoint({ method, path, description }) {
   const methodColors = {
     GET: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    POST: 'bg-blue-50 text-blue-700 border-blue-200',
+    POST: 'bg-[#c89b3c]/10 text-[#c89b3c] border-[#c89b3c]/30',
     PUT: 'bg-amber-50 text-amber-700 border-amber-200',
     DELETE: 'bg-red-50 text-red-700 border-red-200',
   }
@@ -43,7 +43,7 @@ function Endpoint({ method, path, description }) {
         {method}
       </span>
       <code className="text-sm font-mono text-[#333]">{path}</code>
-      {description && <span className="text-xs text-[#999] ml-auto">{description}</span>}
+      {description && <span className="text-xs text-[#c8bfa8]/50 ml-auto">{description}</span>}
     </div>
   )
 }
@@ -64,30 +64,30 @@ const sections = [
           <h3 className="font-semibold mb-3 text-[#1e40af]">Quick Start</h3>
           <ol className="space-y-2 text-sm text-[#444]">
             <li className="flex items-start gap-3">
-              <span className="w-6 h-6 bg-[#2563eb] text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0">1</span>
+              <span className="w-6 h-6 bg-[#c89b3c] text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0">1</span>
               <span><strong>Create account</strong> — Register with email and password</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="w-6 h-6 bg-[#2563eb] text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0">2</span>
+              <span className="w-6 h-6 bg-[#c89b3c] text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0">2</span>
               <span><strong>Start research</strong> — Enter topic, year range, and focus areas</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="w-6 h-6 bg-[#2563eb] text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0">3</span>
+              <span className="w-6 h-6 bg-[#c89b3c] text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0">3</span>
               <span><strong>Wait for pipeline</strong> — 5 agents process in sequence (~2-3 min)</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="w-6 h-6 bg-[#2563eb] text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0">4</span>
+              <span className="w-6 h-6 bg-[#c89b3c] text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0">4</span>
               <span><strong>Explore results</strong> — Themes, gaps, hypotheses, knowledge graph</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="w-6 h-6 bg-[#2563eb] text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0">5</span>
+              <span className="w-6 h-6 bg-[#c89b3c] text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0">5</span>
               <span><strong>Generate & export</strong> — Literature review in Markdown, LaTeX, or BibTeX</span>
             </li>
           </ol>
         </div>
 
         <h3 className="font-semibold text-lg mb-3">Architecture Overview</h3>
-        <div className="bg-[#1a1a1a] rounded-2xl p-6 font-mono text-xs text-[#ccc] overflow-x-auto">
+        <div className="bg-[#11202f] rounded-2xl p-6 font-mono text-xs text-[#c8bfa8]/50 overflow-x-auto">
           <pre>{`┌─────────────────────────────────────────────────────────┐
 │                    Frontend (React + Vite)                │
 │   Landing │ Auth │ Dashboard │ Graph │ Writing │ Docs    │
@@ -190,23 +190,23 @@ const sections = [
         ].map((agent) => (
           <div key={agent.num} className="mb-10 last:mb-0">
             <div className="flex items-center gap-3 mb-4">
-              <span className="text-xs font-mono text-[#999]">{agent.num}</span>
+              <span className="text-xs font-mono text-[#c8bfa8]/50">{agent.num}</span>
               <div className="w-8 h-1 rounded-full" style={{ backgroundColor: agent.color }} />
               <h2 className="text-xl font-bold">{agent.name}</h2>
             </div>
 
             <div className="ml-10 space-y-4">
               <div>
-                <p className="text-sm font-medium text-[#555] mb-1">Purpose</p>
+                <p className="text-sm font-medium text-[#c8bfa8] mb-1">Purpose</p>
                 <p className="text-sm text-[#666]">{agent.purpose}</p>
               </div>
 
               <div>
-                <p className="text-sm font-medium text-[#555] mb-2">Process</p>
+                <p className="text-sm font-medium text-[#c8bfa8] mb-2">Process</p>
                 <ol className="space-y-1.5">
                   {agent.process.map((step, i) => (
                     <li key={i} className="flex items-start gap-2 text-sm text-[#666]">
-                      <span className="text-[#999] font-mono text-xs mt-0.5">{i + 1}.</span>
+                      <span className="text-[#c8bfa8]/50 font-mono text-xs mt-0.5">{i + 1}.</span>
                       {step}
                     </li>
                   ))}
@@ -214,16 +214,16 @@ const sections = [
               </div>
 
               <div>
-                <p className="text-sm font-medium text-[#555] mb-1">Output</p>
-                <p className="text-sm text-[#666] bg-[#f8f8f8] px-3 py-2 rounded-lg border border-[#eee] font-mono">{agent.output}</p>
+                <p className="text-sm font-medium text-[#c8bfa8] mb-1">Output</p>
+                <p className="text-sm text-[#666] bg-[#11202f] px-3 py-2 rounded-lg border border-[#1c2f42] font-mono">{agent.output}</p>
               </div>
 
               <div>
-                <p className="text-sm font-medium text-[#555] mb-2">Configuration</p>
+                <p className="text-sm font-medium text-[#c8bfa8] mb-2">Configuration</p>
                 <div className="flex flex-wrap gap-2">
                   {Object.entries(agent.config).map(([key, val]) => (
-                    <span key={key} className="text-xs bg-[#f0f0f0] border border-[#e5e5e5] px-2.5 py-1 rounded-lg font-mono">
-                      <span className="text-[#999]">{key}:</span> <span className="text-[#333]">{val}</span>
+                    <span key={key} className="text-xs bg-[#152738] border border-[#e5e5e5] px-2.5 py-1 rounded-lg font-mono">
+                      <span className="text-[#c8bfa8]/50">{key}:</span> <span className="text-[#333]">{val}</span>
                     </span>
                   ))}
                 </div>
@@ -243,15 +243,15 @@ const sections = [
         <h1 className="text-3xl font-bold tracking-tight mb-3">API Reference</h1>
         <p className="text-[#666] mb-4">RESTful API. All responses are JSON. Auth via Bearer token.</p>
 
-        <div className="bg-[#f8f8f8] border border-[#e5e5e5] rounded-xl px-4 py-3 mb-8 flex items-center gap-3">
-          <span className="text-xs font-mono text-[#999]">Base URL</span>
+        <div className="bg-[#11202f] border border-[#e5e5e5] rounded-xl px-4 py-3 mb-8 flex items-center gap-3">
+          <span className="text-xs font-mono text-[#c8bfa8]/50">Base URL</span>
           <code className="text-sm font-mono text-[#333] font-medium">https://ai-research-engine-8ctr.onrender.com/api</code>
         </div>
 
         {/* Auth */}
         <div className="mb-10">
           <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#2563eb]" />
+            <span className="w-2 h-2 rounded-full bg-[#c89b3c]" />
             Authentication
           </h2>
 
@@ -343,7 +343,7 @@ const sections = [
         {/* Research */}
         <div className="mb-10">
           <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#7c3aed]" />
+            <span className="w-2 h-2 rounded-full bg-[#4a7c7e]" />
             Research Pipeline
           </h2>
 
@@ -381,7 +381,7 @@ const sections = [
 
             <div>
               <Endpoint method="GET" path="/research/results/{project_id}" description="Get full results" />
-              <p className="text-xs text-[#999] ml-4 mt-1">Returns: papers, themes, gaps, contradictions, hypotheses, framework, draft, review</p>
+              <p className="text-xs text-[#c8bfa8]/50 ml-4 mt-1">Returns: papers, themes, gaps, contradictions, hypotheses, framework, draft, review</p>
             </div>
 
             <div>
@@ -453,15 +453,15 @@ const sections = [
 
         <h2 className="text-xl font-bold mb-4">Current Production</h2>
         <div className="grid grid-cols-2 gap-4 mb-8">
-          <div className="bg-white border border-[#e5e5e5] rounded-xl p-5">
-            <p className="text-xs font-mono text-[#999] uppercase tracking-wider mb-2">Frontend</p>
+          <div className="bg-[#11202f] border border-[#e5e5e5] rounded-xl p-5">
+            <p className="text-xs font-mono text-[#c8bfa8]/50 uppercase tracking-wider mb-2">Frontend</p>
             <p className="font-medium text-sm mb-1">Vercel</p>
-            <code className="text-xs text-[#2563eb] break-all">frontend-kappa-six-83.vercel.app</code>
+            <code className="text-xs text-[#c89b3c] break-all">frontend-kappa-six-83.vercel.app</code>
           </div>
-          <div className="bg-white border border-[#e5e5e5] rounded-xl p-5">
-            <p className="text-xs font-mono text-[#999] uppercase tracking-wider mb-2">Backend</p>
+          <div className="bg-[#11202f] border border-[#e5e5e5] rounded-xl p-5">
+            <p className="text-xs font-mono text-[#c8bfa8]/50 uppercase tracking-wider mb-2">Backend</p>
             <p className="font-medium text-sm mb-1">Render</p>
-            <code className="text-xs text-[#2563eb] break-all">ai-research-engine-8ctr.onrender.com</code>
+            <code className="text-xs text-[#c89b3c] break-all">ai-research-engine-8ctr.onrender.com</code>
           </div>
         </div>
 
@@ -487,11 +487,11 @@ npm run dev`} />
         <h2 className="text-xl font-bold mb-4 mt-8">Environment Variables</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm border border-[#e5e5e5] rounded-xl overflow-hidden">
-            <thead className="bg-[#f8f8f8]">
+            <thead className="bg-[#11202f]">
               <tr>
-                <th className="text-left px-4 py-2.5 font-medium text-[#555] border-b border-[#e5e5e5]">Variable</th>
-                <th className="text-left px-4 py-2.5 font-medium text-[#555] border-b border-[#e5e5e5]">Required</th>
-                <th className="text-left px-4 py-2.5 font-medium text-[#555] border-b border-[#e5e5e5]">Description</th>
+                <th className="text-left px-4 py-2.5 font-medium text-[#c8bfa8] border-b border-[#e5e5e5]">Variable</th>
+                <th className="text-left px-4 py-2.5 font-medium text-[#c8bfa8] border-b border-[#e5e5e5]">Required</th>
+                <th className="text-left px-4 py-2.5 font-medium text-[#c8bfa8] border-b border-[#e5e5e5]">Description</th>
               </tr>
             </thead>
             <tbody className="font-mono text-xs">
@@ -505,7 +505,7 @@ npm run dev`} />
               ].map(([name, req, desc]) => (
                 <tr key={name} className="border-b border-[#f0f0f0] last:border-0">
                   <td className="px-4 py-2.5 text-[#333]">{name}</td>
-                  <td className="px-4 py-2.5"><span className={req === 'Yes' ? 'text-red-500' : 'text-[#999]'}>{req}</span></td>
+                  <td className="px-4 py-2.5"><span className={req === 'Yes' ? 'text-red-500' : 'text-[#c8bfa8]/50'}>{req}</span></td>
                   <td className="px-4 py-2.5 text-[#666] font-sans">{desc}</td>
                 </tr>
               ))}
@@ -568,15 +568,15 @@ npm run dev`} />
               ]
             },
           ].map((group) => (
-            <div key={group.title} className="bg-white border border-[#e5e5e5] rounded-2xl p-5">
+            <div key={group.title} className="bg-[#11202f] border border-[#e5e5e5] rounded-2xl p-5">
               <h3 className="font-bold text-sm mb-4 text-[#333]">{group.title}</h3>
               <div className="space-y-3">
                 {group.items.map((item) => (
                   <div key={item.name} className="flex items-start gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#2563eb] mt-1.5 shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#c89b3c] mt-1.5 shrink-0" />
                     <div>
                       <span className="text-sm font-medium">{item.name}</span>
-                      <span className="text-xs text-[#999] ml-2">{item.desc}</span>
+                      <span className="text-xs text-[#c8bfa8]/50 ml-2">{item.desc}</span>
                     </div>
                   </div>
                 ))}
@@ -614,10 +614,10 @@ npm run dev`} />
               <div key={i} className="border border-[#e5e5e5] rounded-xl overflow-hidden">
                 <button
                   onClick={() => setOpen(open === i ? null : i)}
-                  className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-[#f8f8f8] transition-colors"
+                  className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-[#11202f] transition-colors"
                 >
                   <span className="font-medium text-sm">{faq.q}</span>
-                  <ChevronRight size={16} className={`text-[#999] transition-transform ${open === i ? 'rotate-90' : ''}`} />
+                  <ChevronRight size={16} className={`text-[#c8bfa8]/50 transition-transform ${open === i ? 'rotate-90' : ''}`} />
                 </button>
                 <AnimatePresence>
                   {open === i && (
@@ -648,9 +648,9 @@ export default function Docs() {
   const currentSection = sections.find(s => s.id === activeSection)
 
   return (
-    <div className="min-h-screen bg-[#fafaf9]">
+    <div className="min-h-screen bg-[#0b1626]">
       {/* Nav */}
-      <nav className="sticky top-0 z-50 backdrop-blur-xl bg-[#fafaf9]/80 border-b border-[#eee]/50">
+      <nav className="sticky top-0 z-50 backdrop-blur-xl bg-[#0b1626]/80 border-b border-[#1c2f42]/50">
         <div className="flex items-center justify-between px-8 py-4 max-w-7xl mx-auto">
           <div className="flex items-center gap-4">
             <Link to="/" className="flex items-center gap-2">
@@ -661,17 +661,17 @@ export default function Docs() {
               </svg>
               <span className="text-base font-semibold tracking-tight">ResearchAI</span>
             </Link>
-            <span className="text-[#ddd]">/</span>
-            <span className="text-sm text-[#888]">Documentation</span>
+            <span className="text-[#c8bfa8]/40">/</span>
+            <span className="text-sm text-[#c8bfa8]/60">Documentation</span>
           </div>
           <div className="flex items-center gap-6 text-sm">
-            <Link to="/" className="text-[#555] hover:text-[#1a1a1a] transition-colors">Home</Link>
-            <Link to="/app" className="text-[#555] hover:text-[#1a1a1a] transition-colors">Dashboard</Link>
+            <Link to="/" className="text-[#c8bfa8] hover:text-[#f5efe0] transition-colors">Home</Link>
+            <Link to="/app" className="text-[#c8bfa8] hover:text-[#f5efe0] transition-colors">Dashboard</Link>
             <a
               href="https://github.com/Vexccz/ai-research-engine"
               target="_blank"
               rel="noopener"
-              className="flex items-center gap-1.5 text-[#555] hover:text-[#1a1a1a] transition-colors"
+              className="flex items-center gap-1.5 text-[#c8bfa8] hover:text-[#f5efe0] transition-colors"
             >
               GitHub <ExternalLink size={12} />
             </a>
@@ -682,7 +682,7 @@ export default function Docs() {
       <div className="max-w-7xl mx-auto flex">
         {/* Sidebar */}
         <aside className="w-52 shrink-0 sticky top-[57px] h-[calc(100vh-57px)] overflow-y-auto py-6 pl-8 pr-4">
-          <p className="text-[10px] font-mono text-[#999] uppercase tracking-wider mb-3 px-3">Navigation</p>
+          <p className="text-[10px] font-mono text-[#c8bfa8]/50 uppercase tracking-wider mb-3 px-3">Navigation</p>
           <nav className="space-y-0.5">
             {sections.map((section) => {
               const Icon = section.icon
@@ -692,8 +692,8 @@ export default function Docs() {
                   onClick={() => setActiveSection(section.id)}
                   className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-left transition-all ${
                     activeSection === section.id
-                      ? 'bg-[#f0f0f0] text-[#1a1a1a] font-medium'
-                      : 'text-[#888] hover:text-[#555] hover:bg-[#f8f8f8]'
+                      ? 'bg-[#152738] text-[#f5efe0] font-medium'
+                      : 'text-[#c8bfa8]/60 hover:text-[#c8bfa8] hover:bg-[#11202f]'
                   }`}
                 >
                   <Icon size={14} />
@@ -704,15 +704,15 @@ export default function Docs() {
           </nav>
 
           <div className="mt-8 px-3">
-            <div className="bg-[#f8f8f8] border border-[#eee] rounded-lg p-3">
-              <p className="text-[10px] text-[#999] font-mono">Version</p>
+            <div className="bg-[#11202f] border border-[#1c2f42] rounded-lg p-3">
+              <p className="text-[10px] text-[#c8bfa8]/50 font-mono">Version</p>
               <p className="text-xs font-medium">v0.1.0</p>
             </div>
           </div>
         </aside>
 
         {/* Content */}
-        <main className="flex-1 py-8 px-12 max-w-4xl border-l border-[#eee] min-h-[calc(100vh-57px)]">
+        <main className="flex-1 py-8 px-12 max-w-4xl border-l border-[#1c2f42] min-h-[calc(100vh-57px)]">
           <motion.div
             key={activeSection}
             initial={{ opacity: 0, y: 8 }}

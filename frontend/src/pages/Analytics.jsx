@@ -40,7 +40,7 @@ function AnimatedCounter({ value, suffix = '', duration = 1500 }) {
 
 function CardSkeleton() {
   return (
-    <div className="bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-2xl p-6 animate-pulse">
+    <div className="bg-[#11202f] dark:bg-[#11202f] border border-[#1c2f42] dark:border-[#1c2f42] rounded-2xl p-6 animate-pulse">
       <div className="h-4 bg-[#eee] dark:bg-[#2a2a2a] rounded w-1/3 mb-4" />
       <div className="h-8 bg-[#eee] dark:bg-[#2a2a2a] rounded w-1/2" />
     </div>
@@ -49,16 +49,16 @@ function CardSkeleton() {
 
 function ChartSkeleton({ height = 300 }) {
   return (
-    <div className="bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-2xl p-6 animate-pulse">
+    <div className="bg-[#11202f] dark:bg-[#11202f] border border-[#1c2f42] dark:border-[#1c2f42] rounded-2xl p-6 animate-pulse">
       <div className="h-4 bg-[#eee] dark:bg-[#2a2a2a] rounded w-1/4 mb-6" />
-      <div className={`bg-[#f5f5f5] dark:bg-[#222] rounded-xl`} style={{ height }} />
+      <div className={`bg-[#f5f5f5] dark:bg-[#1c2f42] rounded-xl`} style={{ height }} />
     </div>
   )
 }
 
 function EmptyState({ message }) {
   return (
-    <div className="flex flex-col items-center justify-center py-12 text-[#999]">
+    <div className="flex flex-col items-center justify-center py-12 text-[#c8bfa8]/50">
       <TrendingUp size={40} strokeWidth={1} className="mb-3 opacity-40" />
       <p className="text-sm">{message}</p>
     </div>
@@ -124,7 +124,7 @@ export default function Analytics() {
         className="mb-8"
       >
         <h1 className="text-2xl font-bold dark:text-white">Analytics</h1>
-        <p className="text-sm text-[#888] mt-1">Research patterns, productivity metrics, and insights</p>
+        <p className="text-sm text-[#c8bfa8]/60 mt-1">Research patterns, productivity metrics, and insights</p>
       </motion.div>
 
       {/* Section 1: Overview Cards */}
@@ -140,13 +140,13 @@ export default function Analytics() {
               whileInView="visible"
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-2xl p-5"
+              className="bg-[#11202f] dark:bg-[#11202f] border border-[#1c2f42] dark:border-[#1c2f42] rounded-2xl p-5"
             >
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${card.color}15` }}>
                   <card.icon size={16} style={{ color: card.color }} />
                 </div>
-                <span className="text-xs text-[#888] font-medium">{card.label}</span>
+                <span className="text-xs text-[#c8bfa8]/60 font-medium">{card.label}</span>
               </div>
               <p className="text-2xl font-bold dark:text-white">
                 <AnimatedCounter value={card.value} suffix={card.suffix || ''} />
@@ -166,7 +166,7 @@ export default function Analytics() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-2xl p-6"
+            className="bg-[#11202f] dark:bg-[#11202f] border border-[#1c2f42] dark:border-[#1c2f42] rounded-2xl p-6"
           >
             <h3 className="text-sm font-semibold mb-4 dark:text-white">Papers by Year</h3>
             {!papersByYear || papersByYear.length === 0 ? (
@@ -198,7 +198,7 @@ export default function Analytics() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-2xl p-6"
+            className="bg-[#11202f] dark:bg-[#11202f] border border-[#1c2f42] dark:border-[#1c2f42] rounded-2xl p-6"
           >
             <h3 className="text-sm font-semibold mb-4 dark:text-white">Top Themes</h3>
             {!themes || themes.length === 0 ? (
@@ -228,7 +228,7 @@ export default function Analytics() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-2xl p-6"
+            className="bg-[#11202f] dark:bg-[#11202f] border border-[#1c2f42] dark:border-[#1c2f42] rounded-2xl p-6"
           >
             <h3 className="text-sm font-semibold mb-4 dark:text-white">Quality Score Trend</h3>
             {!quality || quality.length === 0 ? (
@@ -255,7 +255,7 @@ export default function Analytics() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-2xl p-6"
+            className="bg-[#11202f] dark:bg-[#11202f] border border-[#1c2f42] dark:border-[#1c2f42] rounded-2xl p-6"
           >
             <h3 className="text-sm font-semibold mb-4 dark:text-white">Source Breakdown</h3>
             {!sources || sources.length === 0 ? (
@@ -292,7 +292,7 @@ export default function Analytics() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-2xl p-6 lg:col-span-2"
+            className="bg-[#11202f] dark:bg-[#11202f] border border-[#1c2f42] dark:border-[#1c2f42] rounded-2xl p-6 lg:col-span-2"
           >
             <h3 className="text-sm font-semibold mb-4 dark:text-white">Research Velocity</h3>
             {!velocity || velocity.length === 0 ? (

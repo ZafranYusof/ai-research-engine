@@ -20,8 +20,8 @@ import api from '../utils/api'
 const ACTION_CONFIG = {
   research_started: {
     icon: BookOpen,
-    color: 'text-blue-500',
-    bg: 'bg-blue-500/10',
+    color: 'text-[#c89b3c]',
+    bg: 'bg-[#c89b3c]/10',
     label: 'Started Research',
   },
   research_completed: {
@@ -161,10 +161,10 @@ export default function Activity() {
         className="mb-8"
       >
         <h1 className="text-2xl font-semibold dark:text-white flex items-center gap-3">
-          <ActivityIcon size={24} className="text-blue-500" />
+          <ActivityIcon size={24} className="text-[#c89b3c]" />
           Activity
         </h1>
-        <p className="text-sm text-[#888] mt-1">Your research timeline and activity history</p>
+        <p className="text-sm text-[#c8bfa8]/60 mt-1">Your research timeline and activity history</p>
       </motion.div>
 
       {/* Chart Section */}
@@ -172,9 +172,9 @@ export default function Activity() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-xl p-6 mb-6"
+        className="bg-[#11202f] dark:bg-[#11202f] border border-[#1c2f42] dark:border-[#1c2f42] rounded-xl p-6 mb-6"
       >
-        <h2 className="text-sm font-medium text-[#888] mb-4">Last 30 Days</h2>
+        <h2 className="text-sm font-medium text-[#c8bfa8]/60 mb-4">Last 30 Days</h2>
         <div className="flex items-end gap-[3px] h-32">
           {chartData.map((day, i) => (
             <motion.div
@@ -184,14 +184,14 @@ export default function Activity() {
               transition={{ delay: i * 0.02, duration: 0.4, ease: 'easeOut' }}
               className={`flex-1 rounded-sm ${
                 day.count > 0
-                  ? 'bg-blue-500 dark:bg-blue-400'
-                  : 'bg-[#eee] dark:bg-[#2a2a2a]'
+                  ? 'bg-[#c89b3c]'
+                  : 'bg-[#1c2f42]'
               }`}
               title={`${day.date}: ${day.count} activities`}
             />
           ))}
         </div>
-        <div className="flex justify-between mt-2 text-[10px] text-[#aaa]">
+        <div className="flex justify-between mt-2 text-[10px] text-[#c8bfa8]/70">
           <span>{chartData[0]?.date || ''}</span>
           <span>{chartData[chartData.length - 1]?.date || ''}</span>
         </div>
@@ -208,7 +208,7 @@ export default function Activity() {
         <div className="relative">
           <button
             onClick={() => setFilterOpen(!filterOpen)}
-            className="flex items-center gap-2 px-3 py-1.5 text-xs bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-lg text-[#666] dark:text-[#bbb] hover:border-[#ccc] dark:hover:border-[#444] transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 text-xs bg-[#11202f] dark:bg-[#11202f] border border-[#1c2f42] dark:border-[#1c2f42] rounded-lg text-[#666] dark:text-[#bbb] hover:border-[#ccc] dark:hover:border-[#444] transition-colors"
           >
             <Filter size={12} />
             {filter === 'all' ? 'All Activities' : ACTION_CONFIG[filter]?.label || filter}
@@ -220,12 +220,12 @@ export default function Activity() {
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -5 }}
-                className="absolute right-0 top-full mt-1 bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-xl shadow-lg z-10 py-1 min-w-[180px]"
+                className="absolute right-0 top-full mt-1 bg-[#11202f] dark:bg-[#11202f] border border-[#1c2f42] dark:border-[#1c2f42] rounded-xl shadow-lg z-10 py-1 min-w-[180px]"
               >
                 <button
                   onClick={() => { setFilter('all'); setFilterOpen(false) }}
-                  className={`w-full text-left px-3 py-2 text-xs hover:bg-[#f5f5f5] dark:hover:bg-[#222] transition-colors ${
-                    filter === 'all' ? 'text-blue-500 font-medium' : 'text-[#666] dark:text-[#bbb]'
+                  className={`w-full text-left px-3 py-2 text-xs hover:bg-[#f5f5f5] dark:hover:bg-[#1c2f42] transition-colors ${
+                    filter === 'all' ? 'text-[#c89b3c] font-medium' : 'text-[#666] dark:text-[#bbb]'
                   }`}
                 >
                   All Activities
@@ -234,8 +234,8 @@ export default function Activity() {
                   <button
                     key={key}
                     onClick={() => { setFilter(key); setFilterOpen(false) }}
-                    className={`w-full text-left px-3 py-2 text-xs hover:bg-[#f5f5f5] dark:hover:bg-[#222] transition-colors flex items-center gap-2 ${
-                      filter === key ? 'text-blue-500 font-medium' : 'text-[#666] dark:text-[#bbb]'
+                    className={`w-full text-left px-3 py-2 text-xs hover:bg-[#f5f5f5] dark:hover:bg-[#1c2f42] transition-colors flex items-center gap-2 ${
+                      filter === key ? 'text-[#c89b3c] font-medium' : 'text-[#666] dark:text-[#bbb]'
                     }`}
                   >
                     <config.icon size={12} className={config.color} />
@@ -251,7 +251,7 @@ export default function Activity() {
       {/* Timeline */}
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 size={24} className="animate-spin text-[#888]" />
+          <Loader2 size={24} className="animate-spin text-[#c8bfa8]/60" />
         </div>
       ) : filteredActivities.length === 0 ? (
         <motion.div
@@ -259,9 +259,9 @@ export default function Activity() {
           animate={{ opacity: 1 }}
           className="text-center py-20"
         >
-          <ActivityIcon size={48} className="mx-auto text-[#ccc] dark:text-[#444] mb-4" />
-          <p className="text-[#888] text-sm">No activities yet</p>
-          <p className="text-[#aaa] text-xs mt-1">Start researching to see your timeline</p>
+          <ActivityIcon size={48} className="mx-auto text-[#c8bfa8]/50 dark:text-[#444] mb-4" />
+          <p className="text-[#c8bfa8]/60 text-sm">No activities yet</p>
+          <p className="text-[#c8bfa8]/70 text-xs mt-1">Start researching to see your timeline</p>
         </motion.div>
       ) : (
         <div className="space-y-3">
@@ -269,7 +269,7 @@ export default function Activity() {
             {filteredActivities.map((activity, i) => {
               const config = ACTION_CONFIG[activity.action] || {
                 icon: Clock,
-                color: 'text-gray-500',
+                color: 'text-[#c8bfa8]/60',
                 bg: 'bg-gray-500/10',
                 label: activity.action,
               }
@@ -281,7 +281,7 @@ export default function Activity() {
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.03 }}
-                  className="bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-xl p-4 flex items-center gap-4"
+                  className="bg-[#11202f] dark:bg-[#11202f] border border-[#1c2f42] dark:border-[#1c2f42] rounded-xl p-4 flex items-center gap-4"
                 >
                   <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${config.bg}`}>
                     <Icon size={16} className={config.color} />
@@ -291,18 +291,18 @@ export default function Activity() {
                       {activity.details}
                     </p>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-[11px] text-[#888]">{config.label}</span>
+                      <span className="text-[11px] text-[#c8bfa8]/60">{config.label}</span>
                       {activity.project_id && (
                         <Link
                           to={`/research/${activity.project_id}`}
-                          className="text-[11px] text-blue-500 hover:underline"
+                          className="text-[11px] text-[#c89b3c] hover:underline"
                         >
                           View project →
                         </Link>
                       )}
                     </div>
                   </div>
-                  <span className="text-[11px] text-[#aaa] whitespace-nowrap">
+                  <span className="text-[11px] text-[#c8bfa8]/70 whitespace-nowrap">
                     {getRelativeTime(activity.timestamp)}
                   </span>
                 </motion.div>
@@ -320,7 +320,7 @@ export default function Activity() {
               <button
                 onClick={() => fetchActivities(false)}
                 disabled={loadingMore}
-                className="px-4 py-2 text-xs bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-lg text-[#666] dark:text-[#bbb] hover:border-[#ccc] dark:hover:border-[#444] transition-colors disabled:opacity-50"
+                className="px-4 py-2 text-xs bg-[#11202f] dark:bg-[#11202f] border border-[#1c2f42] dark:border-[#1c2f42] rounded-lg text-[#666] dark:text-[#bbb] hover:border-[#ccc] dark:hover:border-[#444] transition-colors disabled:opacity-50"
               >
                 {loadingMore ? (
                   <span className="flex items-center gap-2">

@@ -2,17 +2,47 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
-body {
-  @apply bg-[#fafaf9] text-[#1a1a1a];
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  -webkit-font-smoothing: antialiased;
+:root {
+  --bg: #0b1626;
+  --surface: #11202f;
+  --border: #1c2f42;
+  --text: #e8e2d4;
+  --text-muted: #c8bfa8;
+  --accent: #c89b3c;
+  --accent-deep: #a37c2a;
+  --teal-citation: #4a7c7e;
+  --ivory: #faf7f2;
 }
 
-/* Custom scrollbar - subtle */
+html, body, #root {
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'liga', 'ss01';
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Fraunces', ui-serif, Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+/* Selection */
+::selection {
+  background: rgba(200, 155, 60, 0.3);
+  color: #f5efe0;
+}
+
+/* Scrollbar — subtle navy with amber hover */
 ::-webkit-scrollbar {
-  width: 5px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -20,25 +50,35 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #ddd;
-  border-radius: 3px;
+  background: #1c2f42;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #bbb;
+  background: #c89b3c;
 }
 
-/* Input focus ring */
-input:focus {
+/* Inputs */
+input:focus, textarea:focus, select:focus {
   outline: none;
 }
 
-/* Smooth page transitions */
+/* Main fade */
 main {
-  animation: fadeIn 0.3s ease;
+  animation: fadeIn 0.35s ease;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(5px); }
+  from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Print-style drop cap helper for academic headings (optional usage) */
+.drop-cap::first-letter {
+  font-family: 'Fraunces', serif;
+  font-size: 3.5em;
+  float: left;
+  line-height: 0.85;
+  padding: 0.1em 0.1em 0 0;
+  color: var(--accent);
 }

@@ -20,7 +20,7 @@ function RelevanceBar({ score }) {
 
   return (
     <div className="flex items-center gap-2">
-      <div className="w-24 h-2 bg-[#f0f0f0] dark:bg-[#2a2a2a] rounded-full overflow-hidden">
+      <div className="w-24 h-2 bg-[#152738] dark:bg-[#2a2a2a] rounded-full overflow-hidden">
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${score * 10}%` }}
@@ -45,7 +45,7 @@ function PaperCard({ paper, index }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       whileHover={{ y: -2 }}
-      className="bg-white border border-[#eee] rounded-2xl p-5 hover:shadow-lg hover:shadow-black/5 transition-all dark:bg-[#1a1a1a] dark:border-[#2a2a2a]"
+      className="bg-[#11202f] border border-[#1c2f42] rounded-2xl p-5 hover:shadow-lg hover:shadow-black/5 transition-all dark:bg-[#11202f] dark:border-[#1c2f42]"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
@@ -57,10 +57,10 @@ function PaperCard({ paper, index }) {
               {source.label}
             </span>
             {paper.year && (
-              <span className="text-[11px] text-[#999]">{paper.year}</span>
+              <span className="text-[11px] text-[#c8bfa8]/50">{paper.year}</span>
             )}
             {paper.citation_count > 0 && (
-              <span className="text-[11px] text-[#999]">
+              <span className="text-[11px] text-[#c8bfa8]/50">
                 {paper.citation_count} citations
               </span>
             )}
@@ -70,7 +70,7 @@ function PaperCard({ paper, index }) {
             {paper.title}
           </h3>
 
-          <p className="text-[12px] text-[#888] mb-2 line-clamp-1">
+          <p className="text-[12px] text-[#c8bfa8]/60 mb-2 line-clamp-1">
             {paper.authors?.slice(0, 3).join(', ')}
             {paper.authors?.length > 3 && ` +${paper.authors.length - 3} more`}
           </p>
@@ -82,7 +82,7 @@ function PaperCard({ paper, index }) {
           )}
 
           {paper.recommendation_reason && (
-            <p className="text-[12px] text-[#7c3aed] dark:text-[#a78bfa] italic leading-relaxed">
+            <p className="text-[12px] text-[#4a7c7e] dark:text-[#a78bfa] italic leading-relaxed">
               💡 {paper.recommendation_reason}
             </p>
           )}
@@ -94,16 +94,16 @@ function PaperCard({ paper, index }) {
               href={paper.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#f8f8f8] hover:bg-[#f0f0f0] transition-colors dark:bg-[#2a2a2a] dark:hover:bg-[#333]"
+              className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#11202f] hover:bg-[#152738] transition-colors dark:bg-[#2a2a2a] dark:hover:bg-[#333]"
             >
-              <ExternalLink size={14} className="text-[#888]" />
+              <ExternalLink size={14} className="text-[#c8bfa8]/60" />
             </a>
           )}
           <button
-            className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#2563eb]/10 hover:bg-[#2563eb]/20 transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#c89b3c]/10 hover:bg-[#c89b3c]/20 transition-colors"
             title="Add to Project"
           >
-            <Plus size={14} className="text-[#2563eb]" />
+            <Plus size={14} className="text-[#c89b3c]" />
           </button>
         </div>
       </div>
@@ -120,7 +120,7 @@ function TrendingCard({ paper, index }) {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: index * 0.06, duration: 0.4 }}
       whileHover={{ y: -3, scale: 1.01 }}
-      className="bg-white border border-[#eee] rounded-2xl p-5 hover:shadow-lg hover:shadow-black/5 transition-all dark:bg-[#1a1a1a] dark:border-[#2a2a2a]"
+      className="bg-[#11202f] border border-[#1c2f42] rounded-2xl p-5 hover:shadow-lg hover:shadow-black/5 transition-all dark:bg-[#11202f] dark:border-[#1c2f42]"
     >
       <div className="flex items-center gap-2 mb-3">
         <span
@@ -129,14 +129,14 @@ function TrendingCard({ paper, index }) {
         >
           {source.label}
         </span>
-        {paper.year && <span className="text-[11px] text-[#999]">{paper.year}</span>}
+        {paper.year && <span className="text-[11px] text-[#c8bfa8]/50">{paper.year}</span>}
       </div>
 
       <h3 className="text-sm font-semibold leading-snug mb-2 dark:text-white line-clamp-2">
         {paper.title}
       </h3>
 
-      <p className="text-[12px] text-[#888] mb-3 line-clamp-1">
+      <p className="text-[12px] text-[#c8bfa8]/60 mb-3 line-clamp-1">
         {paper.authors?.slice(0, 3).join(', ')}
         {paper.authors?.length > 3 && ` +${paper.authors.length - 3}`}
       </p>
@@ -153,7 +153,7 @@ function TrendingCard({ paper, index }) {
             href={paper.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[11px] text-[#2563eb] hover:underline"
+            className="text-[11px] text-[#c89b3c] hover:underline"
           >
             View →
           </a>
@@ -165,15 +165,15 @@ function TrendingCard({ paper, index }) {
 
 function SkeletonCard() {
   return (
-    <div className="bg-white border border-[#eee] rounded-2xl p-5 dark:bg-[#1a1a1a] dark:border-[#2a2a2a] animate-pulse">
+    <div className="bg-[#11202f] border border-[#1c2f42] rounded-2xl p-5 dark:bg-[#11202f] dark:border-[#1c2f42] animate-pulse">
       <div className="flex items-center gap-2 mb-3">
-        <div className="w-10 h-4 bg-[#f0f0f0] dark:bg-[#2a2a2a] rounded-full" />
-        <div className="w-8 h-3 bg-[#f0f0f0] dark:bg-[#2a2a2a] rounded" />
+        <div className="w-10 h-4 bg-[#152738] dark:bg-[#2a2a2a] rounded-full" />
+        <div className="w-8 h-3 bg-[#152738] dark:bg-[#2a2a2a] rounded" />
       </div>
-      <div className="w-full h-4 bg-[#f0f0f0] dark:bg-[#2a2a2a] rounded mb-2" />
-      <div className="w-3/4 h-4 bg-[#f0f0f0] dark:bg-[#2a2a2a] rounded mb-3" />
-      <div className="w-1/2 h-3 bg-[#f0f0f0] dark:bg-[#2a2a2a] rounded mb-3" />
-      <div className="w-24 h-2 bg-[#f0f0f0] dark:bg-[#2a2a2a] rounded" />
+      <div className="w-full h-4 bg-[#152738] dark:bg-[#2a2a2a] rounded mb-2" />
+      <div className="w-3/4 h-4 bg-[#152738] dark:bg-[#2a2a2a] rounded mb-3" />
+      <div className="w-1/2 h-3 bg-[#152738] dark:bg-[#2a2a2a] rounded mb-3" />
+      <div className="w-24 h-2 bg-[#152738] dark:bg-[#2a2a2a] rounded" />
     </div>
   )
 }
@@ -278,12 +278,12 @@ export default function Recommendations() {
     <div>
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-[#7c3aed]/10 flex items-center justify-center">
-            <Sparkles size={20} className="text-[#7c3aed]" />
+          <div className="w-10 h-10 rounded-xl bg-[#4a7c7e]/10 flex items-center justify-center">
+            <Sparkles size={20} className="text-[#4a7c7e]" />
           </div>
           <div>
             <h1 className="text-2xl font-bold tracking-tight dark:text-white">Discover</h1>
-            <p className="text-[#888] text-sm">Smart paper recommendations based on your research.</p>
+            <p className="text-[#c8bfa8]/60 text-sm">Smart paper recommendations based on your research.</p>
           </div>
         </div>
       </motion.div>
@@ -293,7 +293,7 @@ export default function Recommendations() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="flex gap-1 mt-6 mb-6 bg-[#f5f5f5] dark:bg-[#1a1a1a] p-1 rounded-xl w-fit"
+        className="flex gap-1 mt-6 mb-6 bg-[#f5f5f5] dark:bg-[#11202f] p-1 rounded-xl w-fit"
       >
         {tabs.map(({ id, label, icon: Icon }) => (
           <button
@@ -301,8 +301,8 @@ export default function Recommendations() {
             onClick={() => setActiveTab(id)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               activeTab === id
-                ? 'bg-white text-[#1a1a1a] shadow-sm dark:bg-[#2a2a2a] dark:text-white'
-                : 'text-[#888] hover:text-[#555] dark:hover:text-[#ccc]'
+                ? 'bg-[#11202f] text-[#f5efe0] shadow-sm dark:bg-[#2a2a2a] dark:text-white'
+                : 'text-[#c8bfa8]/60 hover:text-[#c8bfa8] dark:hover:text-[#c8bfa8]/50'
             }`}
           >
             <Icon size={15} />
@@ -325,7 +325,7 @@ export default function Recommendations() {
               <select
                 value={selectedProject}
                 onChange={(e) => setSelectedProject(e.target.value)}
-                className="flex-1 max-w-md px-4 py-2.5 rounded-xl border border-[#eee] bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#2563eb]/20 focus:border-[#2563eb] dark:bg-[#1a1a1a] dark:border-[#2a2a2a] dark:text-white"
+                className="flex-1 max-w-md px-4 py-2.5 rounded-xl border border-[#1c2f42] bg-[#11202f] text-sm focus:outline-none focus:ring-2 focus:ring-[#2563eb]/20 focus:border-[#c89b3c] dark:bg-[#11202f] dark:border-[#1c2f42] dark:text-white"
               >
                 <option value="">Select a project...</option>
                 {projects.map((p) => (
@@ -338,7 +338,7 @@ export default function Recommendations() {
               <button
                 onClick={handleRefresh}
                 disabled={loading || !selectedProject}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#2563eb] text-white text-sm font-medium hover:bg-[#1d4ed8] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#c89b3c] text-white text-sm font-medium hover:bg-[#1d4ed8] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
                 Refresh
@@ -364,8 +364,8 @@ export default function Recommendations() {
                 animate={{ opacity: 1 }}
                 className="text-center py-16"
               >
-                <BookOpen size={40} className="mx-auto text-[#ddd] dark:text-[#444] mb-3" />
-                <p className="text-[#888] text-sm">
+                <BookOpen size={40} className="mx-auto text-[#c8bfa8]/40 dark:text-[#444] mb-3" />
+                <p className="text-[#c8bfa8]/60 text-sm">
                   Click "Refresh" to generate recommendations for this project.
                 </p>
               </motion.div>
@@ -375,8 +375,8 @@ export default function Recommendations() {
                 animate={{ opacity: 1 }}
                 className="text-center py-16"
               >
-                <Sparkles size={40} className="mx-auto text-[#ddd] dark:text-[#444] mb-3" />
-                <p className="text-[#888] text-sm">
+                <Sparkles size={40} className="mx-auto text-[#c8bfa8]/40 dark:text-[#444] mb-3" />
+                <p className="text-[#c8bfa8]/60 text-sm">
                   Select a completed research project to get personalized recommendations.
                 </p>
               </motion.div>
@@ -399,12 +399,12 @@ export default function Recommendations() {
                 value={trendingTopic}
                 onChange={(e) => setTrendingTopic(e.target.value)}
                 placeholder="Enter a research topic..."
-                className="flex-1 max-w-md px-4 py-2.5 rounded-xl border border-[#eee] bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#7c3aed]/20 focus:border-[#7c3aed] dark:bg-[#1a1a1a] dark:border-[#2a2a2a] dark:text-white"
+                className="flex-1 max-w-md px-4 py-2.5 rounded-xl border border-[#1c2f42] bg-[#11202f] text-sm focus:outline-none focus:ring-2 focus:ring-[#7c3aed]/20 focus:border-[#7c3aed] dark:bg-[#11202f] dark:border-[#1c2f42] dark:text-white"
               />
               <button
                 type="submit"
                 disabled={trendingLoading || !trendingTopic.trim()}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#7c3aed] text-white text-sm font-medium hover:bg-[#6d28d9] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#4a7c7e] text-white text-sm font-medium hover:bg-[#6d28d9] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <TrendingUp size={14} className={trendingLoading ? 'animate-pulse' : ''} />
                 Find Trending
@@ -430,8 +430,8 @@ export default function Recommendations() {
                 animate={{ opacity: 1 }}
                 className="text-center py-16"
               >
-                <TrendingUp size={40} className="mx-auto text-[#ddd] dark:text-[#444] mb-3" />
-                <p className="text-[#888] text-sm">
+                <TrendingUp size={40} className="mx-auto text-[#c8bfa8]/40 dark:text-[#444] mb-3" />
+                <p className="text-[#c8bfa8]/60 text-sm">
                   Enter a topic to discover trending high-impact papers from the last 2 years.
                 </p>
               </motion.div>

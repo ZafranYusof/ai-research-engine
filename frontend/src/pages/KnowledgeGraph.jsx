@@ -126,7 +126,7 @@ export default function KnowledgeGraph() {
             <SkeletonText width="320px" height="12px" />
           </div>
         </div>
-        <div className="relative overflow-hidden bg-white border border-[#eee] rounded-2xl h-96 dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
+        <div className="relative overflow-hidden bg-[#11202f] border border-[#1c2f42] rounded-2xl h-96 dark:bg-[#11202f] dark:border-[#1c2f42]">
           <motion.div
             className="absolute inset-0"
             style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)' }}
@@ -145,7 +145,7 @@ export default function KnowledgeGraph() {
         <div className="flex justify-between items-start mb-6">
           <div>
             <h1 className="text-2xl font-bold tracking-tight dark:text-white">Knowledge Graph</h1>
-            <p className="text-[#888] text-sm mt-1">Visual map of paper relationships and citation networks</p>
+            <p className="text-[#c8bfa8]/60 text-sm mt-1">Visual map of paper relationships and citation networks</p>
           </div>
           <div className="flex gap-2">
             {/* PageRank Toggle */}
@@ -154,7 +154,7 @@ export default function KnowledgeGraph() {
               className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all ${
                 showPageRank
                   ? 'bg-[#f59e0b]/10 border border-[#f59e0b]/30 text-[#d97706]'
-                  : 'bg-white border border-[#eee] text-[#555] dark:text-[#ccc] hover:border-[#ddd] dark:bg-[#1a1a1a] dark:border-[#2a2a2a]'
+                  : 'bg-[#11202f] border border-[#1c2f42] text-[#c8bfa8] dark:text-[#c8bfa8]/50 hover:border-[#ddd] dark:bg-[#11202f] dark:border-[#1c2f42]'
               }`}
             >
               {showPageRank ? <ToggleRight size={14} /> : <ToggleLeft size={14} />}
@@ -162,13 +162,13 @@ export default function KnowledgeGraph() {
             </button>
             <button
               onClick={() => setFullscreen(!fullscreen)}
-              className="flex items-center gap-1.5 bg-white border border-[#eee] text-[#555] dark:text-[#ccc] px-3 py-2 rounded-xl text-xs font-medium hover:border-[#ddd] transition-all dark:bg-[#1a1a1a] dark:border-[#2a2a2a]"
+              className="flex items-center gap-1.5 bg-[#11202f] border border-[#1c2f42] text-[#c8bfa8] dark:text-[#c8bfa8]/50 px-3 py-2 rounded-xl text-xs font-medium hover:border-[#ddd] transition-all dark:bg-[#11202f] dark:border-[#1c2f42]"
             >
               <Maximize2 size={14} />
             </button>
             <button
               onClick={loadGraph}
-              className="flex items-center gap-1.5 bg-white border border-[#eee] text-[#555] dark:text-[#ccc] px-3 py-2 rounded-xl text-xs font-medium hover:border-[#ddd] transition-all dark:bg-[#1a1a1a] dark:border-[#2a2a2a]"
+              className="flex items-center gap-1.5 bg-[#11202f] border border-[#1c2f42] text-[#c8bfa8] dark:text-[#c8bfa8]/50 px-3 py-2 rounded-xl text-xs font-medium hover:border-[#ddd] transition-all dark:bg-[#11202f] dark:border-[#1c2f42]"
             >
               <RefreshCw size={14} />
               Refresh
@@ -179,19 +179,19 @@ export default function KnowledgeGraph() {
         {/* Stats bar */}
         {stats && (
           <div className="flex gap-3 mb-4 flex-wrap">
-            <span className="text-[11px] bg-white border border-[#eee] px-3 py-1.5 rounded-full text-[#555] dark:text-[#ccc] font-medium dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
+            <span className="text-[11px] bg-[#11202f] border border-[#1c2f42] px-3 py-1.5 rounded-full text-[#c8bfa8] dark:text-[#c8bfa8]/50 font-medium dark:bg-[#11202f] dark:border-[#1c2f42]">
               {stats.total_nodes} nodes
             </span>
-            <span className="text-[11px] bg-white border border-[#eee] px-3 py-1.5 rounded-full text-[#555] dark:text-[#ccc] font-medium dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
+            <span className="text-[11px] bg-[#11202f] border border-[#1c2f42] px-3 py-1.5 rounded-full text-[#c8bfa8] dark:text-[#c8bfa8]/50 font-medium dark:bg-[#11202f] dark:border-[#1c2f42]">
               {stats.total_edges} edges
             </span>
             {stats.node_types && Object.entries(stats.node_types).map(([type, count]) => (
-              <span key={type} className="text-[11px] bg-white border border-[#eee] px-3 py-1.5 rounded-full text-[#888] dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
+              <span key={type} className="text-[11px] bg-[#11202f] border border-[#1c2f42] px-3 py-1.5 rounded-full text-[#c8bfa8]/60 dark:bg-[#11202f] dark:border-[#1c2f42]">
                 {type}: {count}
               </span>
             ))}
             {stats.density > 0 && (
-              <span className="text-[11px] bg-white border border-[#eee] px-3 py-1.5 rounded-full text-[#888] font-mono dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
+              <span className="text-[11px] bg-[#11202f] border border-[#1c2f42] px-3 py-1.5 rounded-full text-[#c8bfa8]/60 font-mono dark:bg-[#11202f] dark:border-[#1c2f42]">
                 density: {stats.density}
               </span>
             )}
@@ -211,8 +211,8 @@ export default function KnowledgeGraph() {
               onClick={() => setFilter(f.id)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 filter === f.id
-                  ? 'bg-[#1a1a1a] text-white dark:bg-white dark:text-[#1a1a1a]'
-                  : 'bg-white border border-[#eee] text-[#888] hover:text-[#555] dark:text-[#ccc] hover:border-[#ddd] dark:bg-[#1a1a1a] dark:border-[#2a2a2a]'
+                  ? 'bg-[#11202f] text-white dark:bg-[#11202f] dark:text-[#f5efe0]'
+                  : 'bg-[#11202f] border border-[#1c2f42] text-[#c8bfa8]/60 hover:text-[#c8bfa8] dark:text-[#c8bfa8]/50 hover:border-[#ddd] dark:bg-[#11202f] dark:border-[#1c2f42]'
               }`}
             >
               {f.label}
@@ -222,7 +222,7 @@ export default function KnowledgeGraph() {
 
         {/* Graph */}
         <div
-          className={`bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-2xl overflow-hidden transition-all dark:bg-[#1a1a1a] dark:border-[#2a2a2a] ${
+          className={`bg-[#11202f] dark:bg-[#11202f] border border-[#1c2f42] dark:border-[#1c2f42] rounded-2xl overflow-hidden transition-all dark:bg-[#11202f] dark:border-[#1c2f42] ${
             fullscreen ? 'fixed inset-4 z-50 shadow-2xl' : ''
           }`}
           style={{ height: fullscreen ? 'auto' : '550px' }}
@@ -230,9 +230,9 @@ export default function KnowledgeGraph() {
           {fullscreen && (
             <button
               onClick={() => setFullscreen(false)}
-              className="absolute top-4 right-4 z-10 bg-white border border-[#eee] rounded-xl p-2 shadow-sm hover:shadow-md transition-all dark:bg-[#1a1a1a] dark:border-[#2a2a2a]"
+              className="absolute top-4 right-4 z-10 bg-[#11202f] border border-[#1c2f42] rounded-xl p-2 shadow-sm hover:shadow-md transition-all dark:bg-[#11202f] dark:border-[#1c2f42]"
             >
-              <X size={16} className="text-[#555] dark:text-[#ccc]" />
+              <X size={16} className="text-[#c8bfa8] dark:text-[#c8bfa8]/50" />
             </button>
           )}
 
@@ -288,11 +288,11 @@ export default function KnowledgeGraph() {
           ) : (
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
-                <div className="w-14 h-14 bg-[#2563eb]/5 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <div className="w-14 h-14 bg-[#c89b3c]/5 rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <span className="text-2xl">🕸️</span>
                 </div>
-                <p className="text-sm font-medium text-[#555] dark:text-[#ccc] mb-1">No data in knowledge graph yet</p>
-                <p className="text-xs text-[#aaa]">Run a research pipeline to populate the graph</p>
+                <p className="text-sm font-medium text-[#c8bfa8] dark:text-[#c8bfa8]/50 mb-1">No data in knowledge graph yet</p>
+                <p className="text-xs text-[#c8bfa8]/70">Run a research pipeline to populate the graph</p>
               </div>
             </div>
           )}
@@ -303,14 +303,14 @@ export default function KnowledgeGraph() {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-4 bg-white border border-[#eee] rounded-xl p-5 dark:bg-[#1a1a1a] dark:border-[#2a2a2a]"
+            className="mt-4 bg-[#11202f] border border-[#1c2f42] rounded-xl p-5 dark:bg-[#11202f] dark:border-[#1c2f42]"
           >
             <div className="flex justify-between items-start">
               <div>
                 <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
-                  selectedNode.type === 'paper' ? 'bg-[#2563eb]/10 text-[#2563eb]' :
+                  selectedNode.type === 'paper' ? 'bg-[#c89b3c]/10 text-[#c89b3c]' :
                   selectedNode.type === 'theme' ? 'bg-[#d97706]/10 text-[#d97706]' :
-                  'bg-[#7c3aed]/10 text-[#7c3aed]'
+                  'bg-[#4a7c7e]/10 text-[#4a7c7e]'
                 }`}>
                   {selectedNode.type}
                 </span>
@@ -318,12 +318,12 @@ export default function KnowledgeGraph() {
               </div>
               <button
                 onClick={() => setSelectedNode(null)}
-                className="text-[#ccc] hover:text-[#888] transition-colors"
+                className="text-[#c8bfa8]/50 hover:text-[#c8bfa8]/60 transition-colors"
               >
                 <X size={16} />
               </button>
             </div>
-            <div className="flex gap-4 mt-2 text-xs text-[#888]">
+            <div className="flex gap-4 mt-2 text-xs text-[#c8bfa8]/60">
               {selectedNode.year && <span>📅 {selectedNode.year}</span>}
               {selectedNode.citation_count > 0 && <span>📊 {selectedNode.citation_count} citations</span>}
             </div>
@@ -360,7 +360,7 @@ export default function KnowledgeGraph() {
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 + i * 0.05 }}
-                  className="bg-white border border-[#eee] rounded-xl p-4 hover:border-[#ddd] hover:shadow-sm transition-all dark:bg-[#1a1a1a] dark:border-[#2a2a2a]"
+                  className="bg-[#11202f] border border-[#1c2f42] rounded-xl p-4 hover:border-[#ddd] hover:shadow-sm transition-all dark:bg-[#11202f] dark:border-[#1c2f42]"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
@@ -370,7 +370,7 @@ export default function KnowledgeGraph() {
                         </span>
                         <h3 className="font-medium text-sm truncate">{paper.title}</h3>
                       </div>
-                      <div className="flex gap-3 mt-1.5 text-[10px] text-[#888]">
+                      <div className="flex gap-3 mt-1.5 text-[10px] text-[#c8bfa8]/60">
                         {paper.year && <span>📅 {paper.year}</span>}
                         <span>📊 {paper.citation_count} citations</span>
                       </div>
@@ -378,11 +378,11 @@ export default function KnowledgeGraph() {
                     </div>
                     {/* Score bar */}
                     <div className="w-24 shrink-0">
-                      <div className="flex justify-between text-[9px] text-[#888] mb-1">
+                      <div className="flex justify-between text-[9px] text-[#c8bfa8]/60 mb-1">
                         <span>Score</span>
                         <span className="font-mono">{(paper.combined_score * 100).toFixed(0)}%</span>
                       </div>
-                      <div className="w-full bg-[#f0f0f0] rounded-full h-2 overflow-hidden dark:bg-[#222]">
+                      <div className="w-full bg-[#152738] rounded-full h-2 overflow-hidden dark:bg-[#1c2f42]">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${paper.combined_score * 100}%` }}
@@ -401,9 +401,9 @@ export default function KnowledgeGraph() {
               ))}
             </div>
           ) : !loadingPageRank ? (
-            <div className="bg-white border border-[#eee] rounded-xl p-8 text-center dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
-              <p className="text-sm text-[#888]">No papers in graph yet</p>
-              <p className="text-xs text-[#aaa] mt-1">Run a research pipeline to analyze paper influence</p>
+            <div className="bg-[#11202f] border border-[#1c2f42] rounded-xl p-8 text-center dark:bg-[#11202f] dark:border-[#1c2f42]">
+              <p className="text-sm text-[#c8bfa8]/60">No papers in graph yet</p>
+              <p className="text-xs text-[#c8bfa8]/70 mt-1">Run a research pipeline to analyze paper influence</p>
             </div>
           ) : null}
         </motion.div>
@@ -417,18 +417,18 @@ export default function KnowledgeGraph() {
             className="mt-6"
           >
             <h2 className="text-sm font-semibold mb-3">PageRank Rankings (Top 20)</h2>
-            <div className="bg-white border border-[#eee] rounded-xl overflow-hidden dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
+            <div className="bg-[#11202f] border border-[#1c2f42] rounded-xl overflow-hidden dark:bg-[#11202f] dark:border-[#1c2f42]">
               <div className="divide-y divide-[#eee] dark:divide-[#2a2a2a]">
                 {pagerankData.map((paper, i) => (
-                  <div key={paper.id} className="flex items-center gap-3 px-4 py-3 hover:bg-[#fafaf9] transition-colors dark:hover:bg-[#222]">
+                  <div key={paper.id} className="flex items-center gap-3 px-4 py-3 hover:bg-[#0b1626] transition-colors dark:hover:bg-[#1c2f42]">
                     <span className={`text-[10px] font-bold w-5 text-center ${
-                      i < 3 ? 'text-[#f59e0b]' : 'text-[#888]'
+                      i < 3 ? 'text-[#f59e0b]' : 'text-[#c8bfa8]/60'
                     }`}>
                       {i + 1}
                     </span>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-medium truncate">{paper.title}</p>
-                      <div className="flex gap-2 mt-0.5 text-[9px] text-[#aaa]">
+                      <div className="flex gap-2 mt-0.5 text-[9px] text-[#c8bfa8]/70">
                         {paper.year && <span>{paper.year}</span>}
                         <span>{paper.citation_count} cites</span>
                         {paper.connected_themes?.length > 0 && (
@@ -437,14 +437,14 @@ export default function KnowledgeGraph() {
                       </div>
                     </div>
                     <div className="w-16 shrink-0">
-                      <div className="w-full bg-[#f0f0f0] rounded-full h-1.5 dark:bg-[#222]">
+                      <div className="w-full bg-[#152738] rounded-full h-1.5 dark:bg-[#1c2f42]">
                         <div
-                          className="h-1.5 rounded-full bg-[#2563eb]"
+                          className="h-1.5 rounded-full bg-[#c89b3c]"
                           style={{ width: `${(paper.score / (pagerankData[0]?.score || 1)) * 100}%` }}
                         />
                       </div>
                     </div>
-                    <span className="text-[9px] font-mono text-[#888] w-12 text-right">
+                    <span className="text-[9px] font-mono text-[#c8bfa8]/60 w-12 text-right">
                       {(paper.score * 1000).toFixed(2)}
                     </span>
                   </div>
@@ -455,15 +455,15 @@ export default function KnowledgeGraph() {
         )}
 
         {/* Legend */}
-        <div className="flex gap-5 mt-4 text-xs text-[#888]">
+        <div className="flex gap-5 mt-4 text-xs text-[#c8bfa8]/60">
           <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#2563eb]" /> Papers
+            <span className="w-2.5 h-2.5 rounded-full bg-[#c89b3c]" /> Papers
           </span>
           <span className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-[#d97706]" /> Themes
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#7c3aed]" /> Authors
+            <span className="w-2.5 h-2.5 rounded-full bg-[#4a7c7e]" /> Authors
           </span>
           {showPageRank && (
             <>

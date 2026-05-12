@@ -32,7 +32,7 @@ export default function VerifyEmail() {
   }, [token])
 
   return (
-    <div className="min-h-screen bg-[#fafaf9] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[#0b1626] flex items-center justify-center px-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -48,15 +48,15 @@ export default function VerifyEmail() {
           <span className="text-lg font-semibold tracking-tight">ResearchAI</span>
         </Link>
 
-        <div className="bg-white border border-[#e5e5e5] rounded-2xl p-8 shadow-sm">
+        <div className="bg-[#11202f] border border-[#e5e5e5] rounded-2xl p-8 shadow-sm">
           {status === 'loading' && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="flex flex-col items-center gap-4"
             >
-              <Loader2 className="w-12 h-12 text-[#2563eb] animate-spin" />
-              <p className="text-[#555] text-sm">Verifying your email...</p>
+              <Loader2 className="w-12 h-12 text-[#c89b3c] animate-spin" />
+              <p className="text-[#c8bfa8] text-sm">Verifying your email...</p>
             </motion.div>
           )}
 
@@ -70,10 +70,10 @@ export default function VerifyEmail() {
                 <CheckCircle className="w-8 h-8 text-green-500" />
               </div>
               <h2 className="text-xl font-bold">Email Verified!</h2>
-              <p className="text-[#888] text-sm">{message}</p>
+              <p className="text-[#c8bfa8]/60 text-sm">{message}</p>
               <Link
                 to="/app"
-                className="mt-4 inline-block bg-[#1a1a1a] text-white px-6 py-3 rounded-xl text-sm font-medium hover:bg-[#333] transition-colors"
+                className="mt-4 inline-block bg-[#11202f] text-white px-6 py-3 rounded-xl text-sm font-medium hover:bg-[#333] transition-colors"
               >
                 Go to Dashboard →
               </Link>
@@ -90,10 +90,10 @@ export default function VerifyEmail() {
                 <XCircle className="w-8 h-8 text-red-500" />
               </div>
               <h2 className="text-xl font-bold">Verification Failed</h2>
-              <p className="text-[#888] text-sm">{message}</p>
+              <p className="text-[#c8bfa8]/60 text-sm">{message}</p>
               <Link
                 to="/login"
-                className="mt-4 inline-block text-[#2563eb] text-sm font-medium hover:underline"
+                className="mt-4 inline-block text-[#c89b3c] text-sm font-medium hover:underline"
               >
                 Back to Login
               </Link>

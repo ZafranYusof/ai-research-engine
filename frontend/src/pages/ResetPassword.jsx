@@ -43,11 +43,11 @@ export default function ResetPassword() {
 
   if (!token) {
     return (
-      <div className="min-h-screen bg-[#fafaf9] flex items-center justify-center px-4">
+      <div className="min-h-screen bg-[#0b1626] flex items-center justify-center px-4">
         <div className="text-center">
           <h2 className="text-xl font-bold mb-2">Invalid Reset Link</h2>
-          <p className="text-[#888] text-sm mb-4">No reset token found in the URL.</p>
-          <Link to="/forgot-password" className="text-[#2563eb] text-sm font-medium hover:underline">
+          <p className="text-[#c8bfa8]/60 text-sm mb-4">No reset token found in the URL.</p>
+          <Link to="/forgot-password" className="text-[#c89b3c] text-sm font-medium hover:underline">
             Request a new reset link
           </Link>
         </div>
@@ -56,7 +56,7 @@ export default function ResetPassword() {
   }
 
   return (
-    <div className="min-h-screen bg-[#fafaf9] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[#0b1626] flex items-center justify-center px-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -81,12 +81,12 @@ export default function ResetPassword() {
               exit={{ opacity: 0 }}
             >
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
-                  <Lock className="w-5 h-5 text-[#2563eb]" />
+                <div className="w-10 h-10 rounded-xl bg-[#c89b3c]/10 flex items-center justify-center">
+                  <Lock className="w-5 h-5 text-[#c89b3c]" />
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold tracking-tight">New password</h1>
-                  <p className="text-[#888] text-xs">Choose a strong password</p>
+                  <p className="text-[#c8bfa8]/60 text-xs">Choose a strong password</p>
                 </div>
               </div>
 
@@ -105,7 +105,7 @@ export default function ResetPassword() {
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-[#555] mb-1.5">New Password</label>
+                  <label className="block text-sm font-medium text-[#c8bfa8] mb-1.5">New Password</label>
                   <div className={`relative rounded-xl transition-all duration-300 ${focused === 'password' ? 'ring-2 ring-[#2563eb]/20 shadow-lg shadow-[#2563eb]/5' : ''}`}>
                     <input
                       type="password"
@@ -114,14 +114,14 @@ export default function ResetPassword() {
                       onFocus={() => setFocused('password')}
                       onBlur={() => setFocused(null)}
                       placeholder="••••••••"
-                      className="w-full bg-white border border-[#e5e5e5] rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:border-[#2563eb] transition-all placeholder:text-[#ccc]"
+                      className="w-full bg-[#11202f] border border-[#e5e5e5] rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:border-[#c89b3c] transition-all placeholder:text-[#c8bfa8]/50"
                       required
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[#555] mb-1.5">Confirm Password</label>
+                  <label className="block text-sm font-medium text-[#c8bfa8] mb-1.5">Confirm Password</label>
                   <div className={`relative rounded-xl transition-all duration-300 ${focused === 'confirm' ? 'ring-2 ring-[#2563eb]/20 shadow-lg shadow-[#2563eb]/5' : ''}`}>
                     <input
                       type="password"
@@ -130,7 +130,7 @@ export default function ResetPassword() {
                       onFocus={() => setFocused('confirm')}
                       onBlur={() => setFocused(null)}
                       placeholder="••••••••"
-                      className="w-full bg-white border border-[#e5e5e5] rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:border-[#2563eb] transition-all placeholder:text-[#ccc]"
+                      className="w-full bg-[#11202f] border border-[#e5e5e5] rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:border-[#c89b3c] transition-all placeholder:text-[#c8bfa8]/50"
                       required
                     />
                   </div>
@@ -141,7 +141,7 @@ export default function ResetPassword() {
                   disabled={loading}
                   whileHover={{ scale: 1.01, y: -1 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full bg-[#1a1a1a] text-white py-3.5 rounded-xl font-medium text-sm hover:bg-[#333] disabled:bg-[#ccc] disabled:cursor-not-allowed transition-all hover:shadow-xl hover:shadow-black/10"
+                  className="w-full bg-[#11202f] text-white py-3.5 rounded-xl font-medium text-sm hover:bg-[#333] disabled:bg-[#ccc] disabled:cursor-not-allowed transition-all hover:shadow-xl hover:shadow-black/10"
                 >
                   {loading ? (
                     <span className="flex items-center justify-center gap-2">
@@ -163,10 +163,10 @@ export default function ResetPassword() {
                 <CheckCircle className="w-8 h-8 text-green-500" />
               </div>
               <h2 className="text-2xl font-bold mb-2">Password Reset!</h2>
-              <p className="text-[#888] text-sm mb-6">Your password has been updated successfully.</p>
+              <p className="text-[#c8bfa8]/60 text-sm mb-6">Your password has been updated successfully.</p>
               <Link
                 to="/login"
-                className="inline-block bg-[#1a1a1a] text-white px-6 py-3 rounded-xl text-sm font-medium hover:bg-[#333] transition-colors"
+                className="inline-block bg-[#11202f] text-white px-6 py-3 rounded-xl text-sm font-medium hover:bg-[#333] transition-colors"
               >
                 Sign In →
               </Link>

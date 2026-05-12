@@ -13,7 +13,7 @@ function StatCard({ icon: Icon, label, value, color, delay }) {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ delay, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       whileHover={{ y: -3 }}
-      className="bg-white border border-[#eee] rounded-2xl p-5 hover:shadow-lg hover:shadow-black/5 transition-all cursor-default dark:bg-[#1a1a1a] dark:border-[#2a2a2a]"
+      className="bg-[#11202f] border border-[#1c2f42] rounded-2xl p-5 hover:shadow-lg hover:shadow-black/5 transition-all cursor-default dark:bg-[#11202f] dark:border-[#1c2f42]"
     >
       <div className="flex items-center gap-3">
         <motion.div
@@ -32,7 +32,7 @@ function StatCard({ icon: Icon, label, value, color, delay }) {
           >
             {value}
           </motion.p>
-          <p className="text-[11px] text-[#999]">{label}</p>
+          <p className="text-[11px] text-[#c8bfa8]/50">{label}</p>
         </div>
       </div>
     </motion.div>
@@ -49,7 +49,7 @@ function QuickAction({ icon: Icon, title, desc, to, color, delay }) {
     >
       <Link
         to={to}
-        className="block bg-white border border-[#eee] rounded-2xl p-5 hover:border-[#ddd] hover:shadow-lg hover:shadow-black/5 transition-all group dark:bg-[#1a1a1a] dark:border-[#2a2a2a] dark:hover:border-[#444]"
+        className="block bg-[#11202f] border border-[#1c2f42] rounded-2xl p-5 hover:border-[#ddd] hover:shadow-lg hover:shadow-black/5 transition-all group dark:bg-[#11202f] dark:border-[#1c2f42] dark:hover:border-[#444]"
       >
         <motion.div
           whileHover={{ scale: 1.05, rotate: 3 }}
@@ -58,8 +58,8 @@ function QuickAction({ icon: Icon, title, desc, to, color, delay }) {
         >
           <Icon size={20} style={{ color }} />
         </motion.div>
-        <h3 className="font-medium text-sm group-hover:text-[#2563eb] transition-colors dark:text-white">{title}</h3>
-        <p className="text-xs text-[#999] mt-1">{desc}</p>
+        <h3 className="font-medium text-sm group-hover:text-[#c89b3c] transition-colors dark:text-white">{title}</h3>
+        <p className="text-xs text-[#c8bfa8]/50 mt-1">{desc}</p>
       </Link>
     </motion.div>
   )
@@ -129,14 +129,14 @@ function TrendingTopics() {
         >
           <Link
             to="/recommendations"
-            className="flex items-center gap-3 bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-xl px-4 py-3 hover:border-[#ddd] dark:hover:border-[#444] hover:shadow-sm transition-all group"
+            className="flex items-center gap-3 bg-[#11202f] dark:bg-[#11202f] border border-[#1c2f42] dark:border-[#1c2f42] rounded-xl px-4 py-3 hover:border-[#ddd] dark:hover:border-[#444] hover:shadow-sm transition-all group"
           >
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#2563eb]/10 to-[#7c3aed]/10 flex items-center justify-center shrink-0">
-              <TrendingUp size={14} className="text-[#2563eb]" />
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#c89b3c]/10 to-[#7c3aed]/10 flex items-center justify-center shrink-0">
+              <TrendingUp size={14} className="text-[#c89b3c]" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate group-hover:text-[#2563eb] transition-colors dark:text-white">{topic.title}</p>
-              <p className="text-[10px] text-[#aaa]">{topic.papers} papers</p>
+              <p className="text-sm font-medium truncate group-hover:text-[#c89b3c] transition-colors dark:text-white">{topic.title}</p>
+              <p className="text-[10px] text-[#c8bfa8]/70">{topic.papers} papers</p>
             </div>
             <span className="text-[10px] text-[#059669] font-medium bg-[#059669]/5 px-2 py-0.5 rounded-full">{topic.trend}</span>
           </Link>
@@ -166,22 +166,22 @@ function GettingStarted({ hasProjects }) {
         >
           <Link
             to={step.to}
-            className={`block bg-white dark:bg-[#1a1a1a] border rounded-xl p-4 transition-all group ${
+            className={`block bg-[#11202f] dark:bg-[#11202f] border rounded-xl p-4 transition-all group ${
               step.done
                 ? 'border-[#059669]/30 bg-[#059669]/5 dark:bg-[#059669]/5'
-                : 'border-[#eee] dark:border-[#2a2a2a] hover:border-[#ddd] dark:hover:border-[#444] hover:shadow-sm'
+                : 'border-[#1c2f42] dark:border-[#1c2f42] hover:border-[#ddd] dark:hover:border-[#444] hover:shadow-sm'
             }`}
           >
             <div className="flex items-center gap-2 mb-2">
               <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
-                step.done ? 'bg-[#059669] text-white' : 'bg-[#f0f0f0] dark:bg-[#333] text-[#888]'
+                step.done ? 'bg-[#059669] text-white' : 'bg-[#152738] dark:bg-[#333] text-[#c8bfa8]/60'
               }`}>
                 {step.done ? '✓' : step.num}
               </span>
-              <step.icon size={14} className={step.done ? 'text-[#059669]' : 'text-[#aaa]'} />
+              <step.icon size={14} className={step.done ? 'text-[#059669]' : 'text-[#c8bfa8]/70'} />
             </div>
-            <h4 className="text-xs font-medium dark:text-white group-hover:text-[#2563eb] transition-colors">{step.title}</h4>
-            <p className="text-[10px] text-[#aaa] mt-0.5">{step.desc}</p>
+            <h4 className="text-xs font-medium dark:text-white group-hover:text-[#c89b3c] transition-colors">{step.title}</h4>
+            <p className="text-[10px] text-[#c8bfa8]/70 mt-0.5">{step.desc}</p>
           </Link>
         </motion.div>
       ))}
@@ -206,13 +206,13 @@ function Capabilities() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.7 + i * 0.05 }}
-          className="bg-gradient-to-br from-white to-[#fafaf9] dark:from-[#1a1a1a] dark:to-[#111] border border-[#eee] dark:border-[#2a2a2a] rounded-xl p-4 text-center"
+          className="bg-gradient-to-br from-white to-[#fafaf9] dark:from-[#1a1a1a] dark:to-[#111] border border-[#1c2f42] dark:border-[#1c2f42] rounded-xl p-4 text-center"
         >
           <div className="w-9 h-9 rounded-xl flex items-center justify-center mx-auto mb-2" style={{ backgroundColor: item.color + '10' }}>
             <item.icon size={18} style={{ color: item.color }} />
           </div>
           <p className="text-xs font-semibold dark:text-white">{item.title}</p>
-          <p className="text-[10px] text-[#999] mt-0.5">{item.desc}</p>
+          <p className="text-[10px] text-[#c8bfa8]/50 mt-0.5">{item.desc}</p>
         </motion.div>
       ))}
     </div>
@@ -293,7 +293,7 @@ export default function Dashboard() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="text-[#888] text-sm mt-1"
+            className="text-[#c8bfa8]/60 text-sm mt-1"
           >
             Your AI-powered research workspace
           </motion.p>
@@ -305,7 +305,7 @@ export default function Dashboard() {
         >
           <Link
             to="/new"
-            className="flex items-center gap-2 bg-[#1a1a1a] text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-[#333] transition-all hover:shadow-lg hover:shadow-black/10 hover:-translate-y-0.5 active:translate-y-0"
+            className="flex items-center gap-2 bg-[#11202f] text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-[#333] transition-all hover:shadow-lg hover:shadow-black/10 hover:-translate-y-0.5 active:translate-y-0"
           >
             <Plus size={16} />
             New Research
@@ -334,7 +334,7 @@ export default function Dashboard() {
         transition={{ delay: 0.3 }}
         className="mb-8"
       >
-        <h2 className="text-xs font-medium text-[#888] uppercase tracking-wider mb-3">Getting Started</h2>
+        <h2 className="text-xs font-medium text-[#c8bfa8]/60 uppercase tracking-wider mb-3">Getting Started</h2>
         <GettingStarted hasProjects={projects.length > 0} />
       </motion.div>
 
@@ -345,7 +345,7 @@ export default function Dashboard() {
         transition={{ delay: 0.4 }}
         className="mb-8"
       >
-        <h2 className="text-xs font-medium text-[#888] uppercase tracking-wider mb-3">Quick Actions</h2>
+        <h2 className="text-xs font-medium text-[#c8bfa8]/60 uppercase tracking-wider mb-3">Quick Actions</h2>
         <div className="grid grid-cols-4 gap-3">
           <QuickAction icon={Plus} title="New Research" desc="Start a pipeline" to="/new" color="#2563eb" delay={0.35} />
           <QuickAction icon={Search} title="Search Papers" desc="Find literature" to="/search" color="#059669" delay={0.4} />
@@ -363,8 +363,8 @@ export default function Dashboard() {
           transition={{ delay: 0.5 }}
         >
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-xs font-medium text-[#888] uppercase tracking-wider">Trending Topics</h2>
-            <Link to="/recommendations" className="text-[10px] text-[#2563eb] hover:underline flex items-center gap-0.5">
+            <h2 className="text-xs font-medium text-[#c8bfa8]/60 uppercase tracking-wider">Trending Topics</h2>
+            <Link to="/recommendations" className="text-[10px] text-[#c89b3c] hover:underline flex items-center gap-0.5">
               Explore <ArrowRight size={10} />
             </Link>
           </div>
@@ -377,7 +377,7 @@ export default function Dashboard() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.55 }}
         >
-          <h2 className="text-xs font-medium text-[#888] uppercase tracking-wider mb-3">Platform Capabilities</h2>
+          <h2 className="text-xs font-medium text-[#c8bfa8]/60 uppercase tracking-wider mb-3">Platform Capabilities</h2>
           <Capabilities />
 
           {/* Powered by */}
@@ -385,14 +385,14 @@ export default function Dashboard() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
-            className="mt-3 bg-gradient-to-r from-[#2563eb]/5 to-[#7c3aed]/5 border border-[#2563eb]/10 rounded-xl p-4 flex items-center gap-3"
+            className="mt-3 bg-gradient-to-r from-[#c89b3c]/5 to-[#7c3aed]/5 border border-[#c89b3c]/10 rounded-xl p-4 flex items-center gap-3"
           >
-            <div className="w-9 h-9 bg-white dark:bg-[#1a1a1a] rounded-lg flex items-center justify-center border border-[#eee] dark:border-[#333]">
-              <Sparkles size={16} className="text-[#2563eb]" />
+            <div className="w-9 h-9 bg-[#11202f] dark:bg-[#11202f] rounded-lg flex items-center justify-center border border-[#1c2f42] dark:border-[#1c2f42]">
+              <Sparkles size={16} className="text-[#c89b3c]" />
             </div>
             <div>
               <p className="text-xs font-medium dark:text-white">Powered by Groq</p>
-              <p className="text-[10px] text-[#888]">Llama 3.3 70B - Ultra-fast inference</p>
+              <p className="text-[10px] text-[#c8bfa8]/60">Llama 3.3 70B - Ultra-fast inference</p>
             </div>
           </motion.div>
         </motion.div>
@@ -406,21 +406,21 @@ export default function Dashboard() {
           transition={{ delay: 0.6 }}
           className="mb-8"
         >
-          <h2 className="text-xs font-medium text-[#888] uppercase tracking-wider mb-3">Research Insights</h2>
+          <h2 className="text-xs font-medium text-[#c8bfa8]/60 uppercase tracking-wider mb-3">Research Insights</h2>
           <div className="grid grid-cols-4 gap-3">
-            <div className="bg-white border border-[#eee] rounded-2xl p-4 dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
+            <div className="bg-[#11202f] border border-[#1c2f42] rounded-2xl p-4 dark:bg-[#11202f] dark:border-[#1c2f42]">
               <div className="flex items-center justify-between mb-2">
-                <div className="w-8 h-8 rounded-lg bg-[#2563eb]/10 flex items-center justify-center">
-                  <FileCheck size={16} className="text-[#2563eb]" />
+                <div className="w-8 h-8 rounded-lg bg-[#c89b3c]/10 flex items-center justify-center">
+                  <FileCheck size={16} className="text-[#c89b3c]" />
                 </div>
                 <MiniSparkline color="#2563eb" />
               </div>
               <p className="text-xl font-bold tracking-tight dark:text-white">
                 <AnimatedCounter value={researchStats.total_papers_analyzed} />
               </p>
-              <p className="text-[10px] text-[#999] mt-0.5">Papers Analyzed</p>
+              <p className="text-[10px] text-[#c8bfa8]/50 mt-0.5">Papers Analyzed</p>
             </div>
-            <div className="bg-white border border-[#eee] rounded-2xl p-4 dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
+            <div className="bg-[#11202f] border border-[#1c2f42] rounded-2xl p-4 dark:bg-[#11202f] dark:border-[#1c2f42]">
               <div className="flex items-center justify-between mb-2">
                 <div className="w-8 h-8 rounded-lg bg-[#059669]/10 flex items-center justify-center">
                   <BookOpen size={16} className="text-[#059669]" />
@@ -430,21 +430,21 @@ export default function Dashboard() {
               <p className="text-xl font-bold tracking-tight dark:text-white">
                 <AnimatedCounter value={researchStats.total_words_generated} />
               </p>
-              <p className="text-[10px] text-[#999] mt-0.5">Words Generated</p>
+              <p className="text-[10px] text-[#c8bfa8]/50 mt-0.5">Words Generated</p>
             </div>
-            <div className="bg-white border border-[#eee] rounded-2xl p-4 dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
+            <div className="bg-[#11202f] border border-[#1c2f42] rounded-2xl p-4 dark:bg-[#11202f] dark:border-[#1c2f42]">
               <div className="flex items-center justify-between mb-2">
-                <div className="w-8 h-8 rounded-lg bg-[#7c3aed]/10 flex items-center justify-center">
-                  <BarChart3 size={16} className="text-[#7c3aed]" />
+                <div className="w-8 h-8 rounded-lg bg-[#4a7c7e]/10 flex items-center justify-center">
+                  <BarChart3 size={16} className="text-[#4a7c7e]" />
                 </div>
                 <MiniSparkline color="#7c3aed" />
               </div>
               <p className="text-xl font-bold tracking-tight dark:text-white">
                 <AnimatedCounter value={Math.round((researchStats.avg_score || 0) * 10)} suffix="%" />
               </p>
-              <p className="text-[10px] text-[#999] mt-0.5">Avg Quality Score</p>
+              <p className="text-[10px] text-[#c8bfa8]/50 mt-0.5">Avg Quality Score</p>
             </div>
-            <div className="bg-white border border-[#eee] rounded-2xl p-4 dark:bg-[#1a1a1a] dark:border-[#2a2a2a]">
+            <div className="bg-[#11202f] border border-[#1c2f42] rounded-2xl p-4 dark:bg-[#11202f] dark:border-[#1c2f42]">
               <div className="flex items-center justify-between mb-2">
                 <div className="w-8 h-8 rounded-lg bg-[#d97706]/10 flex items-center justify-center">
                   <Timer size={16} className="text-[#d97706]" />
@@ -454,7 +454,7 @@ export default function Dashboard() {
               <p className="text-xl font-bold tracking-tight dark:text-white">
                 <AnimatedCounter value={Math.round((researchStats.total_duration_seconds || 0) / 60)} suffix="m" />
               </p>
-              <p className="text-[10px] text-[#999] mt-0.5">Total Research Time</p>
+              <p className="text-[10px] text-[#c8bfa8]/50 mt-0.5">Total Research Time</p>
             </div>
           </div>
         </motion.div>
@@ -467,9 +467,9 @@ export default function Dashboard() {
         transition={{ delay: 0.65 }}
       >
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xs font-medium text-[#888] uppercase tracking-wider">Recent Projects</h2>
+          <h2 className="text-xs font-medium text-[#c8bfa8]/60 uppercase tracking-wider">Recent Projects</h2>
           {projects.length > 0 && (
-            <span className="text-[10px] text-[#aaa] font-mono bg-[#f5f5f4] dark:bg-[#222] px-2 py-0.5 rounded-full">{projects.length} total</span>
+            <span className="text-[10px] text-[#c8bfa8]/70 font-mono bg-[#f5f5f4] dark:bg-[#1c2f42] px-2 py-0.5 rounded-full">{projects.length} total</span>
           )}
         </div>
 
@@ -481,20 +481,20 @@ export default function Dashboard() {
           <motion.div
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="text-center py-12 bg-white border border-[#eee] rounded-2xl dark:bg-[#1a1a1a] dark:border-[#2a2a2a]"
+            className="text-center py-12 bg-[#11202f] border border-[#1c2f42] rounded-2xl dark:bg-[#11202f] dark:border-[#1c2f42]"
           >
             <motion.div
               animate={{ y: [0, -5, 0] }}
               transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-              className="w-14 h-14 bg-gradient-to-br from-[#2563eb]/10 to-[#7c3aed]/10 rounded-2xl flex items-center justify-center mx-auto mb-4"
+              className="w-14 h-14 bg-gradient-to-br from-[#c89b3c]/10 to-[#7c3aed]/10 rounded-2xl flex items-center justify-center mx-auto mb-4"
             >
-              <BookOpen size={24} className="text-[#2563eb]" />
+              <BookOpen size={24} className="text-[#c89b3c]" />
             </motion.div>
             <p className="text-sm font-medium mb-1 dark:text-white">No projects yet</p>
-            <p className="text-xs text-[#888] mb-5">Start your first AI-powered literature review</p>
+            <p className="text-xs text-[#c8bfa8]/60 mb-5">Start your first AI-powered literature review</p>
             <Link
               to="/new"
-              className="inline-flex items-center gap-2 bg-[#1a1a1a] text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-[#333] transition-all hover:shadow-lg hover:shadow-black/10 hover:-translate-y-0.5"
+              className="inline-flex items-center gap-2 bg-[#11202f] text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-[#333] transition-all hover:shadow-lg hover:shadow-black/10 hover:-translate-y-0.5"
             >
               <Plus size={14} />
               Create Project
@@ -513,7 +513,7 @@ export default function Dashboard() {
                 >
                   <Link
                     to={`/research/${project.id}`}
-                    className="flex items-center gap-4 bg-white border border-[#eee] rounded-xl px-5 py-4 hover:border-[#ddd] hover:shadow-md hover:shadow-black/5 transition-all group hover:-translate-y-0.5 dark:bg-[#1a1a1a] dark:border-[#2a2a2a] dark:hover:border-[#444]"
+                    className="flex items-center gap-4 bg-[#11202f] border border-[#1c2f42] rounded-xl px-5 py-4 hover:border-[#ddd] hover:shadow-md hover:shadow-black/5 transition-all group hover:-translate-y-0.5 dark:bg-[#11202f] dark:border-[#1c2f42] dark:hover:border-[#444]"
                   >
                     <motion.div
                       whileHover={{ scale: 1.1, rotate: 5 }}
@@ -531,27 +531,27 @@ export default function Dashboard() {
                       {project.status === 'failed' && <AlertCircle size={20} className="text-red-500" />}
                     </motion.div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-medium text-sm truncate group-hover:text-[#2563eb] transition-colors dark:text-white">
+                      <h3 className="font-medium text-sm truncate group-hover:text-[#c89b3c] transition-colors dark:text-white">
                         {project.topic}
                       </h3>
                       {project.status === 'started' && (
                         <div className="flex items-center gap-2 mt-1.5">
-                          <div className="flex-1 max-w-[200px] bg-[#f0f0f0] dark:bg-[#333] rounded-full h-1.5 overflow-hidden">
+                          <div className="flex-1 max-w-[200px] bg-[#152738] dark:bg-[#333] rounded-full h-1.5 overflow-hidden">
                             <motion.div
-                              className="bg-gradient-to-r from-[#2563eb] to-[#7c3aed] h-1.5 rounded-full"
+                              className="bg-gradient-to-r from-[#c89b3c] to-[#7c3aed] h-1.5 rounded-full"
                               initial={{ width: 0 }}
                               animate={{ width: `${(project.progress || 0) * 100}%` }}
                               transition={{ duration: 1, ease: 'easeOut' }}
                             />
                           </div>
-                          <span className="text-[10px] text-[#999] font-mono">{Math.round((project.progress || 0) * 100)}%</span>
+                          <span className="text-[10px] text-[#c8bfa8]/50 font-mono">{Math.round((project.progress || 0) * 100)}%</span>
                         </div>
                       )}
                       {project.status === 'completed' && (
                         <p className="text-[10px] text-[#059669] mt-1 font-medium">Completed</p>
                       )}
                     </div>
-                    <svg className="w-4 h-4 text-[#ccc] group-hover:text-[#2563eb] shrink-0 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-4 h-4 text-[#c8bfa8]/50 group-hover:text-[#c89b3c] shrink-0 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </Link>

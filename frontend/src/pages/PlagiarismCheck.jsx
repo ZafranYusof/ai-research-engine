@@ -74,7 +74,7 @@ export default function PlagiarismCheck() {
       case 'high': return 'bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800'
       case 'medium': return 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800'
       case 'low': return 'bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-400 dark:border-yellow-800'
-      default: return 'bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700'
+      default: return 'bg-gray-100 text-[#c8bfa8] border-[#1c2f42] dark:bg-gray-800 dark:text-[#c8bfa8]/50 dark:border-gray-700'
     }
   }
 
@@ -94,7 +94,7 @@ export default function PlagiarismCheck() {
           </div>
           <div>
             <h1 className="text-2xl font-bold dark:text-white">Originality Check</h1>
-            <p className="text-sm text-[#888] dark:text-[#bbb]">Detect similarity and ensure your writing is original</p>
+            <p className="text-sm text-[#c8bfa8]/60 dark:text-[#bbb]">Detect similarity and ensure your writing is original</p>
           </div>
         </div>
       </motion.div>
@@ -107,17 +107,17 @@ export default function PlagiarismCheck() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-xl p-5"
+            className="bg-[#11202f] dark:bg-[#11202f] border border-[#1c2f42] dark:border-[#1c2f42] rounded-xl p-5"
           >
             <div className="flex items-center justify-between mb-3">
               <label className="text-sm font-medium dark:text-white">Paste your content</label>
-              <span className="text-xs text-[#999]">{wordCount} words</span>
+              <span className="text-xs text-[#c8bfa8]/50">{wordCount} words</span>
             </div>
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Paste your academic writing here to check for originality..."
-              className="w-full h-64 p-4 bg-[#fafaf9] dark:bg-[#111] border border-[#eee] dark:border-[#2a2a2a] rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-500 dark:text-[#e5e5e5] placeholder:text-[#bbb]"
+              className="w-full h-64 p-4 bg-[#0b1626] dark:bg-[#11202f] border border-[#1c2f42] dark:border-[#1c2f42] rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-500 dark:text-[#e5e5e5] placeholder:text-[#bbb]"
             />
           </motion.div>
 
@@ -126,19 +126,19 @@ export default function PlagiarismCheck() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
-            className="bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-xl p-5"
+            className="bg-[#11202f] dark:bg-[#11202f] border border-[#1c2f42] dark:border-[#1c2f42] rounded-xl p-5"
           >
             <div className="flex flex-col sm:flex-row gap-4">
               {/* Check Type */}
               <div className="flex-1">
-                <label className="text-xs font-medium text-[#888] dark:text-[#bbb] mb-2 block">Check Type</label>
+                <label className="text-xs font-medium text-[#c8bfa8]/60 dark:text-[#bbb] mb-2 block">Check Type</label>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setCheckType('quick')}
                     className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                       checkType === 'quick'
                         ? 'bg-violet-500 text-white'
-                        : 'bg-[#f5f5f5] dark:bg-[#222] text-[#666] dark:text-[#aaa] hover:bg-[#eee] dark:hover:bg-[#2a2a2a]'
+                        : 'bg-[#f5f5f5] dark:bg-[#1c2f42] text-[#666] dark:text-[#c8bfa8]/70 hover:bg-[#eee] dark:hover:bg-[#2a2a2a]'
                     }`}
                   >
                     Quick Check
@@ -148,7 +148,7 @@ export default function PlagiarismCheck() {
                     className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                       checkType === 'full'
                         ? 'bg-violet-500 text-white'
-                        : 'bg-[#f5f5f5] dark:bg-[#222] text-[#666] dark:text-[#aaa] hover:bg-[#eee] dark:hover:bg-[#2a2a2a]'
+                        : 'bg-[#f5f5f5] dark:bg-[#1c2f42] text-[#666] dark:text-[#c8bfa8]/70 hover:bg-[#eee] dark:hover:bg-[#2a2a2a]'
                     }`}
                   >
                     Full Check
@@ -159,11 +159,11 @@ export default function PlagiarismCheck() {
               {/* Project Selector */}
               {checkType === 'full' && (
                 <div className="flex-1">
-                  <label className="text-xs font-medium text-[#888] dark:text-[#bbb] mb-2 block">Compare against project</label>
+                  <label className="text-xs font-medium text-[#c8bfa8]/60 dark:text-[#bbb] mb-2 block">Compare against project</label>
                   <select
                     value={projectId}
                     onChange={(e) => setProjectId(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#f5f5f5] dark:bg-[#222] border border-[#eee] dark:border-[#2a2a2a] rounded-lg text-xs dark:text-[#e5e5e5] focus:outline-none focus:ring-2 focus:ring-violet-500/30"
+                    className="w-full px-3 py-2 bg-[#f5f5f5] dark:bg-[#1c2f42] border border-[#1c2f42] dark:border-[#1c2f42] rounded-lg text-xs dark:text-[#e5e5e5] focus:outline-none focus:ring-2 focus:ring-violet-500/30"
                   >
                     <option value="">Select a project...</option>
                     {projects.map((p) => (
@@ -206,7 +206,7 @@ export default function PlagiarismCheck() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-xl p-8 flex flex-col items-center justify-center"
+                className="bg-[#11202f] dark:bg-[#11202f] border border-[#1c2f42] dark:border-[#1c2f42] rounded-xl p-8 flex flex-col items-center justify-center"
               >
                 <div className="relative w-24 h-24 mb-4">
                   <motion.div
@@ -218,7 +218,7 @@ export default function PlagiarismCheck() {
                     <Sparkles size={24} className="text-violet-500" />
                   </div>
                 </div>
-                <p className="text-sm text-[#888] dark:text-[#bbb]">Analyzing originality...</p>
+                <p className="text-sm text-[#c8bfa8]/60 dark:text-[#bbb]">Analyzing originality...</p>
               </motion.div>
             )}
 
@@ -230,7 +230,7 @@ export default function PlagiarismCheck() {
                 className="space-y-4"
               >
                 {/* Score Circle */}
-                <div className="bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-xl p-6 flex flex-col items-center">
+                <div className="bg-[#11202f] dark:bg-[#11202f] border border-[#1c2f42] dark:border-[#1c2f42] rounded-xl p-6 flex flex-col items-center">
                   <div className="relative w-32 h-32 mb-3">
                     <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
                       <circle
@@ -262,7 +262,7 @@ export default function PlagiarismCheck() {
                       >
                         {results.originality_score}%
                       </motion.span>
-                      <span className="text-[10px] text-[#999] uppercase tracking-wider">Original</span>
+                      <span className="text-[10px] text-[#c8bfa8]/50 uppercase tracking-wider">Original</span>
                     </div>
                   </div>
 
@@ -270,26 +270,26 @@ export default function PlagiarismCheck() {
                   <div className="grid grid-cols-3 gap-3 w-full mt-2">
                     <div className="text-center">
                       <p className="text-lg font-semibold dark:text-white">{results.total_sentences}</p>
-                      <p className="text-[10px] text-[#999]">Total</p>
+                      <p className="text-[10px] text-[#c8bfa8]/50">Total</p>
                     </div>
                     <div className="text-center">
                       <p className="text-lg font-semibold text-emerald-500">{results.clean_sentences}</p>
-                      <p className="text-[10px] text-[#999]">Clean</p>
+                      <p className="text-[10px] text-[#c8bfa8]/50">Clean</p>
                     </div>
                     <div className="text-center">
                       <p className="text-lg font-semibold text-red-500">{results.flagged_sentences?.length || 0}</p>
-                      <p className="text-[10px] text-[#999]">Flagged</p>
+                      <p className="text-[10px] text-[#c8bfa8]/50">Flagged</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Suggestions */}
                 {results.suggestions?.length > 0 && (
-                  <div className="bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-xl p-4">
-                    <h3 className="text-xs font-semibold text-[#888] dark:text-[#bbb] uppercase tracking-wider mb-3">Suggestions</h3>
+                  <div className="bg-[#11202f] dark:bg-[#11202f] border border-[#1c2f42] dark:border-[#1c2f42] rounded-xl p-4">
+                    <h3 className="text-xs font-semibold text-[#c8bfa8]/60 dark:text-[#bbb] uppercase tracking-wider mb-3">Suggestions</h3>
                     <div className="space-y-2">
                       {results.suggestions.map((s, i) => (
-                        <p key={i} className="text-xs text-[#666] dark:text-[#aaa] leading-relaxed">{s}</p>
+                        <p key={i} className="text-xs text-[#666] dark:text-[#c8bfa8]/70 leading-relaxed">{s}</p>
                       ))}
                     </div>
                   </div>
@@ -302,10 +302,10 @@ export default function PlagiarismCheck() {
                 key="empty"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-xl p-8 flex flex-col items-center justify-center text-center"
+                className="bg-[#11202f] dark:bg-[#11202f] border border-[#1c2f42] dark:border-[#1c2f42] rounded-xl p-8 flex flex-col items-center justify-center text-center"
               >
-                <FileText size={32} className="text-[#ccc] dark:text-[#444] mb-3" />
-                <p className="text-sm text-[#888] dark:text-[#bbb]">Paste content and click check to see results</p>
+                <FileText size={32} className="text-[#c8bfa8]/50 dark:text-[#444] mb-3" />
+                <p className="text-sm text-[#c8bfa8]/60 dark:text-[#bbb]">Paste content and click check to see results</p>
               </motion.div>
             )}
           </AnimatePresence>
@@ -319,12 +319,12 @@ export default function PlagiarismCheck() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="mt-6 bg-white dark:bg-[#1a1a1a] border border-[#eee] dark:border-[#2a2a2a] rounded-xl p-5"
+            className="mt-6 bg-[#11202f] dark:bg-[#11202f] border border-[#1c2f42] dark:border-[#1c2f42] rounded-xl p-5"
           >
             <div className="flex items-center gap-2 mb-4">
               <AlertTriangle size={16} className="text-amber-500" />
               <h3 className="text-sm font-semibold dark:text-white">Flagged Sentences</h3>
-              <span className="text-xs text-[#999]">({results.flagged_sentences.length})</span>
+              <span className="text-xs text-[#c8bfa8]/50">({results.flagged_sentences.length})</span>
             </div>
 
             <div className="space-y-3">
