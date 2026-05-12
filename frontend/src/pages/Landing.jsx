@@ -420,47 +420,289 @@ function Features() {
   )
 }
 
+function AnimatedPipeline() {
+  const [active, setActive] = useState(-1)
+  const [running, setRunning] = useState(false)
+  const containerRef = useRef(null)
+  const hasStartedRef = useRef(false)
+
+  const phases = [
+    {
+      agent: 'Retriever',
+      icon: Search,
+      action: 'Searching Semantic Scholar, Google Scholar, PubMed...',
+      output: '47 papers retrieved',
+      duration: 2200,
+    },
+    {
+      agent: 'Analyzer',
+      icon: Brain,
+      action: 'Extracting findings, methods, and gaps...',
+      output: '12 themes · 7 gaps identified',
+      duration: 2400,
+    },
+    {
+      agent: 'Synthesizer',
+      icon: Network,
+      action: 'Connecting themes into a coherent narrative...',
+      output: '4 threads · 5 hypotheses drafted',
+      duration: 2200,
+    },
+    {
+      agent: 'Writer',
+      icon: PenTool,
+      action: 'Drafting prose with APA citations...',
+      output: '2,340 words generated',
+      duration: 2600,
+    },
+    {
+      agent: 'Critic',
+      icon: Shield,
+      action: 'Reviewing coherence and citation accuracy...',
+      output: 'Score 8.1 / 10 — approved',
+      duration: 2000,
+    },
+  ]
+
+  const start = () => {
+    if (running) return
+    setRunning(true)
+    setActive(0)
+  }
+
+  useEffect(() => {
+    if (!running) return
+    if (active >= phases.length) {
+      const t = setTimeout(() => {
+        setRunning(false)
+        setActive(-1)
+        hasStartedRef.current = false
+      }, 3000)
+      return () => clearTimeout(t)
+    }
+    const t = setTimeout(() => setActive((a) => a + 1), phases[active].duration)
+    return () => clearTimeout(t)
+  }, [active, running])
+
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasStartedRef.current) {
+          hasStartedRef.current = true
+          start()
+        }
+      },
+      { threshold: 0.35 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <div ref={containerRef} className="relative">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+        className="max-w-md mx-auto mb-3"
+      >
+        <div className="relative bg-[#11202f] border border-[#1c2f42] rounded-2xl p-5">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-lg bg-[#faf7f2] flex items-center justify-center shrink-0">
+              <Quote size={16} className="text-[#0b1626]" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-[10px] tracking-[0.3em] uppercase text-[#c8bfa8]/50 font-medium mb-1">Research query</div>
+              <div className="font-serif text-sm text-[#f5efe0] italic leading-snug">
+                “Alternative credit scoring in emerging markets”
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      <div className="flex justify-center">
+        <motion.div
+          className="w-px bg-gradient-to-b from-[#c89b3c]/70 to-transparent h-6"
+          initial={{ scaleY: 0 }}
+          animate={{ scaleY: active >= 0 ? 1 : 0 }}
+          transition={{ duration: 0.4 }}
+          style={{ originY: 0 }}
+        />
+      </div>
+
+      <div className="relative max-w-2xl mx-auto space-y-3">
+        <div className="absolute left-6 top-6 bottom-6 w-px bg-[#1c2f42] hidden sm:block" />
+        <motion.div
+          className="absolute left-6 top-6 w-px bg-[#c89b3c] hidden sm:block"
+          initial={{ height: 0 }}
+          animate={{
+            height:
+              active < 0
+                ? 0
+                : active >= phases.length
+                ? '100%'
+                : `${((active + 1) / phases.length) * 100}%`,
+          }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          style={{ originY: 0 }}
+        />
+
+        {phases.map((p, i) => {
+          const isActive = i === active
+          const isDone = i < active || active >= phases.length
+          const isPending = i > active && active < phases.length
+          const Icon = p.icon
+          return (
+            <div key={p.agent} className="relative flex items-start gap-5">
+              <div className="relative z-10 shrink-0">
+                <motion.div
+                  animate={{
+                    scale: isActive ? [1, 1.12, 1] : 1,
+                    boxShadow: isActive
+                      ? [
+                          '0 0 0 0 rgba(200,155,60,0.5)',
+                          '0 0 0 14px rgba(200,155,60,0)',
+                          '0 0 0 0 rgba(200,155,60,0.5)',
+                        ]
+                      : '0 0 0 0 rgba(200,155,60,0)',
+                  }}
+                  transition={{ duration: 1.6, repeat: isActive ? Infinity : 0 }}
+                  className={`w-12 h-12 rounded-xl flex items-center justify-center border transition-colors ${
+                    isActive
+                      ? 'bg-[#c89b3c]/15 border-[#c89b3c]'
+                      : isDone
+                      ? 'bg-[#c89b3c]/10 border-[#c89b3c]/40'
+                      : 'bg-[#11202f] border-[#1c2f42]'
+                  }`}
+                >
+                  {isDone && !isActive ? (
+                    <Check size={18} className="text-[#c89b3c]" />
+                  ) : (
+                    <Icon size={18} className={isActive || isDone ? 'text-[#c89b3c]' : 'text-[#c8bfa8]/40'} />
+                  )}
+                </motion.div>
+              </div>
+
+              <motion.div
+                animate={{ opacity: isPending ? 0.35 : 1 }}
+                transition={{ duration: 0.4 }}
+                className={`flex-1 bg-[#11202f] border rounded-2xl p-5 transition-colors ${
+                  isActive
+                    ? 'border-[#c89b3c]/40 shadow-[0_20px_60px_-30px_rgba(200,155,60,0.5)]'
+                    : 'border-[#1c2f42]'
+                }`}
+              >
+                <div className="flex items-center justify-between gap-3 mb-2">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-[10px] tracking-[0.3em] uppercase text-[#c8bfa8]/40 font-mono tabular-nums">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <span className="font-serif text-lg font-medium text-[#f5efe0]">{p.agent}</span>
+                  </div>
+                  {isActive && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="flex items-center gap-1.5 text-[10px] tracking-wider uppercase text-[#c89b3c] font-medium"
+                    >
+                      <motion.span
+                        className="w-1.5 h-1.5 rounded-full bg-[#c89b3c]"
+                        animate={{ opacity: [0.3, 1, 0.3] }}
+                        transition={{ duration: 1, repeat: Infinity }}
+                      />
+                      Running
+                    </motion.div>
+                  )}
+                  {isDone && !isActive && (
+                    <span className="text-[10px] tracking-wider uppercase text-[#7db9b9] font-medium">Done</span>
+                  )}
+                </div>
+                <div className="text-sm text-[#c8bfa8]/70 leading-relaxed">
+                  {isPending ? 'Waiting for upstream output...' : p.action}
+                </div>
+                <AnimatePresence>
+                  {(isDone || isActive) && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                      animate={{ opacity: 1, height: 'auto', marginTop: 12 }}
+                      exit={{ opacity: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-[#c89b3c]/10 border border-[#c89b3c]/25">
+                        <ArrowRight size={11} className="text-[#c89b3c]" />
+                        <span className="text-[11px] font-mono text-[#c89b3c]">{p.output}</span>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            </div>
+          )
+        })}
+      </div>
+
+      <div className="flex justify-center">
+        <motion.div
+          className="w-px bg-gradient-to-b from-[#c89b3c]/60 to-transparent h-6"
+          initial={{ scaleY: 0 }}
+          animate={{ scaleY: active >= phases.length ? 1 : 0 }}
+          transition={{ duration: 0.4 }}
+          style={{ originY: 0 }}
+        />
+      </div>
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{
+          opacity: active >= phases.length ? 1 : 0,
+          y: active >= phases.length ? 0 : 10,
+        }}
+        transition={{ duration: 0.5 }}
+        className="max-w-md mx-auto"
+      >
+        <div className="relative bg-gradient-to-br from-[#c89b3c]/10 via-[#11202f] to-[#11202f] border border-[#c89b3c]/30 rounded-2xl p-5 shadow-[0_20px_60px_-30px_rgba(200,155,60,0.5)]">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-lg bg-[#c89b3c] flex items-center justify-center shrink-0">
+              <FileText size={16} className="text-[#0b1626]" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="text-[10px] tracking-[0.3em] uppercase text-[#c89b3c] font-medium mb-1">Final draft</div>
+              <div className="font-serif text-sm text-[#f5efe0] leading-snug">
+                Literature review · 2,340 words · 47 citations
+              </div>
+            </div>
+            <span className="text-[10px] tracking-wider uppercase text-[#7db9b9] font-medium shrink-0">Ready</span>
+          </div>
+        </div>
+      </motion.div>
+
+      <div className="flex justify-center mt-8">
+        <button
+          onClick={start}
+          disabled={running}
+          className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-[#c8bfa8]/60 border border-[#1c2f42] hover:border-[#c89b3c]/40 hover:text-[#c89b3c] rounded-full transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          <Zap size={12} />
+          {running ? 'Pipeline running...' : 'Replay pipeline'}
+        </button>
+      </div>
+    </div>
+  )
+}
+
 function Agents() {
   return (
     <section id="agents" className="relative py-28 bg-gradient-to-b from-transparent via-[#c89b3c]/[0.025] to-transparent">
       <div className="max-w-7xl mx-auto px-6">
         <SectionHeading
-          eyebrow="Agent pipeline"
-          title="Five specialized agents, one coherent workflow"
-          desc="Each agent owns a single phase of the pipeline. They hand work off like colleagues in a research lab, with the critic auditing before anything reaches you."
+          eyebrow="Live pipeline"
+          title="Watch five agents build a review"
+          desc="A real research query flows through the full pipeline below. Each agent hands its output to the next, with the critic auditing before anything lands in your editor."
         />
-
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-60px' }}
-          variants={staggerContainer}
-          className="relative"
-        >
-          <div className="grid gap-3">
-            {agents.map((a, i) => (
-              <motion.div
-                key={a.name}
-                variants={fadeInUp}
-                className="flex items-center gap-6 bg-[#11202f] border border-[#1c2f42] rounded-2xl p-6 hover:border-[#c89b3c]/30 transition-colors"
-              >
-                <div className="flex items-center gap-5 flex-1 min-w-0">
-                  <div className="text-[11px] tracking-[0.3em] uppercase text-[#c8bfa8]/40 font-mono tabular-nums">
-                    {String(i + 1).padStart(2, '0')}
-                  </div>
-                  <div className="w-12 h-12 rounded-xl bg-[#c89b3c]/10 border border-[#c89b3c]/25 flex items-center justify-center shrink-0">
-                    <a.icon size={20} className="text-[#c89b3c]" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="font-serif text-xl font-medium text-[#f5efe0]">{a.name}</div>
-                    <div className="text-sm text-[#c8bfa8]/60">{a.role}</div>
-                  </div>
-                </div>
-                <ChevronRight size={18} className="text-[#c8bfa8]/30 shrink-0 hidden sm:block" />
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+        <AnimatedPipeline />
       </div>
     </section>
   )
@@ -619,7 +861,6 @@ export default function Landing() {
         <Stats />
         <Features />
         <Agents />
-        <WorkflowPreview />
         <FAQ />
         <FinalCTA />
       </main>
