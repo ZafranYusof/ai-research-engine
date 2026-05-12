@@ -57,7 +57,7 @@ const sections = [
       <div>
         <h1 className="text-3xl font-bold tracking-tight mb-3">Documentation</h1>
         <p className="text-[#666] text-lg leading-relaxed mb-8">
-          ResearchAI is a multi-agent system that automates academic literature reviews using five specialized AI agents.
+          ResearchEngine is a multi-agent system that automates academic literature reviews using five specialized AI agents.
         </p>
 
         <div className="bg-gradient-to-br from-[#f8f9ff] to-[#f0f4ff] border border-[#e0e7ff] rounded-2xl p-6 mb-8">
@@ -607,7 +607,7 @@ npm run dev`} />
       return (
         <div>
           <h1 className="text-3xl font-bold tracking-tight mb-3">FAQ</h1>
-          <p className="text-[#666] mb-8">Frequently asked questions about ResearchAI.</p>
+          <p className="text-[#666] mb-8">Frequently asked questions about ResearchEngine.</p>
 
           <div className="space-y-2">
             {faqs.map((faq, i) => (
@@ -659,7 +659,7 @@ export default function Docs() {
                 <path d="M12 4h4v20h-4V4z" fill="#7c3aed" opacity="0.6"/>
                 <path d="M18 4h4c1.1 0 2 .9 2 2v16c0 1.1-.9 2-2 2h-4V4z" fill="#2563eb" opacity="0.4"/>
               </svg>
-              <span className="text-base font-semibold tracking-tight">ResearchAI</span>
+              <span className="text-base font-semibold tracking-tight">ResearchEngine</span>
             </Link>
             <span className="text-[#c8bfa8]/40">/</span>
             <span className="text-sm text-[#c8bfa8]/60">Documentation</span>

@@ -39,7 +39,7 @@ export default function ForgotPassword() {
             <path d="M12 4h4v20h-4V4z" fill="#7c3aed" opacity="0.6"/>
             <path d="M18 4h4c1.1 0 2 .9 2 2v16c0 1.1-.9 2-2 2h-4V4z" fill="#2563eb" opacity="0.4"/>
           </svg>
-          <span className="text-lg font-semibold tracking-tight">ResearchAI</span>
+          <span className="text-lg font-semibold tracking-tight">ResearchEngine</span>
         </Link>
 
         <AnimatePresence mode="wait">

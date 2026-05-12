@@ -57,7 +57,7 @@ export default function Layout() {
         <Link to="/" className="flex items-center gap-3 mb-10 group">
           <BrandMark size={32} />
           <div>
-            <div className="font-serif text-base font-medium text-[#f5efe0] tracking-tight leading-none">ResearchAI</div>
+            <div className="font-serif text-base font-medium text-[#f5efe0] tracking-tight leading-none">ResearchEngine</div>
             <div className="text-[10px] tracking-[0.25em] uppercase text-[#c8bfa8]/50 mt-1">Literature Engine</div>
           </div>
         </Link>

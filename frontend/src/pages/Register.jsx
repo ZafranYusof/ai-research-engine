@@ -58,7 +58,7 @@ export default function Register() {
         >
           <Link to="/" className="flex items-center justify-center gap-2 mb-10 text-[#f5efe0]">
             <BrandMark size={32} />
-            <span className="font-serif text-xl font-medium tracking-tight">ResearchAI</span>
+            <span className="font-serif text-xl font-medium tracking-tight">ResearchEngine</span>
           </Link>
 
           <div className="text-center mb-8">

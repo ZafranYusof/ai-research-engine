@@ -38,7 +38,7 @@ export default function Login() {
         >
           <Link to="/" className="flex items-center justify-center gap-2 mb-10 text-[#f5efe0]">
             <BrandMark size={32} />
-            <span className="font-serif text-xl font-medium tracking-tight">ResearchAI</span>
+            <span className="font-serif text-xl font-medium tracking-tight">ResearchEngine</span>
           </Link>
 
           <div className="text-center mb-8">
@@ -108,7 +108,7 @@ export default function Login() {
 
             <div className="mt-6 text-center">
               <p className="text-sm text-[#c8bfa8]/60">
-                New to ResearchAI?{' '}
+                New to ResearchEngine?{' '}
                 <Link to="/register" className="text-[#c89b3c] hover:text-[#d9ae4e] font-medium transition-colors">
                   Create an account
                 </Link>

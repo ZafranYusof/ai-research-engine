@@ -249,7 +249,7 @@ function Navbar() {
         <Link to="/" className="flex items-center gap-2.5 text-[#f5efe0] tracking-tight">
           <BrandMark size={28} />
           <div className="leading-none">
-            <div className="font-serif text-base font-medium">ResearchAI</div>
+            <div className="font-serif text-base font-medium">ResearchEngine</div>
           </div>
         </Link>
 
@@ -865,7 +865,7 @@ function Footer() {
       <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
         <Link to="/" className="flex items-center gap-2 text-[#f5efe0] font-medium tracking-tight">
           <BrandMark size={24} />
-          <span className="font-serif">ResearchAI</span>
+          <span className="font-serif">ResearchEngine</span>
         </Link>
         <div className="flex items-center gap-6 text-xs text-[#c8bfa8]/50">
           <a href="#features" className="hover:text-[#c89b3c] transition-colors">Features</a>
@@ -873,7 +873,7 @@ function Footer() {
           <a href="#faq" className="hover:text-[#c89b3c] transition-colors">FAQ</a>
         </div>
         <div className="text-xs text-[#c8bfa8]/40 italic font-serif">
-          © {new Date().getFullYear()} ResearchAI
+          © {new Date().getFullYear()} ResearchEngine
         </div>
       </div>
     </footer>
