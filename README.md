@@ -1,96 +1,140 @@
-# 🧠 AI Research Paper Engine
+<div align="center">
 
-Multi-agent AI system for automated literature review, research synthesis, and academic writing.
+# AI Research Engine
 
-## Architecture
+**Multi-Agent Literature Review and Academic Writing Assistant**
 
-```
-┌─────────────────────────────────────────────────────┐
-│                    Frontend (React)                   │
-│  Dashboard │ Search │ Knowledge Graph │ Writing      │
-└──────────────────────┬──────────────────────────────┘
-                       │ REST API
-┌──────────────────────┴──────────────────────────────┐
-│                  Backend (FastAPI)                    │
-├─────────────────────────────────────────────────────┤
-│  Multi-Agent Pipeline                                │
-│  ┌──────────┐ ┌──────────┐ ┌───────────┐           │
-│  │Retriever │→│ Analyzer │→│Synthesizer│           │
-│  └──────────┘ └──────────┘ └───────────┘           │
-│       ↓                          ↓                   │
-│  ┌──────────┐              ┌──────────┐             │
-│  │  Writer  │←─────────────│  Critic  │             │
-│  └──────────┘              └──────────┘             │
-├─────────────────────────────────────────────────────┤
-│  Services                                            │
-│  • Semantic Scholar API    • Vector Store            │
-│  • arXiv API               • Knowledge Graph (Neo4j)│
-│  • PDF Parser              • Celery Tasks           │
-└─────────────────────────────────────────────────────┘
-         │              │              │
-    PostgreSQL       Neo4j          Redis
-```
+An automated research platform that retrieves, analyzes, and synthesizes academic papers across multiple scholarly databases, then drafts literature reviews with proper citations through a five-agent pipeline.
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.110-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev)
+[![MongoDB](https://img.shields.io/badge/MongoDB-6.0-47A248?logo=mongodb&logoColor=white)](https://mongodb.com)
+
+[Live Demo](https://research-kappa-six-83.vercel.app) · [API](https://ai-research-engine-8ctr.onrender.com) · [Report Issue](https://github.com/Vexccz/ai-research-engine/issues)
+
+</div>
+
+---
+
+## Overview
+
+Writing a literature review is time-intensive. Researchers spend hours searching across Google Scholar, Semantic Scholar, and PubMed, then manually organizing findings, identifying gaps, and drafting narrative prose with citations.
+
+This platform automates that pipeline. A multi-agent system retrieves relevant papers, extracts structured findings, synthesizes connections across sources, drafts academic text with proper citations, and runs a critic pass for coherence and quality.
+
+## Core Features
+
+### Research
+
+- Multi-source paper search (Google Scholar, Semantic Scholar, PubMed)
+- PDF full-text parsing via PyMuPDF
+- Citation network analysis with PageRank scoring
+- Smart recommendations based on reading history
+- Knowledge graph visualization
+
+### Writing
+
+- Auto-generated literature reviews with APA citations
+- Iterative writing with critic feedback loop
+- Plagiarism detection against source corpus
+- Auto-save drafts and activity timeline
+
+### Collaboration
+
+- Collaborative research projects
+- Email verification and password reset flows
+- Analytics dashboard per project
+- AI chat widget for in-context Q&A
+
+### Productivity
+
+- Keyboard shortcuts and command palette
+- Theme customization
+- Export-ready prose output
+
+## Agent Pipeline
+
+| Agent         | Responsibility                                                     |
+| ------------- | ------------------------------------------------------------------ |
+| Retriever     | Finds papers across Semantic Scholar, Google Scholar, and PubMed   |
+| Analyzer      | Extracts findings, methodology, and research gaps                  |
+| Synthesizer   | Connects themes, builds narratives, generates hypotheses           |
+| Writer        | Generates academic prose with APA citations                        |
+| Critic        | Reviews coherence, citation accuracy, and overall quality          |
 
 ## Tech Stack
 
-**Backend:** Python, FastAPI, Celery, SQLAlchemy
-**Frontend:** React 19, Vite, Tailwind, D3.js, Framer Motion
-**AI:** OpenAI GPT-4, Sentence Transformers (embeddings)
-**Databases:** PostgreSQL (metadata), Neo4j (knowledge graph), Redis (queue/cache)
-**APIs:** Semantic Scholar, arXiv
+| Layer         | Technologies                                                  |
+| ------------- | ------------------------------------------------------------- |
+| Backend       | Python, FastAPI, MongoDB, PyMuPDF, NetworkX                   |
+| Frontend      | React 19, Vite, TailwindCSS, Framer Motion                    |
+| AI            | LLM-based agent pipeline with retrieval-augmented generation  |
+| Auth          | bcrypt and hashlib hashing, JWT                               |
+| Deployment    | Vercel (frontend), Render (backend)                           |
 
-## Quick Start
+## Project Structure
 
-### With Docker:
-```bash
-docker-compose up -d
+```
+ai-research-engine/
+├── backend/
+│   ├── app/
+│   │   ├── agents/         Retriever, Analyzer, Synthesizer, Writer, Critic
+│   │   ├── services/       Paper search, PDF parser, citation graph
+│   │   ├── routes/         Auth, Projects, Papers, Chat, Analytics
+│   │   ├── models/         Pydantic schemas and MongoDB documents
+│   │   └── core/           Config, security, database clients
+│   └── requirements.txt
+└── frontend/
+    └── src/
+        ├── pages/          Dashboard, Search, Project, Writing, Settings
+        ├── components/     Graph, ChatWidget, Editor, CommandPalette
+        └── services/       API client, auth context
 ```
 
-### Manual:
+## Getting Started
+
+### Prerequisites
+
+- Python 3.10 or newer
+- Node.js 18 or newer
+- MongoDB (local or Atlas, requires `dnspython` for `mongodb+srv://`)
+
+### Backend
+
 ```bash
-# Backend
 cd backend
 pip install -r requirements.txt
-cp .env.example .env  # Edit with your API keys
+cp .env.example .env       # configure MONGODB_URI, JWT_SECRET, LLM credentials
 uvicorn app.main:app --reload --port 8000
+```
 
-# Celery worker
-celery -A app.core.celery_app worker --loglevel=info
+### Frontend
 
-# Frontend
+```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-## Agents
+Open `http://localhost:5173`.
 
-| Agent | Role |
-|-------|------|
-| **Retriever** | Finds papers from Semantic Scholar + arXiv |
-| **Analyzer** | Extracts findings, methodology, gaps |
-| **Synthesizer** | Connects dots, builds narratives, generates hypotheses |
-| **Writer** | Generates academic text with proper citations |
-| **Critic** | Reviews quality, citations, coherence (score 0-10) |
+## API Integrations
 
-## Features
-
-- 🔍 Multi-source paper search (Semantic Scholar + arXiv)
-- 🧠 AI-powered analysis and synthesis
-- 🕸️ Knowledge graph visualization (citation networks)
-- ✍️ Auto-generate literature review with citations
-- 📊 Gap analysis and hypothesis generation
-- 🔄 Iterative writing with critic feedback loop
-- 📑 APA citation formatting
-- 🎯 Theme clustering and bridge paper detection
+- Semantic Scholar (note: subject to 429 rate limits at peak hours)
+- Google Scholar (scraped via compliant proxy)
+- PubMed E-utilities
+- MongoDB Atlas for persistent storage
 
 ## Roadmap
 
-- [ ] PDF full-text parsing
-- [ ] Google Scholar integration
-- [ ] LaTeX/Word export
-- [ ] Collaborative projects
-- [ ] Custom model fine-tuning
-- [ ] Plagiarism detection
-- [ ] Citation network analysis (PageRank)
-- [ ] Real-time collaboration
+- LaTeX and Word export
+- Custom LLM fine-tuning on domain corpora
+- Real-time collaborative editing
+- Multi-language paper support
+- Citation style switcher (APA, MLA, Chicago, IEEE)
+
+## License
+
+Distributed under the MIT License. See `LICENSE` for details.
