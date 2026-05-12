@@ -2,9 +2,12 @@ import { useState, useEffect, useRef } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import api, { API_URL } from '../utils/api'
 import { motion } from 'framer-motion'
-import { CheckCircle, Clock, AlertCircle, Share2 } from 'lucide-react'
+import { CheckCircle, Clock, AlertCircle, Share2, FileDown } from 'lucide-react'
 import ShareModal from '../components/ShareModal'
+import CitationStyleSwitcher from '../components/CitationStyleSwitcher'
 import { toast } from '../utils/toast'
+import { formatCitation, getPreferredStyle, setPreferredStyle } from '../utils/citation'
+import { exportDraftToDocx } from '../utils/docxExport'
 
 export default function ResearchView() {
   const { id } = useParams()
@@ -12,6 +15,34 @@ export default function ResearchView() {
   const [showShare, setShowShare] = useState(false)
   const [results, setResults] = useState(null)
   const [activeTab, setActiveTab] = useState('papers')
+  const [citeStyle, setCiteStyleState] = useState(getPreferredStyle())
+  const [exporting, setExporting] = useState(false)
+
+  const handleCiteStyleChange = (s) => {
+    setCiteStyleState(s)
+    setPreferredStyle(s)
+  }
+
+  const handleExportDocx = async () => {
+    if (!results) return
+    setExporting(true)
+    try {
+      await exportDraftToDocx({
+        title: status?.topic || 'Research Draft',
+        abstract: results?.draft?.abstract || '',
+        body: results?.draft?.content || '',
+        citations: results?.papers || [],
+        citationStyle: citeStyle,
+        filename: `research-${id || new Date().toISOString().slice(0,10)}.docx`,
+      })
+      toast.success('DOCX downloaded')
+    } catch (err) {
+      console.error(err)
+      toast.error('Export failed')
+    } finally {
+      setExporting(false)
+    }
+  }
 
   const wsRef = useRef(null)
 
@@ -185,6 +216,14 @@ export default function ResearchView() {
             <Share2 size={15} />
             Share
           </button>
+          <button
+            onClick={handleExportDocx}
+            disabled={exporting}
+            className="flex items-center gap-2 border border-[#1c2f42] text-[#c8bfa8] px-4 py-2.5 rounded-xl text-sm font-medium hover:border-[#c89b3c]/40 hover:text-[#f5efe0] transition-all disabled:opacity-60"
+          >
+            <FileDown size={15} />
+            {exporting ? 'Exporting...' : 'Export as DOCX'}
+          </button>
           <Link
             to={`/write/${id}`}
             className="flex items-center gap-2 bg-[#11202f] text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-[#333] transition-all hover:shadow-lg hover:shadow-black/10"
@@ -216,6 +255,10 @@ export default function ResearchView() {
       {/* Tab Content */}
       {activeTab === 'papers' && (
         <div className="space-y-3">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-[#c8bfa8]/50">Citation style</p>
+            <CitationStyleSwitcher value={citeStyle} onChange={handleCiteStyleChange} />
+          </div>
           {results?.papers?.map((paper, i) => (
             <motion.div
               key={i}
@@ -235,6 +278,10 @@ export default function ResearchView() {
               {paper.tldr && (
                 <p className="text-xs text-[#666] dark:text-[#bbb] mt-2 italic leading-relaxed">{paper.tldr}</p>
               )}
+              <p className="text-[11px] text-[#c8bfa8]/80 mt-3 leading-relaxed border-t border-[#1c2f42] pt-2 font-serif">
+                <span className="text-[9px] uppercase tracking-[0.2em] text-[#c89b3c] mr-2">{citeStyle}</span>
+                {formatCitation(paper, citeStyle)}
+              </p>
             </motion.div>
           ))}
         </div>

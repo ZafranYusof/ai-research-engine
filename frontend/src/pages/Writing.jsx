@@ -4,7 +4,11 @@ import api from '../utils/api'
 import ReactMarkdown from 'react-markdown'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from '../utils/toast'
-import { Save, Check, Clock, Shield } from 'lucide-react'
+import { Save, Check, Clock, Shield, FileDown } from 'lucide-react'
+import CitationStyleSwitcher from '../components/CitationStyleSwitcher'
+import { formatCitation, getPreferredStyle, setPreferredStyle } from '../utils/citation'
+import { exportDraftToDocx } from '../utils/docxExport'
+import { useTypewriter, GeneratingDots } from '../hooks/useTypewriter'
 
 const SECTION_TYPES = [
   { value: 'introduction', label: 'Introduction' },
@@ -32,6 +36,23 @@ export default function Writing() {
   const [draftRestoreOffer, setDraftRestoreOffer] = useState(null)
   const saveTimerRef = useRef(null)
   const contentRef = useRef(null)
+
+  // Streaming illusion state
+  const [streamTarget, setStreamTarget] = useState('')
+  const [streaming, setStreaming] = useState(false)
+  const { text: streamedText, done: streamDone } = useTypewriter(streamTarget, {
+    enabled: streaming,
+    charsPerFrame: 8,
+    onDone: () => setStreaming(false),
+  })
+
+  // Citation style preference
+  const [citeStyle, setCiteStyleState] = useState(getPreferredStyle())
+  const [docxExporting, setDocxExporting] = useState(false)
+  const handleCiteStyleChange = (s) => {
+    setCiteStyleState(s)
+    setPreferredStyle(s)
+  }
 
   // Check for existing draft on load / section change
   useEffect(() => {
@@ -121,20 +142,45 @@ export default function Writing() {
 
   const handleGenerate = async () => {
     setLoading(true)
+    setStreamTarget('')
+    setStreaming(true)
     try {
       const endpoint = iterative ? '/api/writing/generate-iterative' : '/api/writing/generate'
       const res = await api.post(endpoint, {
         section_type: sectionType,
         project_id: projectId,
         max_words: maxWords,
-        style: 'APA',
+        style: citeStyle,
       })
       setGenerated(res.data)
       setDraftRestoreOffer(null)
+      // kick off typewriter reveal of the freshly generated content
+      setStreamTarget(res.data?.content || '')
     } catch (err) {
       console.error(err)
+      setStreaming(false)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleExportDocx = async () => {
+    if (!generated) return
+    setDocxExporting(true)
+    try {
+      await exportDraftToDocx({
+        title: `Research Paper — ${sectionType.replace(/_/g, ' ')}`,
+        body: generated.content || '',
+        citations: generated.citations || [],
+        citationStyle: citeStyle,
+        filename: `research-${projectId || new Date().toISOString().slice(0,10)}.docx`,
+      })
+      toast.success('DOCX downloaded')
+    } catch (err) {
+      console.error(err)
+      toast.error('Export failed')
+    } finally {
+      setDocxExporting(false)
     }
   }
 
@@ -309,6 +355,11 @@ export default function Writing() {
               ) : 'Generate Section →'}
             </button>
 
+            <div>
+              <label className="block text-xs font-medium text-[#c8bfa8] dark:text-[#c8bfa8]/50 mb-1.5">Citation Style</label>
+              <CitationStyleSwitcher value={citeStyle} onChange={handleCiteStyleChange} />
+            </div>
+
             {/* Review Score */}
             {review && (
               <motion.div
@@ -381,6 +432,15 @@ export default function Writing() {
                   Save Section ({sections.length} saved)
                 </button>
 
+                <button
+                  onClick={handleExportDocx}
+                  disabled={docxExporting || !generated?.content}
+                  className="w-full flex items-center justify-center gap-2 border border-[#c89b3c]/40 text-[#c89b3c] py-2.5 rounded-xl text-xs font-medium hover:bg-[#c89b3c]/10 transition-all disabled:opacity-50"
+                >
+                  <FileDown size={14} />
+                  {docxExporting ? 'Exporting...' : 'Export as DOCX'}
+                </button>
+
                 {sections.length > 0 && (
                   <div className="flex gap-2">
                     <select
@@ -419,8 +479,9 @@ export default function Writing() {
               <div className="space-y-4">
                 <div className="bg-[#11202f] border border-[#1c2f42] rounded-xl p-6 dark:bg-[#11202f] dark:border-[#1c2f42]">
                   <div className="flex justify-between items-center mb-4">
-                    <h2 className="font-medium text-sm capitalize">
+                    <h2 className="font-medium text-sm capitalize flex items-center gap-3">
                       {sectionType.replace(/_/g, ' ')}
+                      {(loading || streaming) && <GeneratingDots />}
                     </h2>
                     <div className="flex items-center gap-3">
                       {/* Auto-save indicator */}
@@ -480,7 +541,17 @@ export default function Writing() {
                     </div>
                   </div>
                   <div className="prose prose-sm max-w-none text-[#444] dark:text-[#c8bfa8]/50 leading-relaxed dark:text-[#c8bfa8]/50">
-                    <ReactMarkdown>{generated.content}</ReactMarkdown>
+                    {streaming && !streamDone ? (
+                      <div>
+                        <span style={{ whiteSpace: 'pre-wrap' }}>{streamedText}</span>
+                        <span
+                          aria-hidden="true"
+                          className="inline-block w-[2px] h-[1em] align-[-0.15em] ml-0.5 bg-[#c89b3c] animate-pulse"
+                        />
+                      </div>
+                    ) : (
+                      <ReactMarkdown>{generated.content}</ReactMarkdown>
+                    )}
                   </div>
 
                   {generated.citations?.length > 0 && (
