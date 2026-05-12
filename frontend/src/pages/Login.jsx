@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Mail, Lock, ArrowRight, BookOpen } from 'lucide-react'
+import { Mail, Lock, ArrowRight, BookOpen, User } from 'lucide-react'
 import api from '../utils/api'
 import { toast } from '../utils/toast'
 import { PageShell, BrandMark, Card, Pill, btn, input } from '../components/ui'
@@ -18,6 +18,7 @@ export default function Login() {
       const res = await api.post('/api/auth/login', form)
       localStorage.setItem('token', res.data.token)
       localStorage.setItem('user', JSON.stringify(res.data.user))
+      localStorage.removeItem('guest')
       toast.success('Welcome back')
       navigate('/app')
     } catch (err) {
@@ -25,6 +26,20 @@ export default function Login() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleGuest = () => {
+    const guestUser = {
+      id: `guest-${Date.now()}`,
+      name: 'Guest Researcher',
+      email: 'guest@researchengine.local',
+      isGuest: true,
+    }
+    localStorage.setItem('user', JSON.stringify(guestUser))
+    localStorage.setItem('guest', 'true')
+    localStorage.removeItem('token')
+    toast.success('Exploring as guest')
+    navigate('/app')
   }
 
   return (
@@ -105,6 +120,24 @@ export default function Login() {
                 )}
               </button>
             </form>
+
+            <div className="mt-6 flex items-center gap-3">
+              <div className="flex-1 h-px bg-[#1c2f42]" />
+              <span className="text-[10px] tracking-[0.25em] uppercase text-[#c8bfa8]/40">or</span>
+              <div className="flex-1 h-px bg-[#1c2f42]" />
+            </div>
+
+            <button
+              type="button"
+              onClick={handleGuest}
+              className={`${btn.secondary} w-full py-3 mt-4`}
+            >
+              <User size={15} />
+              Continue as guest
+            </button>
+            <p className="text-center text-[11px] text-[#c8bfa8]/45 mt-2.5 leading-relaxed">
+              Explore the interface without an account. Guest sessions don't save drafts.
+            </p>
 
             <div className="mt-6 text-center">
               <p className="text-sm text-[#c8bfa8]/60">

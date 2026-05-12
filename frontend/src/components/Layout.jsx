@@ -45,6 +45,7 @@ export default function Layout() {
   const handleLogout = () => {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
+    localStorage.removeItem('guest')
     navigate('/login')
   }
 
@@ -85,19 +86,37 @@ export default function Layout() {
         {/* User section */}
         <div className="border-t border-[#1c2f42] pt-4 mt-4">
           {user ? (
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 min-w-0">
-                <div className="w-9 h-9 bg-[#c89b3c]/10 border border-[#c89b3c]/25 rounded-lg flex items-center justify-center shrink-0">
-                  <User size={15} className="text-[#c89b3c]" />
+            <div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
+                    user.isGuest
+                      ? 'bg-[#c8bfa8]/10 border border-[#c8bfa8]/20'
+                      : 'bg-[#c89b3c]/10 border border-[#c89b3c]/25'
+                  }`}>
+                    <User size={15} className={user.isGuest ? 'text-[#c8bfa8]/80' : 'text-[#c89b3c]'} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-medium truncate text-[#f5efe0] flex items-center gap-1.5">
+                      {user.name}
+                      {user.isGuest && (
+                        <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#c8bfa8]/10 text-[#c8bfa8]/70 tracking-wider uppercase font-medium">Guest</span>
+                      )}
+                    </p>
+                    <p className="text-[10px] text-[#c8bfa8]/50 truncate">
+                      {user.isGuest ? 'Read-only session' : user.email}
+                    </p>
+                  </div>
                 </div>
-                <div className="min-w-0">
-                  <p className="text-xs font-medium truncate text-[#f5efe0]">{user.name}</p>
-                  <p className="text-[10px] text-[#c8bfa8]/50 truncate">{user.email}</p>
-                </div>
+                <button onClick={handleLogout} className="text-[#c8bfa8]/40 hover:text-[#c89b3c] transition-colors shrink-0" title={user.isGuest ? 'Exit guest' : 'Sign out'}>
+                  <LogOut size={16} />
+                </button>
               </div>
-              <button onClick={handleLogout} className="text-[#c8bfa8]/40 hover:text-[#c89b3c] transition-colors shrink-0">
-                <LogOut size={16} />
-              </button>
+              {user.isGuest && (
+                <Link to="/register" className="mt-3 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-[#c89b3c]/10 border border-[#c89b3c]/30 text-[11px] text-[#c89b3c] hover:bg-[#c89b3c]/15 transition-colors font-medium">
+                  Create account to save work
+                </Link>
+              )}
             </div>
           ) : (
             <Link
