@@ -81,18 +81,17 @@ This platform automates that pipeline. A multi-agent system retrieves relevant p
 
 ```
 ai-research-engine/
-├── backend/
-│   ├── app/
-│   │   ├── agents/         Retriever, Analyzer, Synthesizer, Writer, Critic
-│   │   ├── services/       Paper search, PDF parser, citation graph
-│   │   ├── routes/         Auth, Projects, Papers, Chat, Analytics
-│   │   ├── models/         Pydantic schemas and MongoDB documents
-│   │   └── core/           Config, security, database clients
-│   └── requirements.txt
-└── frontend/
+├── backend/                Python FastAPI server
+│   ├── app/                Application package
+│   ├── data/               Seed data and corpora
+│   └── venv/               Python virtual environment
+└── frontend/               React SPA (Vite)
     └── src/
         ├── pages/          Dashboard, Search, Project, Writing, Settings
         ├── components/     Graph, ChatWidget, Editor, CommandPalette
+        ├── hooks/          Custom React hooks
+        ├── styles/         Global styles and themes
+        ├── utils/          Helper functions
         └── services/       API client, auth context
 ```
 
